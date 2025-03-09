@@ -1,6 +1,11 @@
 <?php
-require_once("db.php");
+require_once("../../db.php");
 session_start();
+
+// CSRF 토큰
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = isset($_POST['id']) ? trim($_POST['id']) : null;
@@ -24,39 +29,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 
-    $stmt = $db->prepare("SELECT userid, userpw FROM user WHERE userid = ?");
-    if ($stmt) {
-        $stmt->bind_param("s", $id);
-        $stmt->execute();
-        $stmt->store_result();
-
-        if ($stmt->num_rows === 1) {
-            $stmt->bind_result($userid, $userpw);
-            $stmt->fetch();
-
-            if (password_verify($pw, $userpw)) {
-                $_SESSION["id"] = $userid;
-
-                if (!empty($_POST['idsave'])) {
-                    setcookie("saved_id", $id, time() + 60 * 60 * 24 * 30, "/", "", false, true);
-                } else {
-                    setcookie("saved_id", "", time() - 3600, "/", "", false, true);
-                }
-
-                header("Location: ../../main/index.php");
-                exit;
-            }
-        }
-        $stmt->close();
+    if (!($stmt = $db->prepare("SELECT user_id, user_pw FROM user WHERE user_id = ?"))) {
+        $_SESSION['error'] = "SQL 실행 오류: " . $db->error;
+        header("Location: login.php");
+        exit;
     }
+
+
+    $stmt->bind_param("s", $id);
+
+    if (!$stmt->execute()) {
+        $_SESSION['error'] = "쿼리 실행 중 오류 발생: " . $stmt->error;
+        header("Location: login.php");
+        exit;
+    }
+
+    $stmt->store_result();
+
+    if ($stmt->num_rows === 1) {
+        $stmt->bind_result($user_id, $user_pw);
+        $stmt->fetch();
+
+        if (password_verify($pw, $user_pw)) {
+            session_regenerate_id(true);
+            $_SESSION["id"] = $user_id;
+
+            if (!empty($_POST['idsave'])) {
+                setcookie("saved_id", $id, time() + 60 * 60 * 24 * 3, "/", "", true, true);
+            } else {
+                setcookie("saved_id", "", time() - 3600, "/", "", true, true);
+            }
+
+            header("Location: ../../main/index.php");
+            exit;
+        }
+    }
+
+    sleep(1);
+
+    $stmt->close();
 
     $_SESSION['error'] = "아이디 또는 비밀번호가 일치하지 않습니다.";
     header("Location: login.php");
     exit;
 }
-
-// CSRF 토큰 생성
-$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 ?>
 
 <!DOCTYPE html>
@@ -84,7 +100,7 @@ $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>" />
             <input type="submit" value="로그인" />
             <label for="idsave">
-                <input type="checkbox" id="idsave" />아이디 저장
+                <input type="checkbox" name="idsave" id="idsave" />아이디 저장
             </label>
             <a href="../join/join.php">회원가입</a>
             <a href="../../forgot/index.php">비밀번호 찾기</a>
