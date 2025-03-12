@@ -2,6 +2,11 @@
 require_once("../../db.php");
 session_start();
 
+if (isset($_SESSION['id'])) {
+    echo "<script>alert('이미 로그인 하셨습니다');</script>";
+    header("Location: ../../main/index.php");
+}
+
 // CSRF 토큰
 if (!isset($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
@@ -50,9 +55,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_result($user_id, $user_pw);
         $stmt->fetch();
 
+
+
         if (password_verify($pw, $user_pw)) {
             session_regenerate_id(true);
             $_SESSION["id"] = $user_id;
+            $_SESSION["name"] = $user_name;
 
             if (!empty($_POST['idsave'])) {
                 setcookie("saved_id", $id, time() + 60 * 60 * 24 * 3, "/", "", true, true);
