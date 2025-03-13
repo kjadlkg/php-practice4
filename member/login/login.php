@@ -3,7 +3,7 @@ require_once("../../db.php");
 session_start();
 
 if (isset($_SESSION['id'])) {
-    echo "<script>alert('이미 로그인 하셨습니다');</script>";
+    echo "<script>alert('이미 로그인 하셨습니다.');</script>";
     header("Location: ../../main/index.php");
 }
 
@@ -40,7 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 
-
     $stmt->bind_param("s", $id);
 
     if (!$stmt->execute()) {
@@ -54,8 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($stmt->num_rows === 1) {
         $stmt->bind_result($user_id, $user_pw);
         $stmt->fetch();
-
-
 
         if (password_verify($pw, $user_pw)) {
             session_regenerate_id(true);

@@ -19,20 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 
-    if ($pw != $pwCheck) {
-        echo "<script>alert('비밀번호가 일치하지 않습니다.'); history.back();</script>";
-        exit;
-    }
-
-    if (!preg_match('/^(?=.*[a-zA-Z])(?=.*\d).{8,}$/', $pw)) {
-        echo "<script>alert('비밀번호는 최소 8자 이상, 영문과 숫자를 포함해야 합니다.'); history.back();</script>";
-        exit;
-    }
-
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         echo "<script>alert('유효한 이메일을 입력해주세요.'); history.back();</script>";
+        exit;
     }
-
 
     $bcrypt_pw = password_hash($pw, PASSWORD_DEFAULT);
 
@@ -46,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "<script>alert('회원가입에 실패했습니다. 오류: " . $stmt->error . "'); history.back();</script>";
     }
     $stmt->close();
-
 
 }
 ?>
@@ -85,6 +74,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script>
         $(document).ready(function () {
             var isIdChecked = false;
+
+            $("#pw, #pw_check").on("keyup", function () {
+                var pw = $("#pw").val();
+                var pwCheck = $("#pw_check").val();
+
+                if (pw.length < 8 || /(?=.*[a-zA-Z])(?=.*\d)/.test(pw)) {
+                    $("#pw_result").text("최소 8자 이상, 영문과 숫자의 조합으로 작성해주세요").css("color", "black");
+                } else if (pw !== pwCheck) {
+                    $("#pw_result").text("비밀번호가 불일치합니다").css("color", "red");
+                } else {
+                    $("pw_result").text("비밀번호가 일치합니다").css("color", "blue");
+                }
+            });
 
             $("#id_check").click(function () {
                 var user_id = $("#id").val().trim();
