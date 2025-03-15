@@ -94,8 +94,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h1>로그인</h1>
 
         <?php if (isset($_SESSION['error'])): ?>
-            <p style="color: red;"><?php echo htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8'); ?></p>
-            <?php unset($_SESSION['error']); ?>
+        <p style="color: red;"><?php echo htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8'); ?></p>
+        <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
         <form method="post" action="login.php">
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="checkbox" name="idsave" id="idsave" />아이디 저장
             </label>
             <a href="../join/join.php">회원가입</a>
-            <a href="../../forgot/index.php">비밀번호 찾기</a>
+            <a href="../forgot/index.php">비밀번호 찾기</a>
         </form>
     </div>
 </body>
