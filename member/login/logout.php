@@ -5,7 +5,7 @@ $_SESSION = array();
 
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();
-    $etcookie(
+    setcookie(
         session_name(),
         '',
         time() - 42000,

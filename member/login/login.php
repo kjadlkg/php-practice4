@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 
-    if (!($stmt = $db->prepare("SELECT user_id, user_pw FROM user WHERE user_id = ?"))) {
+    if (!($stmt = $db->prepare("SELECT user_name, user_id, user_pw FROM user WHERE user_id = ?"))) {
         $_SESSION['error'] = "SQL 실행 오류: " . $db->error;
         header("Location: login.php");
         exit;
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->store_result();
 
     if ($stmt->num_rows === 1) {
-        $stmt->bind_result($user_id, $user_pw);
+        $stmt->bind_result($user_name, $user_id, $user_pw);
         $stmt->fetch();
 
         if (password_verify($pw, $user_pw)) {
@@ -94,8 +94,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h1>로그인</h1>
 
         <?php if (isset($_SESSION['error'])): ?>
-        <p style="color: red;"><?php echo htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8'); ?></p>
-        <?php unset($_SESSION['error']); ?>
+            <p style="color: red;"><?php echo htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8'); ?></p>
+            <?php unset($_SESSION['error']); ?>
         <?php endif; ?>
 
         <form method="post" action="login.php">

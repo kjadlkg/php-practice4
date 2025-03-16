@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $result = $stmt->execute();
 
     if ($result) {
-        echo "<script>alert('회원가입이 완료되었습니다.');location.href='../../main/index.php';</script>";
+        echo "<script>alert('회원가입이 완료되었습니다.'); location.href='../login/login.php';</script>";
     } else {
         echo "<script>alert('회원가입에 실패했습니다. 오류: " . $stmt->error . "'); history.back();</script>";
     }

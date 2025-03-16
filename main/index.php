@@ -15,10 +15,16 @@ include "../db.php";
 <body>
     <div>
         <?php if (!isset($_SESSION["id"])) { ?>
-            <a href="../member/login/login.php">로그인</a>
-            <a hreg="../member/join/join.php">회원가입</a>
+            <div>
+                <a href="../member/login/login.php">로그인</a>
+                <a href="../member/join/join.php">회원가입</a>
+            </div>
         <?php } else { ?>
-            <a href="../member/login/logout.php">로그아웃</a>
+            <div>
+                <p><a href="../mypage/index.php"><?php echo $_SESSION['name']; ?></a> 님</p>
+                <a href="../mypage/index.php">마이페이지</a>
+                <a href="../member/login/logout.php">로그아웃</a>
+            </div>
         <?php } ?>
     </div>
 
