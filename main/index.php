@@ -1,6 +1,34 @@
 <?php
 session_start();
 include "../db.php";
+
+$list_num = 10;
+$page_num = 10;
+$page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+$start = ($page - 1) * $list_num;
+
+$stmt = $db->prepare("
+SELECT b.*,
+(SELECT COUNT(*) FROM comment WHERE board_id = b.board_id) AS comment_count
+FROM board b
+ORDER BY b.board_id DESC
+LIMIT ?, ?
+");
+$stmt->bind_param("ii", $start, $list_num);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$count_stmt = $db->prepare("SELECT COUNT(*) AS total FROM board");
+$count_stmt->execute();
+$count_result = $count_stmt->get_result();
+$total_rows = $count_result->fetch_assoc()['total'];
+
+$total_page = ceil($total_rows / $list_num);
+
+$total_block = ceil($total_page / $page_num);
+$now_block = ceil($page / $page_num);
+$s_page = max(1, ($now_block - 1) * $page_num + 1);
+$e_page = min($total_page, $s_page + $page_num - 1);
 ?>
 
 <!DOCTYPE html>
@@ -21,7 +49,7 @@ include "../db.php";
             </div>
         <?php } else { ?>
             <div>
-                <p><a href="../mypage/index.php"><?php echo $_SESSION['name']; ?></a> 님</p>
+                <p><a href="../mypage/index.php"><?= htmlspecialchars($_SESSION['name'], ENT_QUOTES, 'UTF-8') ?></a> 님</p>
                 <a href="../mypage/index.php">마이페이지</a>
                 <a href="../member/login/logout.php">로그아웃</a>
             </div>
@@ -41,65 +69,47 @@ include "../db.php";
                 <th>작성일</th>
                 <th>조회수</th>
             </tr>
-            <?php
-            $list_num = 10;
-            $page_num = 10;
-            $num = query("SELECT COUNT(*) AS total FROM board")->fetch_assoc()['total'];
-
-            $page = isset($_GET['page']) ? $_GET['page'] : 1;
-            $total_page = ceil($num / $list_num);
-            $total_block = ceil($total_page / $page_num);
-            $now_block = ceil($page / $page_num);
-            $s_page = ($now_block * $page_num) - ($page_num - 1);
-            if ($s_page <= 0)
-                $s_page = 1;
-            $e_page = $now_block * $page_num;
-            if ($total_page < $e_page)
-                $e_page = $total_page;
-
-            $start = ($page - 1) * $list_num;
-            $sql = query("SELECT * FROM board ORDER BY board_id DESC LIMIT $start, $list_num");
-            while ($row = $sql->fetch_array()) {
-                echo '<tr>';
-                echo '<td>' . $row['board_id'] . '</td>';
-                echo '<td><a href="view.php?id=' . $row['board_id'] . '">' . $row['board_title'] . '</a><td>';
-                $comment_sql = query("SELECT COUNT(*) FROM comment WHERE board_id = " . $row['board_id']);
-                echo '<td>' . $row['board_writer'] . '</td>';
-                echo '<td>' . $row['created_at'] . '</td>';
-                echo '<td>' . $row['board_views'] . '</td>';
-            }
-            ?>
+            <?php while ($row = $result->fetch_assoc()) { ?>
+                <tr>
+                    <td><?= $row['board_id'] ?></td>
+                    <td>
+                        <a href="view.php?id<?= $row['board_id'] ?>">
+                            <?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?> [<?= $row['comment_count'] ?>]
+                        </a>
+                    </td>
+                    <td><?= htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8') ?></td>
+                    <td><?= $row['created_at'] ?></td>
+                    <td><?= $row['board_views'] ?></td>
+                </tr>
+            <?php } ?>
         </table>
 
         <div class="page">
-            <?php
-            if ($page <= 1) {
-                echo '<span> 이전 </span>';
-            } else {
-                echo '<a href="index.php?page=' . ($page - 1) . '"> 이전 </a>';
-            }
+            <?php if ($page > 1) { ?>
+                <a href="index.php?page=<?= $page - 1 ?>">이전</a>
+            <?php } else { ?>
+                <span>이전</span>
+            <?php } ?>
+            <?php for ($i = $s_page; $i <= $e_page; $i++) { ?>
+                <?php if ($i == $page) { ?>
+                    <strong><?= $i ?></strong>
+                <?php } else { ?>
+                    <a href="index.php?page=<?= $i ?>"><?= $i ?></a>
+                <?php } ?>
+            <?php } ?>
 
-            for ($print_page = $s_page; $print_page <= $e_page; $print_page++) {
-                if ($print_page == $page) {
-                    echo '<strong>' . $print_page . '</strong>';
-                } else {
-                    echo '<a href="index.php?page=' . $print_page . '">' . $print_page . '</a>';
-                }
-            }
-
-            if ($page >= $total_page) {
-                echo '<span> 다음 </span>';
-            } else {
-                echo '<a href="index.php?page=' . ($page + 1) . '"> 다음 </a>';
-            }
-            ?>
+            <?php if ($page >= $total_page) { ?>
+                <a href="index.php?page=<?= $page + 1 ?>">다음</a>
+            <?php } else { ?>
+                <span>다음</span>
+            <?php } ?>
         </div>
 
         <script>
             function writePost() {
                 <?php if (!isset($_SESSION['id'])) { ?>
                     alert('로그인이 필요합니다.');
-                    location.href = '../login/login.php';
+                    location.href = '../member/login/login.php';
                 <?php } else { ?>
                     location.href = '../board//write.php';
                 <?php } ?>
