@@ -111,7 +111,7 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                     alert('로그인이 필요합니다.');
                     location.href = '../member/login/login.php';
                 <?php } else { ?>
-                    location.href = '../board//write.php';
+                    location.href = '../board/write.php';
                 <?php } ?>
             }
         </script>
