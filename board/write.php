@@ -3,6 +3,11 @@ session_start();
 include "../db.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!isset($_SESSION['id'])) {
+        echo "<script>alert('로그인이 필요합니다.'); history.back();</script>";
+        exit;
+    }
+
     $title = $_POST['title'];
     $content = $_POST['content'];
 
@@ -10,17 +15,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "<script>alert('제목과 내용을 입력해주세요.'); history.back();</script>";
         exit;
     }
-    if (!isset($_SESSION['id'])) {
-        echo "<script>alert('로그인이 필요합니다.'); history.back();</script>";
-        exit;
-    }
+
+    $title = htmlspecialchars(strip_tags($title), ENT_QUOTES, 'UTF-8');
+    $content = htmlspecialchars(strip_tags($content), ENT_QUOTES, 'UTF-8');
 
     $user_id = $_SESSION['id'];
+
     $stmt = $db->prepare("INSERT INTO board(board_title, board_content, board_writer) VALUES (?, ?, ?)");
     $stmt->bind_param("sss", $title, $content, $user_id);
-    $stmt->execute();
+
+    if ($stmt->execute()) {
+        header("Location: ../main/index.php");
+        exit;
+    } else {
+        echo "<script>alert('글 작성 중 오류가 발생했습니다.'); history.back();</script>";
+    }
+
     $stmt->close();
-    header("Location: ../main/index.php");
 }
 ?>
 
@@ -37,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div>
         <h1>글 작성</h1>
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
             <table>
                 <tr>
                     <th>제목</th>
