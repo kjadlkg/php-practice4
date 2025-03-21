@@ -73,7 +73,7 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                 <tr>
                     <td><?= $row['board_id'] ?></td>
                     <td>
-                        <a href="view.php?id<?= $row['board_id'] ?>">
+                        <a href="../board/view.php?id=<?= $row['board_id'] ?>">
                             <?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?> [<?= $row['comment_count'] ?>]
                         </a>
                     </td>
