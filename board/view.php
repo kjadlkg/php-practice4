@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     $id = (int) $_GET["id"];
 
-    $stmt = $db->prepare("UPDATE board SET board_views = LAST_INSERT_ID(board_views + 1) WHERE board_id = ?");
+    $stmt = $db->prepare("UPDATE board SET board_views = board_views + 1 WHERE board_id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $stmt->close();
@@ -37,6 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
 
     $is_writer = isset($_SESSION['id']) && $_SESSION['id'] == $row['user_id'];
+    $userName = htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8');
+    $boardTitle = htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8');
+    $boardContent = nl2br(htmlspecialchars($row['board_content']));
 }
 ?>
 
@@ -46,15 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $row['board_title'] ?></title>
+    <title><?= $boardTitle ?></title>
 </head>
 
 <body>
     <div>
         <?php
-        $userName = htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8');
-        $boardTitle = htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8');
-        $boardContent = nl2br(htmlspecialchars($row['board_content']));
         ?>
         <h3><?= $boardTitle; ?></h3>
         <div>
