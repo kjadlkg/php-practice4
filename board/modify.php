@@ -1,5 +1,12 @@
 <?php
+session_start();
 include "../db.php";
+
+if (!isset($_SESSION['id'])) {
+    die("로그인이 필요합니다.");
+}
+
+$loginUser = $_SESSION['id'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
@@ -15,6 +22,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     if (!$row) {
         die("해당 게시글을 찾을 수 없습니다.");
+    }
+
+    if ($row['board_writer'] !== $loginUser) {
+        die("이 게시글을 수정할 권한이 없습니다.");
     }
 
     $userName = htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8');
@@ -46,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: view.php?id=" . $id);
         exit;
     } else {
-        echo "<script>alert('글 작성 중 오류가 발생했습니다.'); history.back();</script>";
+        echo "<script>alert('오류가 발생했습니다.'); history.back();</script>";
     }
 
     $stmt->close();
