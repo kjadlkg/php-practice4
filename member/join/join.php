@@ -2,7 +2,7 @@
 include "../../db.php";
 
 if (isset($_SESSION['id'])) {
-    echo "<script>alert('이미 로그인 하셨습니다');</script>";
+    echo "<script>alert('이미 로그인 하셨습니다.');</script>";
     header("Location: ../../main/index.php");
     exit;
 }
@@ -21,6 +21,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         echo "<script>alert('유효한 이메일을 입력해주세요.'); history.back();</script>";
+        exit;
+    }
+
+    if (!preg_match('/^(?=.*[a-zA-Z])(?=.*\d).{8,}$/', $pw)) {
+        echo "<script>alert('비밀번호는 최소 8자 이상, 영문과 숫자를 포함해야 합니다.');</script>";
+        exit;
+    }
+
+    if ($pw !== $pwCheck) {
+        echo "<script>alert('비밀번호가 일치하지 않습니다.');</script>";
         exit;
     }
 
@@ -72,74 +82,87 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <script>
-        $(document).ready(function () {
-            var isIdChecked = false;
+    $(document).ready(function() {
+        var isIdChecked = false;
 
-            $("#pw, #pw_check").on("keyup", function () {
-                var pw = $("#pw").val();
-                var pwCheck = $("#pw_check").val();
+        $("#pw, #pw_check").on("keyup", function() {
+            var pw = $("#pw").val();
+            var pwCheck = $("#pw_check").val();
+            var pwPattern = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
 
-                if (pw.length < 8 || /(?=.*[a-zA-Z])(?=.*\d)/.test(pw)) {
-                    $("#pw_result").text("최소 8자 이상, 영문과 숫자의 조합으로 작성해주세요").css("color", "black");
-                } else if (pw !== pwCheck) {
-                    $("#pw_result").text("비밀번호가 불일치합니다").css("color", "red");
-                } else {
-                    $("pw_result").text("비밀번호가 일치합니다").css("color", "blue");
-                }
-            });
+            if (!pwPattern.test(pw)) {
+                $("#pw_result").text("최소 8자 이상, 영문과 숫자의 조합으로 작성해주세요").css("color", "black");
+            } else if (pw !== pwCheck) {
+                $("#pw_result").text("비밀번호가 불일치합니다").css("color", "red");
+            } else {
+                $("#pw_result").text("비밀번호가 일치합니다").css("color", "blue");
+            }
 
-            $("#id_check").click(function () {
-                var user_id = $("#id").val().trim();
+            if (pwPattern.test(pw) && isIdChecked) {
+                $("#join_btn").prop("disabled", false);
+            } else {
+                $("#join_btn").prop("disabled", true);
+            }
+        });
 
-                if (user_id === "") {
-                    $("#id_result").text("아이디를 입력해주세요").css("color", "black");
-                    isIdChecked = false;
-                    $("#join_btn").prop("disabled", true);
-                    return;
-                }
+        $("#id_check").click(function() {
+            var user_id = $("#id").val().trim();
+            var pw = $("#pw").val();
+            var pwPattern = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
 
-                $.ajax({
-                    type: "POST",
-                    url: "check.php",
-                    data: {
-                        id: user_id
-                    },
-                    success: function (response) {
-                        if (response === "exists") {
-                            $("#id_result").text("중복된 아이디입니다").css("color", "red");
-                            isIdChecked = false;
-                            $('#join_btn').prop("disabled", true);
-                        } else if (response === "available") {
-                            $("#id_result").text("사용 가능한 아이디입니다").css("color", "blue");
-                            isIdChecked = true;
-                            $('#join_btn').prop("disabled", false);
-                        } else {
-                            $("#id_result").text("아이디를 입력해주세요").css("color", "black");
-                            isIdChecked = false;
-                            $('#join_btn').prop("disabled", true);
+            if (user_id === "") {
+                $("#id_result").text("아이디를 입력해주세요").css("color", "black");
+                isIdChecked = false;
+                $("#join_btn").prop("disabled", true);
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "check.php",
+                data: {
+                    id: user_id
+                },
+                success: function(response) {
+                    if (response === "exists") {
+                        $("#id_result").text("중복된 아이디입니다").css("color", "red");
+                        isIdChecked = false;
+                        $('#join_btn').prop("disabled", true);
+                    } else if (response === "available") {
+                        $("#id_result").text("사용 가능한 아이디입니다").css("color", "blue");
+                        isIdChecked = true;
+                        $('#join_btn').prop("disabled", false);
+
+                        if (pwPattern.test(pw)) {
+                            $("#join_btn").prop("disabled", false);
                         }
-                    },
-                    error: function () {
-                        $("#id_result").text("서버 오류가 발생했습니다").css("color", "red");
+                    } else {
+                        $("#id_result").text("아이디를 입력해주세요").css("color", "black");
                         isIdChecked = false;
                         $('#join_btn').prop("disabled", true);
                     }
-                });
-            });
-
-            $("#id").on("input", function () {
-                isIdChecked = false;
-                $("#id_result").text("중복 확인을 해주세요.").css("color", "black");
-                $("#join_btn").prop("disabled", true);
-            });
-
-            $("form").submit(function (e) {
-                if (!isIdChecked) {
-                    alert("아이디 중복 확인을 해주세요.");
-                    e.preventDefault();
+                },
+                error: function() {
+                    $("#id_result").text("서버 오류가 발생했습니다").css("color", "red");
+                    isIdChecked = false;
+                    $('#join_btn').prop("disabled", true);
                 }
             });
         });
+
+        $("#id").on("input", function() {
+            isIdChecked = false;
+            $("#id_result").text("중복 확인을 해주세요").css("color", "black");
+            $("#join_btn").prop("disabled", true);
+        });
+
+        $("form").submit(function(e) {
+            if (!isIdChecked) {
+                alert("아이디 중복 확인을 해주세요");
+                e.preventDefault();
+            }
+        });
+    });
     </script>
 </body>
 
