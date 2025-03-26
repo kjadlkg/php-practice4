@@ -25,12 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (!preg_match('/^(?=.*[a-zA-Z])(?=.*\d).{8,}$/', $pw)) {
-        echo "<script>alert('비밀번호는 최소 8자 이상, 영문과 숫자를 포함해야 합니다.');</script>";
+        echo "<script>alert('비밀번호는 최소 8자 이상, 영문과 숫자를 포함해야 합니다.'); history.back();</script>";
         exit;
     }
 
     if ($pw !== $pwCheck) {
-        echo "<script>alert('비밀번호가 일치하지 않습니다.');</script>";
+        echo "<script>alert('비밀번호가 일치하지 않습니다.'); history.back();</script>";
         exit;
     }
 
@@ -85,6 +85,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $(document).ready(function() {
         var isIdChecked = false;
 
+        function activeForm() {
+            var pw = $("#pw").val();
+            var pwCheck = $("#pw_check").val();
+            var pwPattern = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
+
+            if (pwPattern.test(pw) && pw === pwCheck && isIdChecked) {
+                $("#join_btn").prop("disabled", false);
+            } else {
+                $("#join_btn").prop("disabled", true);
+            }
+        }
+
         $("#pw, #pw_check").on("keyup", function() {
             var pw = $("#pw").val();
             var pwCheck = $("#pw_check").val();
@@ -98,22 +110,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $("#pw_result").text("비밀번호가 일치합니다").css("color", "blue");
             }
 
-            if (pwPattern.test(pw) && isIdChecked) {
-                $("#join_btn").prop("disabled", false);
-            } else {
-                $("#join_btn").prop("disabled", true);
-            }
+            activeForm();
         });
 
         $("#id_check").click(function() {
             var user_id = $("#id").val().trim();
-            var pw = $("#pw").val();
-            var pwPattern = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
 
             if (user_id === "") {
                 $("#id_result").text("아이디를 입력해주세요").css("color", "black");
                 isIdChecked = false;
-                $("#join_btn").prop("disabled", true);
+                activeForm();
                 return;
             }
 
@@ -127,25 +133,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     if (response === "exists") {
                         $("#id_result").text("중복된 아이디입니다").css("color", "red");
                         isIdChecked = false;
-                        $('#join_btn').prop("disabled", true);
                     } else if (response === "available") {
                         $("#id_result").text("사용 가능한 아이디입니다").css("color", "blue");
                         isIdChecked = true;
-                        $('#join_btn').prop("disabled", false);
-
-                        if (pwPattern.test(pw)) {
-                            $("#join_btn").prop("disabled", false);
-                        }
                     } else {
                         $("#id_result").text("아이디를 입력해주세요").css("color", "black");
                         isIdChecked = false;
-                        $('#join_btn').prop("disabled", true);
                     }
+                    activeForm();
                 },
                 error: function() {
                     $("#id_result").text("서버 오류가 발생했습니다").css("color", "red");
                     isIdChecked = false;
-                    $('#join_btn').prop("disabled", true);
+                    activeForm();
                 }
             });
         });
@@ -153,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $("#id").on("input", function() {
             isIdChecked = false;
             $("#id_result").text("중복 확인을 해주세요").css("color", "black");
-            $("#join_btn").prop("disabled", true);
+            activeForm();
         });
 
         $("form").submit(function(e) {
