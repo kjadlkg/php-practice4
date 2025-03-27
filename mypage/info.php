@@ -34,6 +34,7 @@ if (!$user) {
 <body>
     <div>
         <h1>내 정보</h1>
+        <a href="../member/forgot/index2.php">비밀번호 변경</a>
         <form method="post" action="change.php">
             <label for="name">이름</label>
             <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($name); ?>" required />

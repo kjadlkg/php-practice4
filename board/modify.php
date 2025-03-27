@@ -31,6 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $userName = htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8');
     $boardTitle = htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8');
     $boardContent = nl2br(htmlspecialchars($row['board_content']));
+
+    $stmt->close();
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
