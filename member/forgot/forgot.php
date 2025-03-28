@@ -34,8 +34,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $stmt->bind_param("s", $id);
-    if ($stmt->execute()) {
-        echo "<script>alert('쿼리 실행 중  오류가 발생했습니다.'); history.back();</script>";
+    if (!$stmt->execute()) {
+        echo "<script>alert('쿼리 실행 중 오류가 발생했습니다.'); history.back();</script>";
         exit;
     }
 
@@ -61,6 +61,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($stmt->execute()) {
         session_unset();
         session_destroy();
+
+        header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+        header("Pragma: no-cache");
+        header("Expires: 0");
         echo "<script>alert('비밀번호가 변경되었습니다. 다시 로그인해주세요.'); location.href='../login/login.php';</script>";
     } else {
         echo "<script>alert('오류가 발생했습니다. 다시 시도해주세요.'); history.back();</script>";
