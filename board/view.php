@@ -86,7 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                     <input type="hidden" name="id" value="<?= $id; ?>">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
                     <button type="submit">삭제</button>
-                <?php } ?>
+                </form>
+            <?php } ?>
         </div>
     </div>
 
