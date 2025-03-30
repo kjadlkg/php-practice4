@@ -2,12 +2,12 @@
 session_start();
 include "../db.php";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (!isset($_SESSION['id'])) {
-        echo "<script>alert('로그인이 필요합니다.'); history.back();</script>";
-        exit;
-    }
+if (!isset($_SESSION['id'])) {
+    echo "<script>alert('로그인이 필요합니다.'); history.back();</script>";
+    exit;
+}
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = $_POST['title'];
     $content = $_POST['content'];
 

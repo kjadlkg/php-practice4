@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: view.php?id=" . $id);
         exit;
     } else {
-        echo "<script>alert('오류가 발생했습니다.'); history.back();</script>";
+        die("오류가 발생했습니다.");
     }
 
     $stmt->close();

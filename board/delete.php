@@ -2,11 +2,11 @@
 session_start();
 include "../db.php";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (!isset($_SESSION['id'])) {
-        die("로그인이 필요합니다.");
-    }
+if (!isset($_SESSION['id'])) {
+    die("로그인이 필요합니다.");
+}
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $loginUser = $_SESSION['id'];
 
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: ../main/index.php");
         exit;
     } else {
-        echo "<script>alert('오류가 발생했습니다.'); history.back();</script>";
+        die("오류가 발생했습니다.");
         $stmt->close();
     }
 }
