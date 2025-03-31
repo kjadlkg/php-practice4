@@ -54,17 +54,24 @@ $e_page = min($total_page, $s_page + $page_num - 1);
 <body>
     <div>
         <?php if (!isset($_SESSION["id"])) { ?>
-        <div>
-            <a href="../member/login/login.php">로그인</a>
-            <a href="../member/join/join.php">회원가입</a>
-        </div>
+            <div>
+                <a href="../member/login/login.php">로그인</a>
+                <a href="../member/join/join.php">회원가입</a>
+            </div>
         <?php } else { ?>
-        <div>
-            <p><a href="../mypage/index.php"><?= htmlspecialchars($_SESSION['name'], ENT_QUOTES, 'UTF-8') ?></a> 님</p>
-            <a href="../mypage/index.php">마이페이지</a>
-            <a href="../member/login/logout.php">로그아웃</a>
-        </div>
+            <div>
+                <p><a href="../mypage/index.php"><?= htmlspecialchars($_SESSION['name'], ENT_QUOTES, 'UTF-8') ?></a> 님</p>
+                <a href="../mypage/index.php">마이페이지</a>
+                <a href="../member/login/logout.php">로그아웃</a>
+            </div>
         <?php } ?>
+    </div>
+
+    <div>
+        <form method="GET" action="../search/search.php">
+            <input type="text" name="query" placeholder="제목+내용 검색">
+            <button type="submit">검색</button>
+        </form>
     </div>
 
     <div>
@@ -81,50 +88,50 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                 <th>조회수</th>
             </tr>
             <?php while ($row = $result->fetch_assoc()) { ?>
-            <tr>
-                <td><?= $row['board_id'] ?></td>
-                <td>
-                    <a href="../board/view.php?id=<?= $row['board_id'] ?>">
-                        <?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?> [<?= $row['comment_count'] ?>]
-                    </a>
-                </td>
-                <td><?= htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8') ?></td>
-                <td><?= $row['created_at'] ?></td>
-                <td><?= $row['board_views'] ?></td>
-            </tr>
+                <tr>
+                    <td><?= $row['board_id'] ?></td>
+                    <td>
+                        <a href="../board/view.php?id=<?= $row['board_id'] ?>">
+                            <?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?> [<?= $row['comment_count'] ?>]
+                        </a>
+                    </td>
+                    <td><?= htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8') ?></td>
+                    <td><?= $row['created_at'] ?></td>
+                    <td><?= $row['board_views'] ?></td>
+                </tr>
             <?php } ?>
         </table>
 
         <div class="page">
             <?php if ($page > 1) { ?>
-            <a href="index.php?page=<?= $page - 1 ?>">이전</a>
+                <a href="index.php?page=<?= $page - 1 ?>">이전</a>
             <?php } else { ?>
-            <span>이전</span>
+                <span>이전</span>
             <?php } ?>
             <?php for ($i = $s_page; $i <= $e_page; $i++) { ?>
-            <?php if ($i == $page) { ?>
-            <strong><?= $i ?></strong>
-            <?php } else { ?>
-            <a href="index.php?page=<?= $i ?>"><?= $i ?></a>
-            <?php } ?>
+                <?php if ($i == $page) { ?>
+                    <strong><?= $i ?></strong>
+                <?php } else { ?>
+                    <a href="index.php?page=<?= $i ?>"><?= $i ?></a>
+                <?php } ?>
             <?php } ?>
 
             <?php if ($page < $total_page) { ?>
-            <a href="index.php?page=<?= $page + 1 ?>">다음</a>
+                <a href="index.php?page=<?= $page + 1 ?>">다음</a>
             <?php } else { ?>
-            <span>다음</span>
+                <span>다음</span>
             <?php } ?>
         </div>
 
         <script>
-        function writePost() {
-            <?php if (!isset($_SESSION['id'])) { ?>
-            alert('로그인이 필요합니다.');
-            location.href = '../member/login/login.php';
-            <?php } else { ?>
-            location.href = '../board/write.php';
-            <?php } ?>
-        }
+            function writePost() {
+                <?php if (!isset($_SESSION['id'])) { ?>
+                    alert('로그인이 필요합니다.');
+                    location.href = '../member/login/login.php';
+                <?php } else { ?>
+                    location.href = '../board/write.php';
+                <?php } ?>
+            }
         </script>
 </body>
 
