@@ -81,12 +81,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         <div>
             <button onclick="location.href='../main/index.php'">목록</button>
             <?php if ($is_writer) { ?>
-                <button onclick="location.href='modify.php?id=<?= $id; ?>'">수정</button>
-                <form method="POST" action="delete.php">
-                    <input type="hidden" name="id" value="<?= $id; ?>">
-                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
-                    <button type="submit">삭제</button>
-                </form>
+            <button onclick="location.href='modify.php?id=<?= $id; ?>'">수정</button>
+            <form method="POST" action="delete.php">
+                <input type="hidden" name="id" value="<?= $id; ?>">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
+                <button type="submit">삭제</button>
+            </form>
             <?php } ?>
         </div>
     </div>
@@ -94,26 +94,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     <!-- comment -->
     <h3>댓글 목록</h3>
     <?php while ($comment = $comment_result->fetch_assoc()) { ?>
-        <div>
-            <p>
-                <?= htmlspecialchars($comment['comment_writer'], ENT_QUOTES, 'UTF-8'); ?>
-                (<?= $comment['created_at']; ?>)
-            </p>
-            <p><?= nl2br(htmlspecialchars($comment['comment_content'], ENT_QUOTES, 'UTF-8')); ?></p>
-            <hr>
-        </div>
+    <div>
+        <p>
+            <?= htmlspecialchars($comment['comment_writer'], ENT_QUOTES, 'UTF-8'); ?>
+            (<?= $comment['created_at']; ?>)
+        </p>
+        <p><?= nl2br(htmlspecialchars($comment['comment_content'], ENT_QUOTES, 'UTF-8')); ?></p>
+        <?php
+            $is_comment_writer = isset($_SESSION['name']) && $_SESSION['name'] === $comment['comment_writer'];
+            if ($is_comment_writer) { ?>
+        <form method="POST" action="../comment/delete.php">
+            <input type="hidden" name="comment_id" value="<?= $comment['comment_id']; ?>">
+            <input type="hidden" name="board_id" value="<?= $id; ?>">
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
+            <button type="submit" onclick="return confirm('댓글을 삭제하시겠습니까?');">삭제</button>
+        </form>
+        <?php } ?>
+        <hr>
+    </div>
     <?php } ?>
 
     <div>
         <?php if (isset($_SESSION['id'])) { ?>
-            <form method="POST" action="../comment/comment.php">
-                <input type="hidden" name="board_id" value="<?= $id; ?>">
-                <input type="hidden" name="name" value="<?= htmlspecialchars($_SESSION['name']); ?>">
-                <textarea name="content" autocomplete="off" required></textarea>
-                <button type="submit">댓글 작성</button>
-            </form>
+        <form method="POST" action="../comment/comment.php">
+            <input type="hidden" name="board_id" value="<?= $id; ?>">
+            <input type="hidden" name="name" value="<?= htmlspecialchars($_SESSION['name']); ?>">
+            <textarea name="content" autocomplete="off" required></textarea>
+            <button type="submit">댓글 작성</button>
+        </form>
         <?php } else { ?>
-            <p>로그인 후 댓글을 작성할 수 있습니다</p>
+        <p>로그인 후 댓글을 작성할 수 있습니다</p>
         <?php } ?>
     </div>
 </body>
