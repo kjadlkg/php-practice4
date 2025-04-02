@@ -64,42 +64,46 @@ $e_page = min($total_page, $s_page + $page_num - 1);
     <div>
         <h3>댓글(<?= $total_rows ?>)</h3>
         <?php if ($comment_result->num_rows == 0) { ?>
-        <p>작성한 댓글이 없습니다</p>
+            <p>작성한 댓글이 없습니다</p>
         <?php } else { ?>
-        <table>
-            <?php while ($row = $comment_result->fetch_assoc()) { ?>
-            <tr>
-                <td>
-                    <a href="../board/view.php?id=<? htmlspecialchars($row['comment_id']); ?>">
-                        <?= htmlspecialchars($row['comment_content'], ENT_QUOTES, 'UTF-8'); ?>
-                    </a>
-                </td>
-                <td><?= $row['created_at'] ?></td>
-                <td><?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?></td>
-            </tr>
-            <?php } ?>
-        </table>
+            <table>
+                <?php while ($row = $comment_result->fetch_assoc()) { ?>
+                    <tr>
+                        <td>
+                            <a href="../board/view.php?id=<? htmlspecialchars($row['board_id']); ?>">
+                                <?= htmlspecialchars($row['comment_content'], ENT_QUOTES, 'UTF-8'); ?>
+                            </a>
+                        </td>
+                        <td><?= $row['created_at'] ?></td>
+                        <?php if ($row['board_title'] !== null) { ?>
+                            <td><?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?></td>
+                        <?php } else { ?>
+                            <td>※ 원본 게시글이 삭제되었습니다.</td>
+                        <?php } ?>
+                    </tr>
+                <?php } ?>
+            </table>
         <?php } ?>
     </div>
 
     <div class="page">
         <?php if ($page > 1) { ?>
-        <a href="comment.php?page=<?= $page - 1 ?>">이전</a>
+            <a href="comment.php?page=<?= $page - 1 ?>">이전</a>
         <?php } else { ?>
-        <span>이전</span>
+            <span>이전</span>
         <?php } ?>
         <?php for ($i = $s_page; $i <= $e_page; $i++) { ?>
-        <?php if ($i == $page) { ?>
-        <strong><?= $i ?></strong>
-        <?php } else { ?>
-        <a href="comment.php?page=<?= $i ?>"><?= $i ?></a>
-        <?php } ?>
+            <?php if ($i == $page) { ?>
+                <strong><?= $i ?></strong>
+            <?php } else { ?>
+                <a href="comment.php?page=<?= $i ?>"><?= $i ?></a>
+            <?php } ?>
         <?php } ?>
 
         <?php if ($page < $total_page) { ?>
-        <a href="comment.php?page=<?= $page + 1 ?>">다음</a>
+            <a href="comment.php?page=<?= $page + 1 ?>">다음</a>
         <?php } else { ?>
-        <span>다음</span>
+            <span>다음</span>
         <?php } ?>
     </div>
 </body>
