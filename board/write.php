@@ -2,11 +2,6 @@
 session_start();
 include "../db.php";
 
-if (!isset($_SESSION['id'])) {
-    echo "<script>alert('로그인이 필요합니다.'); history.back();</script>";
-    exit;
-}
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = $_POST['title'];
     $content = $_POST['content'];
@@ -19,10 +14,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = htmlspecialchars(strip_tags($title), ENT_QUOTES, 'UTF-8');
     $content = htmlspecialchars(strip_tags($content), ENT_QUOTES, 'UTF-8');
 
-    $user_id = $_SESSION['id'];
+    if (isset($_SESSION['id'])) {
+        $user_name = $_SESSION['name'];
+        $board_pw = null;
+        $csrf_token = $_POST['csrf_token'] ?? '';
+        if (!isset($_SESSION['csrf_token']) || $_SESSION['csrf_token'] !== $csrf_token) {
+            echo "<script>alert('잘못된 접근입니다.'); history.back();</script>";
+            exit;
+        }
+    } else {
+        $ip = $_SERVER['REMOTE_ADDR'];
+        $user_id = $ip . "_" . time();
+        $user_name = $_POST['name'];
+        $user_pw = $_POST['pw'];
 
-    $stmt = $db->prepare("INSERT INTO board(board_title, board_content, board_writer) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $title, $content, $user_id);
+        if (empty($user_name) || empty($user_pw)) {
+            echo "<script>alert('닉네임과 비밀번호를 입력해주세요.'); history.back();</script>";
+            exit;
+        }
+
+        $user_name = htmlspecialchars(strip_tags($user_name), ENT_QUOTES, 'UTF-8');
+        $board_pw = password_hash($user_pw, PASSWORD_DEFAULT);
+
+        $stmt = $db->prepare("SELECT COUNT(*) FROM user WHERE user_name = ?");
+        $stmt->bind_param("s", $user_name);
+        $stmt->execute();
+        $stmt->bind_result($user_count);
+        $stmt->fetch();
+        $stmt->close();
+
+        if ($user_count == 0) {
+            $stmt = $db->prepare("INSERT INTO user (user_id, user_name, user_pw) VALUES (?, ?, ?)");
+            $stmt->bind_param("sss", $user_id, $user_name, $board_pw);
+            $stmt->execute();
+            $stmt->close();
+        }
+    }
+
+    $stmt = $db->prepare("INSERT INTO board (board_title, board_content, board_writer, board_pw) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssss", $title, $content, $user_name, $board_pw);
 
     if ($stmt->execute()) {
         header("Location: ../main/index.php");
@@ -48,20 +78,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div>
         <h1>글 작성</h1>
         <form method="POST">
-            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
-            <table>
-                <tr>
-                    <th>제목</th>
-                    <td><input type="text" name="title" placeholder="제목을 입력하세요" required /></td>
-                </tr>
-                <tr>
-                    <th>내용</th>
-                    <td><textarea name="content" rows="5" cols="40" placeholder="내용을 입력하세요" required></textarea></td>
-                </tr>
-            </table>
+            <?php if (isset($_SESSION['id'])) { ?>
+                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+            <?php } ?>
             <div>
-                <button onclick="location.href='../main/index.php'">취소</button>
-                <input type="submit" value="작성" />
+                <div>
+                    <?php if (!isset($_SESSION['id'])) { ?>
+                        <input type="text" name="name" placeholder="닉네임" required>
+                        <input type="password" name="pw" placeholder="비밀번호" required>
+                    <?php } ?>
+                </div>
+                <div>
+                    <input type="text" name="title" placeholder="제목을 입력하세요" required>
+                </div>
+                <div>
+                    <textarea name="content" rows="5" cols="40" placeholder="내용을 입력하세요" required></textarea>
+                </div>
+            </div>
+            <div>
+                <button type="button" onclick="location.href='../main/index.php'">취소</button>
+                <button type="submit">작성</button>
             </div>
         </form>
     </div>

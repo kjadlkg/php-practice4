@@ -77,7 +77,7 @@ $e_page = min($total_page, $s_page + $page_num - 1);
     <div>
         <h1>게시판</h1>
 
-        <button onclick="writePost()">글쓰기</button>
+        <button onclick="location.href='../board/write.php'">글쓰기</button>
 
         <table>
             <tr>
@@ -122,17 +122,6 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                 <span>다음</span>
             <?php } ?>
         </div>
-
-        <script>
-            function writePost() {
-                <?php if (!isset($_SESSION['id'])) { ?>
-                    alert('로그인이 필요합니다.');
-                    location.href = '../member/login/login.php';
-                <?php } else { ?>
-                    location.href = '../board/write.php';
-                <?php } ?>
-            }
-        </script>
 </body>
 
 </html>
