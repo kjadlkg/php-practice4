@@ -4,6 +4,7 @@ header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Pragma: no-cache");
 header("Expires: 0");
 include "../db.php";
+include "../function.php";
 
 if (!isset($_SESSION["id"])) {
     unset($_SESSION["name"]);
@@ -95,7 +96,15 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                             <?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?> [<?= $row['comment_count'] ?>]
                         </a>
                     </td>
-                    <td><?= htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8') ?></td>
+                    <td>
+                        <?= htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8') ?>
+                        <?php if (!empty($row['ip'])) {
+                            $mask_ip = mask_ip($row['ip']);
+                            if (!empty($mask_ip)) {
+                                echo "($mask_ip)";
+                            }
+                        } ?>
+                    </td>
                     <td><?= $row['created_at'] ?></td>
                     <td><?= $row['board_views'] ?></td>
                 </tr>

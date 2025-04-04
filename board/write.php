@@ -1,6 +1,7 @@
 <?php
 session_start();
 include "../db.php";
+include "../function.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = $_POST['title'];
@@ -51,17 +52,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    $stmt = $db->prepare("INSERT INTO board (board_title, board_content, board_writer, board_pw) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssss", $title, $content, $user_name, $board_pw);
+    $stmt = $db->prepare("INSERT INTO board (board_title, board_content, board_writer, board_pw, ip) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssss", $title, $content, $user_name, $board_pw, $ip);
 
-    if ($stmt->execute()) {
-        header("Location: ../main/index.php");
-        exit;
-    } else {
-        echo "<script>alert('글 작성 중 오류가 발생했습니다.'); history.back();</script>";
+    try {
+        if ($stmt->execute()) {
+            header("Location: ../main/index.php");
+            exit;
+        } else {
+            echo "<script>alert('글 작성 중 오류가 발생했습니다.'); history.back();</script>";
+        }
+    } finally {
+        $stmt->close();
     }
-
-    $stmt->close();
 }
 ?>
 
