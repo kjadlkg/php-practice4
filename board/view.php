@@ -40,9 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
 
     $is_writer = isset($_SESSION['id']) && $_SESSION['id'] == $row['user_id'];
-    $userName = htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8');
     $boardTitle = htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8');
     $boardContent = htmlspecialchars($row['board_content'], ENT_QUOTES, 'UTF-8');
+    $boardPw = $row['board_pw'];
+    $boardWriter = $row['board_writer'];
 
     // comment
     $stmt = $db->prepare("
@@ -64,37 +65,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $boardTitle ?></title>
+    <title><?= $boardTitle; ?></title>
 </head>
 
 <body>
     <div>
-        <h3><?= $boardTitle; ?></h3>
+        <h3><?= $boardTitle ?></h3>
         <div>
-            <p><?= $userName; ?>
+            <p><?= $boardWriter ?>
                 <?php if (!empty($row['ip'])) {
                     $mask_ip = mask_ip($row['ip']);
                     if (!empty($mask_ip)) {
                         echo "($mask_ip)";
                     }
                 } ?>
-                | <?= $row['created_at']; ?> | 조회 <?= (int) $row['board_views']; ?>
+                | <?= $row['created_at'] ?> | 조회 <?= (int) $row['board_views'] ?>
             </p>
         </div>
         <br>
         <div>
-            <?= $boardContent; ?>
+            <?= $boardContent ?>
         </div>
         <br>
         <div>
             <button onclick="location.href='../main/index.php'">목록</button>
-            <?php if ($is_writer || isset($boardPw)) { ?>
+            <?php if ($is_writer || !empty($boardPw)) { ?>
                 <form method="POST" action="modify.php?id=<?= $id ?>">
-                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
+                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                     <button type="submit">수정</button>
                 </form>
                 <form method="POST" action="delete.php?id=<?= $id ?>">
-                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
+                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                     <button type="submit">삭제</button>
                 </form>
             <?php } ?>
@@ -107,16 +108,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         <div>
             <p>
                 <?= htmlspecialchars($comment['comment_writer'], ENT_QUOTES, 'UTF-8'); ?>
-                (<?= $comment['created_at']; ?>)
+                (<?= $comment['created_at'] ?>)
             </p>
             <p><?= nl2br(htmlspecialchars($comment['comment_content'], ENT_QUOTES, 'UTF-8')); ?></p>
             <?php
             $is_comment_writer = isset($_SESSION['name']) && $_SESSION['name'] === $comment['comment_writer'];
             if ($is_comment_writer) { ?>
                 <form method="POST" action="../comment/delete.php">
-                    <input type="hidden" name="comment_id" value="<?= $comment['comment_id']; ?>">
+                    <input type="hidden" name="comment_id" value="<?= $comment['comment_id'] ?>">
                     <input type="hidden" name="board_id" value="<?= $id; ?>">
-                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token']; ?>">
+                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                     <button type="submit" onclick="return confirm('댓글을 삭제하시겠습니까?');">삭제</button>
                 </form>
             <?php } ?>

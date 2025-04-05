@@ -2,68 +2,79 @@
 session_start();
 include "../db.php";
 
-if (!isset($_SESSION['id'])) {
-    die("로그인이 필요합니다.");
+$loginUser = $_SESSION['id'] ?? null;
+$showEditForm = false;
+
+$id = $_GET['id'] ?? $_POST['id'] ?? null;
+$step = $_POST['step'] ?? $_GET['step'] ?? null;
+
+if (!$id || !is_numeric($id)) {
+    echo "<script>alert('잘못된 접근입니다.'); history.back();</script>";
+    exit;
 }
 
-$loginUser = $_SESSION['id'];
+$id = (int) $id;
 
-if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-        die('잘못된 접근입니다.');
-    }
+$stmt = $db->prepare("SELECT * FROM board WHERE board_id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_array(MYSQLI_ASSOC);
+$stmt->close();
 
-    $id = (int) $_GET['id'];
-    $stmt = $db->prepare("SELECT * FROM board WHERE board_id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_array(MYSQLI_ASSOC);
-
-    if (!$row) {
-        die("해당 게시글을 찾을 수 없습니다.");
-    }
-
-    if ($row['board_writer'] !== $loginUser) {
-        die("이 게시글을 수정할 권한이 없습니다.");
-    }
-
-    $userName = htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8');
-    $boardTitle = htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8');
-    $boardContent = nl2br(htmlspecialchars($row['board_content']));
-
-    $stmt->close();
+if (!$row) {
+    echo "<script>alert('게시글이 존재하지 않습니다.'); history.back();</script>";
+    exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
-        die("잘못된 접근입니다.");
+$boardPw = $row['board_pw'];
+$boardWriter = $row['board_writer'];
+$boardTitle = htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8');
+$boardContent = htmlspecialchars($row['board_content'], ENT_QUOTES, 'UTF-8');
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'check') {
+    if (empty($_POST['pw'])) {
+        echo "<script>alert('비밀번호를 입력해주세요.'); history.back();</script>";
+        exit;
     }
 
-    $id = (int) $_POST['id'];
-    $title = $_POST['title'];
-    $content = $_POST['content'];
+    $inputPw = $_POST['pw'];
+
+    if (!password_verify($inputPw, $boardPw)) {
+        echo "<script>alert('비밀번호가 일치하지 않습니다.'); history.back();</script>";
+        exit;
+    }
+    $showEditForm = true;
+
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'edit') {
+    $title = htmlspecialchars(strip_tags($_POST['title']), ENT_QUOTES, 'UTF-8');
+    $content = htmlspecialchars(strip_tags($_POST['content']), ENT_QUOTES, 'UTF-8');
 
     if (empty($title) || empty($content)) {
         echo "<script>alert('제목과 내용을 입력해주세요.'); history.back();</script>";
         exit;
     }
 
-    $title = htmlspecialchars(strip_tags($title), ENT_QUOTES, 'UTF-8');
-    $content = htmlspecialchars(strip_tags($content), ENT_QUOTES, 'UTF-8');
+    if (empty($boardPw)) {
+        if (!$loginUser || $loginUser !== $boardWriter) {
+            echo "<script>alert('수정 권한이 없습니다.'); history.back();</script>";
+            exit;
+        }
+    }
 
     $stmt = $db->prepare("UPDATE board SET board_title = ?, board_content = ? WHERE board_id = ?");
     $stmt->bind_param("ssi", $title, $content, $id);
 
-    if ($stmt->execute()) {
-        header("Location: view.php?id=" . $id);
-        exit;
-    } else {
-        die("오류가 발생했습니다.");
+    try {
+        if ($stmt->execute()) {
+            header("Location: view.php?id=" . $id);
+            exit;
+        } else {
+            echo "<script>alert('글 수정 중 오류가 발생했습니다.'); history.back();</script>";
+        }
+    } finally {
+        $stmt->close();
     }
-
-    $stmt->close();
-
 }
 ?>
 
@@ -73,27 +84,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $boardTitle; ?></title>
+    <title><?= $boardTitle ?></title>
 </head>
 
 <body>
-    <div>
-        <h3>글 수정</h3>
-        <form method="POST">
-            <table>
-                <tr>
-                    <th>제목</th>
-                    <td><input type="text" name="title" value="<?= $boardTitle; ?>" required></td>
-                </tr>
-                <tr>
-                    <th>내용</th>
-                    <td><textarea name="content" rows="5" cols="40" required><?= $boardContent; ?></textarea></td>
-                </tr>
-            </table>
-            <input type="hidden" name="id" value="<?= $id; ?>">
-            <button onclick="location.href='view.php?id=<?= $id; ?>'">취소</button>
+    <h3>글 수정</h3>
+    <?php if (!empty($boardPw) && !$showEditForm): ?>
+        <form method="POST" action="modify.php?id=<?= $id ?>">
+            <p>비밀번호를 입력하세요.</p>
+            <input type="password" name="pw" required>
+            <input type="hidden" name="step" value="check">
+            <button type="button" onclick="history.back()">취소</button>
+            <button type="submit">확인</button>
+        </form>
+    <?php else: ?>
+        <form method="POST" action="modify.php?id=<?= $id ?>">
+            <div>
+                <div>
+                    <label>제목<input type="text" name="title" value="<?= $boardTitle ?>" required></label>
+                </div>
+                <div>
+                    <label>내용<textarea name="content" rows="5" cols="40" required><?= $boardContent ?></textarea></label>
+                </div>
+            </div>
+            <input type="hidden" name="step" value="edit">
+            <button type="button" onclick="location.href='view.php?id=<?= $id ?>'">취소</button>
             <button type="submit">수정</button>
         </form>
+    <?php endif; ?>
     </div>
 </body>
 
