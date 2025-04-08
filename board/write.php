@@ -3,12 +3,12 @@ session_start();
 include "../db.php";
 include "../function.php";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $title = $_POST['title'];
-    $content = $_POST['content'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $title = $_POST['title'] ?? '';
+    $content = $_POST['content'] ?? '';
 
     if (empty($title) || empty($content)) {
-        echo "<script>alert('제목과 내용을 입력해주세요.'); history.back();</script>";
+        echo "<script>alert('제목과 내용을 입력해주세요.'); location.href='write.php';</script>";
         exit;
     }
 
@@ -20,17 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $board_pw = null;
         $csrf_token = $_POST['csrf_token'] ?? '';
         if (!isset($_SESSION['csrf_token']) || $_SESSION['csrf_token'] !== $csrf_token) {
-            echo "<script>alert('잘못된 접근입니다.'); history.back();</script>";
+            echo "<script>alert('잘못된 접근입니다.'); location.href='../main/index.php';</script>";
             exit;
         }
     } else {
         $ip = $_SERVER['REMOTE_ADDR'];
         $user_id = $ip . "_" . time();
-        $user_name = $_POST['name'];
-        $user_pw = $_POST['pw'];
+        $user_name = $_POST['name'] ?? '';
+        $user_pw = $_POST['pw'] ?? '';
 
         if (empty($user_name) || empty($user_pw)) {
-            echo "<script>alert('닉네임과 비밀번호를 입력해주세요.'); history.back();</script>";
+            echo "<script>alert('닉네임과 비밀번호를 입력해주세요.'); location.href='write.php';</script>";
             exit;
         }
 
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: ../main/index.php");
             exit;
         } else {
-            echo "<script>alert('글 작성 중 오류가 발생했습니다.'); history.back();</script>";
+            echo "<script>alert('글 작성 중 오류가 발생했습니다.'); location.href='../main/index.php';</script>";
         }
     } finally {
         $stmt->close();
@@ -80,22 +80,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <div>
         <h1>글 작성</h1>
-        <form method="POST">
+        <form method="POST" onsubmit="return validateForm()">
             <?php if (isset($_SESSION['id'])) { ?>
-                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>">
             <?php } ?>
             <div>
                 <div>
                     <?php if (!isset($_SESSION['id'])) { ?>
-                        <input type="text" name="name" placeholder="닉네임" required>
-                        <input type="password" name="pw" placeholder="비밀번호" required>
+                    <input type="text" name="name" placeholder="닉네임">
+                    <input type="password" name="pw" placeholder="비밀번호">
                     <?php } ?>
                 </div>
                 <div>
-                    <input type="text" name="title" placeholder="제목을 입력하세요" required>
+                    <input type="text" name="title" placeholder="제목을 입력하세요">
                 </div>
                 <div>
-                    <textarea name="content" rows="5" cols="40" placeholder="내용을 입력하세요" required></textarea>
+                    <textarea name="content" rows="5" cols="40" placeholder="내용을 입력하세요"></textarea>
                 </div>
             </div>
             <div>
@@ -105,5 +105,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
     </div>
 </body>
+<script>
+function validateForm() {
+    const title = document.querySelector('input[name="title"]').value.trim();
+    const content = document.querySelector('input[name="content"]').value.trim();
+
+    <?php if (!isset($_SESSION['id'])) { ?>
+    const name = document.querySelector('input[name="name"]').value.trim();
+    const pw = document.querySelector('input["pw"]').value.trim();
+    if (!name || !pw) {
+        alert("닉네임과 비밀번호를 입력해주세요.");
+        return false;
+    }
+    <?php } ?>
+
+    if (!title || !content) {
+        alert("제목과 내용을 입력해주세요.");
+        return false;
+    }
+    return true;
+}
+</script>
 
 </html>

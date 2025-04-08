@@ -28,4 +28,12 @@ function getMaskedUserId($user_id)
         return '';
     return mask_ip($parts[0]);
 }
+
+function get_csrf_token()
+{
+    if (!isset($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
 ?>
