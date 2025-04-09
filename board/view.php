@@ -4,6 +4,7 @@ include "../db.php";
 include "../function.php";
 
 $id = $_GET['id'] ?? null;
+$is_login = isset($_SESSION['id']);
 
 if (!$id || !is_numeric($id)) {
     echo "<script>alert('잘못된 접근입니다.'); location.href='../main/index.php';</script>";
@@ -39,7 +40,7 @@ if (!$row) {
 
 $boardPw = $row['board_pw'];
 $boardWriter = $row['board_writer'];
-$is_writer = isset($_SESSION['id']) && $_SESSION['id'] == $row['user_id'];
+$is_writer = $is_login && $_SESSION['id'] == $row['user_id'];
 $boardTitle = htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8');
 $boardContent = htmlspecialchars($row['board_content'], ENT_QUOTES, 'UTF-8');
 
@@ -109,13 +110,17 @@ $stmt->close();
         </p>
         <p><?= nl2br(htmlspecialchars($comment['comment_content'], ENT_QUOTES, 'UTF-8')) ?></p>
         <?php
-            $is_comment_writer = isset($_SESSION['name']) && $_SESSION['name'] === $comment['comment_writer'];
+            $is_comment_writer = $is_login && $_SESSION['name'] === $comment['comment_writer'];
             if ($is_comment_writer) { ?>
         <form method="POST" action="../comment/delete.php">
-            <input type="hidden" name="comment_id" value="<?= $comment['comment_id'] ?>">
-            <input type="hidden" name="board_id" value="<?= $id ?>">
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-            <button type="submit" onclick="return confirm('댓글을 삭제하시겠습니까?')">삭제</button>
+            <div>
+                <input type="hidden" name="comment_id" value="<?= $comment['comment_id'] ?>">
+                <input type="hidden" name="board_id" value="<?= $id ?>">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+            </div>
+            <div>
+                <button type="submit" onclick="return confirm('댓글을 삭제하시겠습니까?')">삭제</button>
+            </div>
         </form>
         <?php } ?>
         <hr>
@@ -123,17 +128,67 @@ $stmt->close();
     <?php } ?>
 
     <div>
-        <?php if (isset($_SESSION['id'])) { ?>
-        <form method="POST" action="../comment/comment.php">
-            <input type="hidden" name="board_id" value="<?= $id ?>">
-            <input type="hidden" name="name" value="<?= htmlspecialchars($_SESSION['name']) ?>">
-            <textarea name="content" autocomplete="off" required></textarea>
-            <button type="submit">댓글 작성</button>
+        <?php if ($is_login) { ?>
+        <form method="POST" action="../comment/comment.php" onsubmit="return confirm_empty()">
+            <div>
+                <input type="hidden" name="board_id" value="<?= $id ?>">
+                <input type="hidden" name="name" value="<?= htmlspecialchars($_SESSION['name']) ?>">
+            </div>
+            <div>
+                <textarea name="content" autocomplete="off"></textarea>
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+            </div>
+            <div>
+                <button type="submit">등록</button>
+            </div>
         </form>
         <?php } else { ?>
-        <p>로그인 후 댓글을 작성할 수 있습니다</p>
+        <form method="POST" action="../comment/comment.php" onsubmit="return confirm_empty()">
+            <div>
+                <input type="hidden" name="board_id" value="<?= $id ?>">
+                <input type="text" name="name" placeholder="닉네임">
+                <input type="password" name="pw" placeholder="비밀번호">
+            </div>
+            <div>
+                <textarea name="content" autocomplete="off"></textarea>
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+            </div>
+            <div>
+                <button type="submit">등록</button>
+            </div>
+        </form>
         <?php } ?>
     </div>
 </body>
+<script>
+function confirm_empty() {
+    const isLogin = <?= isset($_SESSION['id']) ? 'true' : 'false' ?>;
+    const username = document.querySelector('input[name = "name"]');
+    const password = document.querySelector('input[name = "pw"]');
+    const content = document.querySelector('textarea[name = "content"]');
+
+    if (isLogin) {
+        if (username && username.value.trim() === "") {
+            alert("닉네임을 입력하세요.");
+            username.focus();
+            return false;
+        }
+
+        if (password && password.value.trim() === "") {
+            alert("비밀번호를 입력하세요.");
+            password.focus();
+            return false;
+        }
+    }
+
+    if (content.value.trim() === "") {
+        alert("내용을 입력하세요.");
+        content.focus();
+        return false;
+    }
+
+    return true;
+}
+</script>
 
 </html>
