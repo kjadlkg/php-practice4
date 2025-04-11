@@ -103,47 +103,63 @@ $stmt->close();
     <!-- comment -->
     <h3>댓글 목록</h3>
     <?php while ($comment = $comment_result->fetch_assoc()) { ?>
-    <div>
-        <p>
-            <?= htmlspecialchars($comment['comment_writer'], ENT_QUOTES, 'UTF-8') ?>
-            (<?= $comment['created_at'] ?>)
-        </p>
+    <div class="comment_delete">
+        <span><?= htmlspecialchars($comment['comment_writer'], ENT_QUOTES, 'UTF-8') ?></span>
         <p><?= nl2br(htmlspecialchars($comment['comment_content'], ENT_QUOTES, 'UTF-8')) ?></p>
+        <span><?= $comment['created_at'] ?></span>
+        <!-- delete -->
         <?php
             $is_comment_writer = $is_login && $_SESSION['name'] === $comment['comment_writer'];
-            if ($is_comment_writer) { ?>
+            $comment_id = $comment['comment_id'];
+            if ($is_comment_writer): ?>
         <form method="POST" action="../comment/delete.php">
             <div>
-                <input type="hidden" name="comment_id" value="<?= $comment['comment_id'] ?>">
+                <input type="hidden" name="comment_id" value="<?= $comment_id ?>">
                 <input type="hidden" name="board_id" value="<?= $id ?>">
-                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
             </div>
             <div>
-                <button type="submit" onclick="return confirm('댓글을 삭제하시겠습니까?')">삭제</button>
+                <button type="submit" onclick="return confirm('댓글을 삭제하시겠습니까?')">X</button>
             </div>
         </form>
-        <?php } ?>
+        <?php elseif (!empty($comment['comment_pw'])): ?>
+        <button onclick="showPasswordForm(<?= $comment_id ?>)">X</button>
+        <div id="delete-box-<?= $comment_id ?>" class="delete-box" style="display: none;">
+            <form method="POST" action="../comment/delete.php" onsubmit="return checkDeletePassword()">
+                <div>
+                    <input type="hidden" name="comment_id" value="<?= $comment_id ?>">
+                    <input type="hidden" name="board_id" value="<?= $id ?>">
+                    <input type="password" name="pw" placeholder="비밀번호">
+                    <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
+                </div>
+                <div>
+                    <button type="submit">확인</button>
+                    <button type="button" onclick="hidePasswordForm(<?= $comment_id ?>)">X</button>
+                </div>
+            </form>
+        </div>
+        <?php endif; ?>
         <hr>
     </div>
     <?php } ?>
 
-    <div>
+    <div class="comment_add">
         <?php if ($is_login) { ?>
-        <form method="POST" action="../comment/comment.php" onsubmit="return confirm_empty()">
+        <form method="POST" action="../comment/comment.php" onsubmit="return confirm_empty(this)">
             <div>
                 <input type="hidden" name="board_id" value="<?= $id ?>">
                 <input type="hidden" name="name" value="<?= htmlspecialchars($_SESSION['name']) ?>">
             </div>
             <div>
                 <textarea name="content" autocomplete="off"></textarea>
-                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
             </div>
             <div>
                 <button type="submit">등록</button>
             </div>
         </form>
         <?php } else { ?>
-        <form method="POST" action="../comment/comment.php" onsubmit="return confirm_empty()">
+        <form method="POST" action="../comment/comment.php" onsubmit="return confirm_empty(this)">
             <div>
                 <input type="hidden" name="board_id" value="<?= $id ?>">
                 <input type="text" name="name" placeholder="닉네임">
@@ -151,7 +167,7 @@ $stmt->close();
             </div>
             <div>
                 <textarea name="content" autocomplete="off"></textarea>
-                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
             </div>
             <div>
                 <button type="submit">등록</button>
@@ -161,11 +177,21 @@ $stmt->close();
     </div>
 </body>
 <script>
-function confirm_empty() {
+function checkDeletePassword(form) {
+    const password = form.querySelector('input[name="pw"]');
+    if (!password || password.value.trim() === "") {
+        alert("비밀번호를 입력하세요.");
+        password.focus();
+        return false;
+    }
+    return true;
+}
+
+function confirm_empty(form) {
     const isLogin = <?= isset($_SESSION['id']) ? 'true' : 'false' ?>;
-    const username = document.querySelector('input[name = "name"]');
-    const password = document.querySelector('input[name = "pw"]');
-    const content = document.querySelector('textarea[name = "content"]');
+    const username = form.querySelector('input[name = "name"]');
+    const password = form.querySelector('input[name = "pw"]');
+    const content = form.querySelector('textarea[name = "content"]');
 
     if (isLogin) {
         if (username && username.value.trim() === "") {
@@ -188,6 +214,14 @@ function confirm_empty() {
     }
 
     return true;
+}
+
+function showPasswordForm(id) {
+    document.getElementById('delete-box-' + id).style.display = 'inline-block';
+}
+
+function hidePasswordForm(id) {
+    document.getElementById('delete-box-' + id).style.display = 'none';
 }
 </script>
 
