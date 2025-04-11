@@ -13,8 +13,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
 
-    $comment_pw = password_hash($pw, PASSWORD_DEFAULT);
-    $ip = $_SERVER['REMOTE_ADDR'];
+    if (!empty($pw)) {
+        $comment_pw = password_hash($pw, PASSWORD_DEFAULT);
+        $ip = $_SERVER['REMOTE_ADDR'];
+    } else {
+        $comment_pw = "";
+        $ip = "";
+    }
 
     $stmt = $db->prepare("INSERT INTO comment (board_id, comment_writer, comment_pw, comment_content, ip) VALUES (?, ?, ?, ?, ?)");
     $stmt->bind_param("issss", $board_id, $name, $comment_pw, $content, $ip);

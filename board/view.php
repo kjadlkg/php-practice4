@@ -47,7 +47,7 @@ $boardContent = htmlspecialchars($row['board_content'], ENT_QUOTES, 'UTF-8');
 // comment
 $stmt = $db->prepare("
     SELECT c.*, u.user_name
-    FROM comment c JOIN user u
+    FROM comment c LEFT JOIN user u
     ON c.comment_writer = u.user_name
     WHERE c.board_id = ? ORDER BY c.created_at
     ");
@@ -105,6 +105,12 @@ $stmt->close();
     <?php while ($comment = $comment_result->fetch_assoc()) { ?>
     <div class="comment_delete">
         <span><?= htmlspecialchars($comment['comment_writer'], ENT_QUOTES, 'UTF-8') ?></span>
+        <?php if (!empty($comment['ip'])) {
+                $mask_ip = mask_ip($comment['ip']);
+                if (!empty($mask_ip)) {
+                    echo "($mask_ip)";
+                }
+            } ?>
         <p><?= nl2br(htmlspecialchars($comment['comment_content'], ENT_QUOTES, 'UTF-8')) ?></p>
         <span><?= $comment['created_at'] ?></span>
         <!-- delete -->
@@ -125,7 +131,7 @@ $stmt->close();
         <?php elseif (!empty($comment['comment_pw'])): ?>
         <button onclick="showPasswordForm(<?= $comment_id ?>)">X</button>
         <div id="delete-box-<?= $comment_id ?>" class="delete-box" style="display: none;">
-            <form method="POST" action="../comment/delete.php" onsubmit="return checkDeletePassword()">
+            <form method="POST" action="../comment/delete.php" onsubmit="return checkDeletePassword(this)">
                 <div>
                     <input type="hidden" name="comment_id" value="<?= $comment_id ?>">
                     <input type="hidden" name="board_id" value="<?= $id ?>">
@@ -193,7 +199,7 @@ function confirm_empty(form) {
     const password = form.querySelector('input[name = "pw"]');
     const content = form.querySelector('textarea[name = "content"]');
 
-    if (isLogin) {
+    if (!isLogin) {
         if (username && username.value.trim() === "") {
             alert("닉네임을 입력하세요.");
             username.focus();
@@ -207,7 +213,7 @@ function confirm_empty(form) {
         }
     }
 
-    if (content.value.trim() === "") {
+    if (content && content.value.trim() === "") {
         alert("내용을 입력하세요.");
         content.focus();
         return false;
