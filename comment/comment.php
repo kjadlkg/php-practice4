@@ -6,10 +6,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $board_id = $_POST['board_id'] ?? '';
     $name = $_POST['name'] ?? '';
     $pw = $_POST['pw'] ?? '';
+    $captcha_input = $_POST['captcha'] ?? '';
+    $correct_code = $_SESSION['captcha_keystring'] ?? '';
     $content = $_POST['content'] ?? '';
 
     if (!isset($_SESSION['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         echo "<script>alert('토큰 값이 유효하지 않습니다.'); location.href='../board/view.php?id={$board_id}';</script>";
+        exit;
+    }
+
+    if (strtolower($captcha_input) !== strtolower($correct_code)) {
+        echo "<script>alert('자동입력 방지코드가 일치하지 않습니다.'); history.back();</script>";
         exit;
     }
 

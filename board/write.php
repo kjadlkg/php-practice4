@@ -28,11 +28,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user_id = $ip . "_" . time();
         $user_name = $_POST['name'] ?? '';
         $user_pw = $_POST['pw'] ?? '';
+        $captcha_input = $_POST['captcha'] ?? '';
+        $correct_code = $_SESSION['captcha_keystring'] ?? '';
 
         if (empty($user_name) || empty($user_pw)) {
             echo "<script>alert('닉네임과 비밀번호를 입력해주세요.'); location.href='write.php';</script>";
             exit;
         }
+
+        if (strtolower($captcha_input) !== strtolower($correct_code)) {
+            echo "<script>alert('자동입력 방지코드가 일치하지 않습니다.'); history.back();</script>";
+            exit;
+        }
+
+        unset($_SESSION['captcha_keystring']);
 
         $user_name = htmlspecialchars(strip_tags($user_name), ENT_QUOTES, 'UTF-8');
         $board_pw = password_hash($user_pw, PASSWORD_DEFAULT);
@@ -80,15 +89,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div>
         <h1>글 작성</h1>
-        <form method="POST" onsubmit="return validateForm()">
+        <form method="POST" onsubmit="return confirm_empty(this)">
             <?php if (isset($_SESSION['id'])) { ?>
-            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>">
+                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>">
             <?php } ?>
             <div>
                 <div>
                     <?php if (!isset($_SESSION['id'])) { ?>
-                    <input type="text" name="name" placeholder="닉네임">
-                    <input type="password" name="pw" placeholder="비밀번호">
+                        <input type="text" name="name" placeholder="닉네임">
+                        <input type="password" name="pw" placeholder="비밀번호">
+                        <img src="../captcha_image.php?<?= time() ?>" alt="KCAPTCHA"
+                            onclick="this.src='../captcha_image.php?' + new Date().getTime()" style="cursor:pointer;">
+                        <input type="text" name="captcha" placeholder="코드 입력">
                     <?php } ?>
                 </div>
                 <div>
@@ -106,25 +118,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </body>
 <script>
-function validateForm() {
-    const title = document.querySelector('input[name="title"]').value.trim();
-    const content = document.querySelector('input[name="content"]').value.trim();
+    function confirm_empty(form) {
+        const isLogin = <?= isset($_SESSION['id']) ? 'true' : 'false' ?>;
+        const title = form.querySelector('input[name="title"]').value.trim();
+        const content = form.querySelector('textarea[name = "content"]').value.trim();
 
-    <?php if (!isset($_SESSION['id'])) { ?>
-    const name = document.querySelector('input[name="name"]').value.trim();
-    const pw = document.querySelector('input["pw"]').value.trim();
-    if (!name || !pw) {
-        alert("닉네임과 비밀번호를 입력해주세요.");
-        return false;
-    }
-    <?php } ?>
+        if (!isLogin) {
+            const username = form.querySelector('input[name = "name"]').value.trim();
+            const password = form.querySelector('input[name = "pw"]').value.trim();
+            if (!username || !pw) {
+                alert("닉네임과 비밀번호를 입력해주세요.");
+                return false;
+            }
+        }
 
-    if (!title || !content) {
-        alert("제목과 내용을 입력해주세요.");
-        return false;
+        if (!title || !content) {
+            alert("제목과 내용을 입력해주세요.");
+            return false;
+        }
+
+        return true;
     }
-    return true;
-}
 </script>
 
 </html>

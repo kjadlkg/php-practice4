@@ -88,14 +88,14 @@ $stmt->close();
         <div>
             <button onclick="location.href='../main/index.php'">목록</button>
             <?php if ($is_writer || !empty($boardPw)) { ?>
-            <form method="POST" action="modify.php?id=<?= $id ?>">
-                <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-                <button type="submit">수정</button>
-            </form>
-            <form method="POST" action="delete.php?id=<?= $id ?>">
-                <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-                <button type="submit">삭제</button>
-            </form>
+                <form method="POST" action="modify.php?id=<?= $id ?>">
+                    <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
+                    <button type="submit">수정</button>
+                </form>
+                <form method="POST" action="delete.php?id=<?= $id ?>">
+                    <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
+                    <button type="submit">삭제</button>
+                </form>
             <?php } ?>
         </div>
     </div>
@@ -103,132 +103,135 @@ $stmt->close();
     <!-- comment -->
     <h3>댓글 목록</h3>
     <?php while ($comment = $comment_result->fetch_assoc()) { ?>
-    <div class="comment_delete">
-        <span><?= htmlspecialchars($comment['comment_writer'], ENT_QUOTES, 'UTF-8') ?></span>
-        <?php if (!empty($comment['ip'])) {
+        <div class="comment_delete">
+            <span><?= htmlspecialchars($comment['comment_writer'], ENT_QUOTES, 'UTF-8') ?></span>
+            <?php if (!empty($comment['ip'])) {
                 $mask_ip = mask_ip($comment['ip']);
                 if (!empty($mask_ip)) {
                     echo "($mask_ip)";
                 }
             } ?>
-        <p><?= nl2br(htmlspecialchars($comment['comment_content'], ENT_QUOTES, 'UTF-8')) ?></p>
-        <span><?= $comment['created_at'] ?></span>
-        <!-- delete -->
-        <?php
+            <p><?= nl2br(htmlspecialchars($comment['comment_content'], ENT_QUOTES, 'UTF-8')) ?></p>
+            <span><?= $comment['created_at'] ?></span>
+            <!-- delete -->
+            <?php
             $is_comment_writer = $is_login && $_SESSION['name'] === $comment['comment_writer'];
             $comment_id = $comment['comment_id'];
             if ($is_comment_writer): ?>
-        <form method="POST" action="../comment/delete.php">
-            <div>
-                <input type="hidden" name="comment_id" value="<?= $comment_id ?>">
-                <input type="hidden" name="board_id" value="<?= $id ?>">
-                <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-            </div>
-            <div>
-                <button type="submit" onclick="return confirm('댓글을 삭제하시겠습니까?')">X</button>
-            </div>
-        </form>
-        <?php elseif (!empty($comment['comment_pw'])): ?>
-        <button onclick="showPasswordForm(<?= $comment_id ?>)">X</button>
-        <div id="delete-box-<?= $comment_id ?>" class="delete-box" style="display: none;">
-            <form method="POST" action="../comment/delete.php" onsubmit="return checkDeletePassword(this)">
-                <div>
-                    <input type="hidden" name="comment_id" value="<?= $comment_id ?>">
-                    <input type="hidden" name="board_id" value="<?= $id ?>">
-                    <input type="password" name="pw" placeholder="비밀번호">
-                    <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
+                <form method="POST" action="../comment/delete.php">
+                    <div>
+                        <input type="hidden" name="comment_id" value="<?= $comment_id ?>">
+                        <input type="hidden" name="board_id" value="<?= $id ?>">
+                        <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
+                    </div>
+                    <div>
+                        <button type="submit" onclick="return confirm('댓글을 삭제하시겠습니까?')">X</button>
+                    </div>
+                </form>
+            <?php elseif (!empty($comment['comment_pw'])): ?>
+                <button onclick="showPasswordForm(<?= $comment_id ?>)">X</button>
+                <div id="delete-box-<?= $comment_id ?>" class="delete-box" style="display: none;">
+                    <form method="POST" action="../comment/delete.php" onsubmit="return checkDeletePassword(this)">
+                        <div>
+                            <input type="hidden" name="comment_id" value="<?= $comment_id ?>">
+                            <input type="hidden" name="board_id" value="<?= $id ?>">
+                            <input type="password" name="pw" placeholder="비밀번호">
+                            <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
+                        </div>
+                        <div>
+                            <button type="submit">확인</button>
+                            <button type="button" onclick="hidePasswordForm(<?= $comment_id ?>)">X</button>
+                        </div>
+                    </form>
                 </div>
-                <div>
-                    <button type="submit">확인</button>
-                    <button type="button" onclick="hidePasswordForm(<?= $comment_id ?>)">X</button>
-                </div>
-            </form>
+            <?php endif; ?>
+            <hr>
         </div>
-        <?php endif; ?>
-        <hr>
-    </div>
     <?php } ?>
 
     <div class="comment_add">
         <?php if ($is_login) { ?>
-        <form method="POST" action="../comment/comment.php" onsubmit="return confirm_empty(this)">
-            <div>
-                <input type="hidden" name="board_id" value="<?= $id ?>">
-                <input type="hidden" name="name" value="<?= htmlspecialchars($_SESSION['name']) ?>">
-            </div>
-            <div>
-                <textarea name="content" autocomplete="off"></textarea>
-                <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-            </div>
-            <div>
-                <button type="submit">등록</button>
-            </div>
-        </form>
+            <form method="POST" action="../comment/comment.php" onsubmit="return confirm_empty(this)">
+                <div>
+                    <input type="hidden" name="board_id" value="<?= $id ?>">
+                    <input type="hidden" name="name" value="<?= htmlspecialchars($_SESSION['name']) ?>">
+                </div>
+                <div>
+                    <textarea name="content" autocomplete="off"></textarea>
+                    <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
+                </div>
+                <div>
+                    <button type="submit">등록</button>
+                </div>
+            </form>
         <?php } else { ?>
-        <form method="POST" action="../comment/comment.php" onsubmit="return confirm_empty(this)">
-            <div>
-                <input type="hidden" name="board_id" value="<?= $id ?>">
-                <input type="text" name="name" placeholder="닉네임">
-                <input type="password" name="pw" placeholder="비밀번호">
-            </div>
-            <div>
-                <textarea name="content" autocomplete="off"></textarea>
-                <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-            </div>
-            <div>
-                <button type="submit">등록</button>
-            </div>
-        </form>
+            <form method="POST" action="../comment/comment.php" onsubmit="return confirm_empty(this)">
+                <div>
+                    <input type="hidden" name="board_id" value="<?= $id ?>">
+                    <input type="text" name="name" placeholder="닉네임">
+                    <input type="password" name="pw" placeholder="비밀번호">
+                    <img src="../captcha_image.php?<?= time() ?>" alt="KCAPTCHA"
+                        onclick="this.src='../captcha_image.php?' + new Date().getTime()" style="cursor:pointer;">
+                    <input type="text" name="captcha" placeholder="코드입력">
+                </div>
+                <div>
+                    <textarea name="content" autocomplete="off"></textarea>
+                    <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
+                </div>
+                <div>
+                    <button type="submit">등록</button>
+                </div>
+            </form>
         <?php } ?>
     </div>
 </body>
 <script>
-function checkDeletePassword(form) {
-    const password = form.querySelector('input[name="pw"]');
-    if (!password || password.value.trim() === "") {
-        alert("비밀번호를 입력하세요.");
-        password.focus();
-        return false;
-    }
-    return true;
-}
-
-function confirm_empty(form) {
-    const isLogin = <?= isset($_SESSION['id']) ? 'true' : 'false' ?>;
-    const username = form.querySelector('input[name = "name"]');
-    const password = form.querySelector('input[name = "pw"]');
-    const content = form.querySelector('textarea[name = "content"]');
-
-    if (!isLogin) {
-        if (username && username.value.trim() === "") {
-            alert("닉네임을 입력하세요.");
-            username.focus();
-            return false;
-        }
-
-        if (password && password.value.trim() === "") {
+    function checkDeletePassword(form) {
+        const password = form.querySelector('input[name="pw"]');
+        if (!password || password.value.trim() === "") {
             alert("비밀번호를 입력하세요.");
             password.focus();
             return false;
         }
+        return true;
     }
 
-    if (content && content.value.trim() === "") {
-        alert("내용을 입력하세요.");
-        content.focus();
-        return false;
+    function confirm_empty(form) {
+        const isLogin = <?= isset($_SESSION['id']) ? 'true' : 'false' ?>;
+        const username = form.querySelector('input[name = "name"]');
+        const password = form.querySelector('input[name = "pw"]');
+        const content = form.querySelector('textarea[name = "content"]');
+
+        if (!isLogin) {
+            if (username && username.value.trim() === "") {
+                alert("닉네임을 입력하세요.");
+                username.focus();
+                return false;
+            }
+
+            if (password && password.value.trim() === "") {
+                alert("비밀번호를 입력하세요.");
+                password.focus();
+                return false;
+            }
+        }
+
+        if (content && content.value.trim() === "") {
+            alert("내용을 입력하세요.");
+            content.focus();
+            return false;
+        }
+
+        return true;
     }
 
-    return true;
-}
+    function showPasswordForm(id) {
+        document.getElementById('delete-box-' + id).style.display = 'inline-block';
+    }
 
-function showPasswordForm(id) {
-    document.getElementById('delete-box-' + id).style.display = 'inline-block';
-}
-
-function hidePasswordForm(id) {
-    document.getElementById('delete-box-' + id).style.display = 'none';
-}
+    function hidePasswordForm(id) {
+        document.getElementById('delete-box-' + id).style.display = 'none';
+    }
 </script>
 
 </html>
