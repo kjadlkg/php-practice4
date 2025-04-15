@@ -36,4 +36,19 @@ function get_csrf_token()
     }
     return $_SESSION['csrf_token'];
 }
+
+function update_recommend($db, $board_id, $type)
+{
+    if (!in_array($type, ['up', 'down'])) {
+        return false;
+    }
+
+    $column = $type === 'up' ? 'recommend_up' : 'recommend_down';
+    $stmt = $db->prepare("UPDATE board SET $column = $column + 1 WHERE board_id = ?");
+    $stmt->bind_param("i", $board_id);
+    $result = $stmt->execute();
+    $stmt->close();
+
+    return $result;
+}
 ?>

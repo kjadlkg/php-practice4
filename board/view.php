@@ -100,6 +100,22 @@ $stmt->close();
         </div>
     </div>
 
+    <div>
+        <form method="POST" action="recommend.php">
+            <?php if (!$is_login) { ?>
+                <img src="../captcha_image.php?<?= time() ?>" alt="KCAPTCHA"
+                    onclick="this.src='../captcha_image.php?' + new Date().getTime()" style="cursor:pointer;">
+                <input type="text" id="captcha_input" name="captcha" placeholder="코드입력">
+            <?php } ?>
+            <div>
+                <p id="recom_up_count"><?= (int) $row['recommend_up'] ?></p>
+                <button onclick="recommend(<?= $id ?>, 'up')">추천</button>
+                <button onclick="recommend(<?= $id ?>, 'down')">비추천</button>
+                <p id="recom_down_count"><?= (int) $row['recommend_down'] ?></p>
+            </div>
+        </form>
+    </div>
+
     <!-- comment -->
     <h3>댓글 목록</h3>
     <?php while ($comment = $comment_result->fetch_assoc()) { ?>
@@ -231,6 +247,44 @@ $stmt->close();
 
     function hidePasswordForm(id) {
         document.getElementById('delete-box-' + id).style.display = 'none';
+    }
+
+    function recommend(boardId, type) {
+        if (!['up', 'down'].includes(type)) return;
+
+        const isLogin = <?= json_encode($is_login) ?>;
+        let captcha = '';
+        if (!isLogin) {
+            const captchaInput = document.getElementById('captcha_input');
+            if (!captchaInput || captchaInput.value.trim() === '') {
+                alert('보안코드를 입력하세요.');
+                return;
+            }
+            captcha = encodeURIComponent(captchaInput.value.trim());
+        }
+
+        fetch('recommend.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'board_id=' + boardId + '&type=' + type + '&captcha=' + captcha
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let upCount = document.getElementById('recom_up_count');
+                    let downCount = document.getElementById('recom_down_count');
+
+                    if (type === 'up') {
+                        upCount.textContent = parseInt(upCount.textContent) + 1;
+                    } else {
+                        downCount.textContent = parseInt(downCount.textContent) + 1;
+                    }
+                } else {
+                    alert(data.message || '오류가 발생했습니다.');
+                }
+            })
     }
 </script>
 
