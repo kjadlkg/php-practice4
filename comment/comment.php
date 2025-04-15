@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (strtolower($captcha_input) !== strtolower($correct_code)) {
-        echo "<script>alert('자동입력 방지코드가 일치하지 않습니다.'); history.back();</script>";
+        echo "<script>alert('올바른 보안코드를 입력하세요.'); history.back();</script>";
         exit;
     }
 
