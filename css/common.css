@@ -1,0 +1,60 @@
+.btn {
+  width: 82px;
+  height: 35px;
+  padding-right: 2px;
+  line-height: 31px;
+  margin-left: 3px;
+  border-width: 1px 1px 3px 1px;
+  border-style: solid;
+  border-radius: 2px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.btn_blue {
+  background: #3b4890;
+  border-color: #29367c;
+  text-shadow: 0px -1px #1d2761;
+  color: #fff;
+}
+
+.search {
+  width: 295px;
+  height: 38px;
+  padding: 0 9px;
+  border: none;
+  background: transparent;
+  outline: none;
+  color: #333;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.page_head {
+  height: 37px;
+  margin-bottom: 3px;
+  padding: 4px;
+}
+
+.page_head h2 {
+  font-size: 24px;
+  font-family: "Nanum Gothic", sans-serif;
+  letter-spacing: -1px;
+  margin: 2px 8px 0 3px;
+  max-width: 420px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  color: #29367c;
+}
+
+.fl {
+  float: left;
+}
+
+.clear::after {
+  clear: both;
+  display: block;
+  visibility: hidden;
+  content: "";
+}

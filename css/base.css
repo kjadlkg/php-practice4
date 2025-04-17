@@ -1,0 +1,35 @@
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: baseline;
+  background: transparent;
+  font-style: normal;
+}
+
+a {
+  cursor: pointer;
+  color: #333;
+  text-decoration: none;
+}
+
+body,
+input,
+select,
+textarea. button {
+  font-size: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+    "Malgun Gothic", "맑은 고딕", arial, Dotum, 돋움, sans-serif;
+}
+
+input,
+select,
+textarea,
+button {
+  border-radius: 0;
+  vertical-align: middle;
+}
+
+button {
+  cursor: pointer;
+}

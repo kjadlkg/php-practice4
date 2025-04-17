@@ -1,12 +1,12 @@
 <?php
 include "../db.php";
 
-$query = isset($_GET['query']) ? trim($_GET['query']) : '';
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
-if ($query) {
+if ($search) {
     $stmt = $db->prepare("SELECT * FROM board WHERE board_title LIKE ? OR board_content LIKE ?");
-    $searchQuery = "%$query%";
-    $stmt->bind_param("ss", $searchQuery, $searchQuery);
+    $search = "%$search%";
+    $stmt->bind_param("ss", $search, $search);
     $stmt->execute();
     $result = $stmt->get_result();
 } else {
@@ -27,18 +27,18 @@ if ($query) {
 <body>
     <h3>게시물</h3>
     <?php if ($result->num_rows == 0) { ?>
-        <p>관련 게시물이 없습니다</p>
+    <p>관련 게시물이 없습니다</p>
     <?php } else { ?>
-        <div>
-            <?php while ($row = $result->fetch_assoc()) { ?>
-                <a href="../board/view.php?id=<?= htmlspecialchars($row['board_id']) ?>">
-                    <?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?>
-                </a>
-                <p><?= htmlspecialchars($row['board_content'], ENT_QUOTES, 'UTF-8') ?></p>
-                <span><?= htmlspecialchars($row['created_at']) ?></span>
-                <hr>
-            <?php } ?>
-        </div>
+    <div>
+        <?php while ($row = $result->fetch_assoc()) { ?>
+        <a href="../board/view.php?id=<?= htmlspecialchars($row['board_id']) ?>">
+            <?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?>
+        </a>
+        <p><?= htmlspecialchars($row['board_content'], ENT_QUOTES, 'UTF-8') ?></p>
+        <span><?= htmlspecialchars($row['created_at']) ?></span>
+        <hr>
+        <?php } ?>
+    </div>
     <?php } ?>
 </body>
 
