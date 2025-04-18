@@ -6,7 +6,11 @@
   max-width: 300px;
 }
 
-div {
-  display: block;
-  unicode-bidi: isolate;
+caption {
+  width: 0;
+  height: 0;
+  font-size: 0;
+  line-height: 0;
+  z-index: -1;
+  position: relative;
 }

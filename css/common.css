@@ -1,3 +1,10 @@
+.main_head {
+  position: relative;
+  width: 1050px;
+  height: 105px;
+  margin: 0 auto;
+}
+
 .btn {
   width: 82px;
   height: 35px;
@@ -52,9 +59,45 @@
   float: left;
 }
 
+.fr {
+  float: right;
+}
+
 .clear::after {
   clear: both;
   display: block;
   visibility: hidden;
   content: "";
+}
+
+.area_links ul {
+  overflow: inherit;
+  line-height: 17px;
+}
+
+.area_links li {
+  float: left;
+  content: "|";
+  color: #ccc;
+  line-height: 10px;
+  padding: 0 12px 0 4px;
+  vertical-align: 1px;
+}
+
+.paging_box {
+  position: relative;
+  text-align: center;
+  line-height: 20px;
+}
+
+.paging_box a,
+.paging_box em,
+.paging_box span {
+  display: inline-block;
+  margin-left: 9px;
+}
+
+.paging_box em {
+  text-decoration: underline;
+  font-weight: bold;
 }

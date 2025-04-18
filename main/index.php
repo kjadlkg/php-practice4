@@ -54,25 +54,28 @@ $e_page = min($total_page, $s_page + $page_num - 1);
     <link rel="stylesheet" href="../css/layout.css">
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/component.css">
+    <link rel="stylesheet" href="../css/contents.css">
     <link rel="stylesheet" href="../css/page/main.css">
 </head>
 
 <body>
     <header>
-        <div>
-            <?php if (!isset($_SESSION["id"])) { ?>
-            <div>
-                <a href="../member/login/login.php">로그인</a>
-                <a href="../member/join/join.php">회원가입</a>
+        <div class="main_head">
+            <div class="area_links">
+                <ul class="fl clear">
+                    <?php if (!isset($_SESSION["id"])) { ?>
+                    <li><a href="../member/login/login.php">로그인</a></li>
+                    <li><a href="../member/join/join.php">회원가입</a></li>
+                    <?php } else { ?>
+                    <li><a
+                            href="../mypage/index.php"><?= htmlspecialchars($_SESSION['name'], ENT_QUOTES, 'UTF-8') ?></a>
+                        님
+                    </li>
+                    <li><a href="../mypage/index.php">마이페이지</a></li>
+                    <li><a href="../member/login/logout.php">로그아웃</a></li>
+                    <?php } ?>
+                </ul>
             </div>
-            <?php } else { ?>
-            <div>
-                <p><a href="../mypage/index.php"><?= htmlspecialchars($_SESSION['name'], ENT_QUOTES, 'UTF-8') ?></a> 님
-                </p>
-                <a href="../mypage/index.php">마이페이지</a>
-                <a href="../member/login/logout.php">로그아웃</a>
-            </div>
-            <?php } ?>
         </div>
     </header>
     <main>
@@ -82,68 +85,94 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                 <button type="submit" class="btn btn_blue">검색</button>
             </form>
         </div>
-
-        <div>
+        <article>
             <div class="page_head clear">
                 <div>
                     <h1>게시판</h1>
                 </div>
             </div>
 
-            <button type="button" class="btn btn_blue" onclick="location.href='../board/write.php'">글쓰기</button>
-
-            <table>
-                <tr>
-                    <th>번호</th>
-                    <th>제목</th>
-                    <th>작성자</th>
-                    <th>작성일</th>
-                    <th>조회수</th>
-                </tr>
-                <?php while ($row = $result->fetch_assoc()) { ?>
-                <tr>
-                    <td><?= $row['board_id'] ?></td>
-                    <td>
-                        <a href="../board/view.php?id=<?= $row['board_id'] ?>">
-                            <?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?>
-                            [<?= $row['comment_count'] ?>]
-                        </a>
-                    </td>
-                    <td>
-                        <?= htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8') ?>
-                        <?php if (!empty($row['ip'])) {
-                                $mask_ip = mask_ip($row['ip']);
-                                if (!empty($mask_ip)) {
-                                    echo "($mask_ip)";
-                                }
-                            } ?>
-                    </td>
-                    <td><?= $row['created_at'] ?></td>
-                    <td><?= $row['board_views'] ?></td>
-                </tr>
-                <?php } ?>
-            </table>
-
-            <div class="page">
-                <?php if ($page > 1) { ?>
-                <a href="index.php?page=<?= $page - 1 ?>">이전</a>
-                <?php } else { ?>
-                <span>이전</span>
-                <?php } ?>
-                <?php for ($i = $s_page; $i <= $e_page; $i++) { ?>
-                <?php if ($i == $page) { ?>
-                <strong><?= $i ?></strong>
-                <?php } else { ?>
-                <a href="index.php?page=<?= $i ?>"><?= $i ?></a>
-                <?php } ?>
-                <?php } ?>
-
-                <?php if ($page < $total_page) { ?>
-                <a href="index.php?page=<?= $page + 1 ?>">다음</a>
-                <?php } else { ?>
-                <span>다음</span>
-                <?php } ?>
+            <div class="list_array_option clear">
+                <div class="right_box">
+                    <div style="display:block">
+                        <button type="button" class="btn btn_blue"
+                            onclick="location.href='../board/write.php'">글쓰기</button>
+                    </div>
+                </div>
             </div>
+
+            <div class="board_list_wrap">
+                <table class="board_list">
+                    <caption>게시판 리스트</caption>
+                    <colgroup>
+                        <col style="width: 7%">
+                        <col>
+                        <col style="width: 18%">
+                        <col style="width: 6%">
+                        <col style="width: 6%">
+                        <col style="width: 6%">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th scope="col">번호</th>
+                            <th scope="col">제목</th>
+                            <th scope="col">작성자</th>
+                            <th scope="col">작성일</th>
+                            <th scope="col">조회수</th>
+                            <th scope="col">추천</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($row = $result->fetch_assoc()) { ?>
+                        <tr>
+                            <td><?= $row['board_id'] ?></td>
+                            <td>
+                                <a href="../board/view.php?id=<?= $row['board_id'] ?>">
+                                    <?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?>
+                                    [<?= $row['comment_count'] ?>]
+                                </a>
+                            </td>
+                            <td>
+                                <?= htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8') ?>
+                                <?php if (!empty($row['ip'])) {
+                                        $mask_ip = mask_ip($row['ip']);
+                                        if (!empty($mask_ip)) {
+                                            echo "($mask_ip)";
+                                        }
+                                    } ?>
+                            </td>
+                            <td><?= $row['created_at'] ?></td>
+                            <td><?= $row['board_views'] ?></td>
+                            <td><?= $row['recommend_up'] ?></td>
+                        </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="paging_wrap">
+                <div class="paging_box">
+                    <?php if ($page > 1) { ?>
+                    <a href="index.php?page=<?= $page - 1 ?>">이전</a>
+                    <?php } else { ?>
+                    <span>이전</span>
+                    <?php } ?>
+                    <?php for ($i = $s_page; $i <= $e_page; $i++) { ?>
+                    <?php if ($i == $page) { ?>
+                    <em><?= $i ?></em>
+                    <?php } else { ?>
+                    <a href="index.php?page=<?= $i ?>"><?= $i ?></a>
+                    <?php } ?>
+                    <?php } ?>
+
+                    <?php if ($page < $total_page) { ?>
+                    <a href="index.php?page=<?= $page + 1 ?>">다음</a>
+                    <?php } else { ?>
+                    <span>다음</span>
+                    <?php } ?>
+                </div>
+            </div>
+        </article>
     </main>
     <footer></footer>
 </body>
