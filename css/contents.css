@@ -1,12 +1,25 @@
-.board_list_wrap {
-  position: relative;
-}
-
 .board_list {
   width: 100%;
   border-bottom: 1px solid #29367c;
   font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
     "Malgun Gothic", "맑은 고딕", arial, 굴림, Gulim, sans-serif;
+}
+
+.board_list_wrap {
+  position: relative;
+}
+
+.board_list td {
+  padding: 0px 4px;
+}
+
+.btn_box.write {
+  position: relative;
+  margin-top: 26px;
+}
+
+.input_box {
+  position: relative;
 }
 
 .list_array_option {
@@ -21,6 +34,56 @@
   z-index: 1;
 }
 
+.note_editor.note_frame {
+  border: 1px solid #cecdce;
+}
+
+.paging_wrap {
+  display: inline-block;
+  width: 100%;
+  margin-top: 20px;
+  padding: 0 121px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.input_box {
+  position: relative;
+}
+
+.input_info {
+  float: left;
+  width: 230px;
+  margin: 10px 10px 0 0;
+}
+
+.input_text {
+  width: 204px;
+  height: 33px;
+  padding: 0 12px;
+  line-height: 35px;
+  border: 1px solid #cecdce;
+}
+
+.input_text,
+.input_box label {
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+    "Malgun Gothic", "맑은 고딕", arial, 굴림, Gulim, sans-serif;
+  color: #999;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.input_write_title {
+  float: left;
+  width: 728px;
+  margin: 10px 0 0 0;
+}
+
+.input_write_title .input_text {
+  width: 702px;
+}
+
 .right_box {
   float: right;
   min-width: 9px;
@@ -28,6 +91,14 @@
   width: max-content;
   vertical-align: top;
   /* padding-top: 11px; */
+}
+
+td {
+  padding: 2px 4px;
+  border-top: 1px solid #eee;
+  vertical-align: middle;
+  text-align: center;
+  color: #333;
 }
 
 th {
@@ -42,27 +113,24 @@ th {
     "Malgun Gothic", "맑은 고딕", arial, Dotum, 돋움, sans-serif;
 }
 
-td {
-  padding: 2px 4px;
-  border-top: 1px solid #eee;
-  vertical-align: middle;
-  text-align: center;
-  color: #333;
-}
-
-.board_list td {
-  padding: 0px 4px;
-}
-
 tr:first-child td {
   border-top: none;
 }
 
-.paging_wrap {
-  display: inline-block;
-  width: 100%;
-  margin-top: 20px;
-  padding: 0 121px;
-  position: relative;
-  box-sizing: border-box;
+.text_placeholder {
+  position: absolute;
+  left: 13px;
+  top: 9px;
+}
+
+#write_wrap {
+  padding: 33px 68px 40px;
+  margin: 0 35px 35px 35px;
+  border: 2px solid #d5d5d5;
+  border-width: 0 2px 2px;
+}
+
+#write_wrap .note_editor {
+  margin-top: 25px;
+  border-radius: 2px;
 }

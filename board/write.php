@@ -84,48 +84,81 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>글쓰기</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/component.css">
+    <link rel="stylesheet" href="../css/contents.css">
+    <link rel="stylesheet" href="../css/page/board.css">
 </head>
 
 <body>
-    <div>
-        <h1>글 작성</h1>
-        <form method="POST" onsubmit="return confirm_empty(this)">
-            <?php if (isset($_SESSION['id'])) { ?>
-                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>">
-            <?php } ?>
-            <div>
-                <div>
-                    <?php if (!isset($_SESSION['id'])) { ?>
-                        <input type="text" name="name" placeholder="닉네임">
-                        <input type="password" name="pw" placeholder="비밀번호">
-                        <img src="../captcha_image.php?<?= time() ?>" alt="KCAPTCHA"
-                            onclick="this.src='../captcha_image.php?' + new Date().getTime()" style="cursor:pointer;">
-                        <input type="text" name="captcha" placeholder="코드 입력">
+    <header></header>
+    <main>
+        <section>
+            <header></header>
+            <article>
+                <h2 class="blind">글 작성</h2>
+            </article>
+            <article id="write_wrap" class="clear">
+                <form method="POST" onsubmit="return confirm_empty(this)">
+                    <?php if (isset($_SESSION['id'])) { ?>
+                        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>">
                     <?php } ?>
-                </div>
-                <div>
-                    <input type="text" name="title" placeholder="제목을 입력하세요">
-                </div>
-                <div>
-                    <textarea name="content" rows="5" cols="40" placeholder="내용을 입력하세요"></textarea>
-                </div>
-            </div>
-            <div>
-                <button type="button" onclick="location.href='../main/index.php'">취소</button>
-                <button type="submit">작성</button>
-            </div>
-        </form>
-    </div>
+                    <div>
+                        <div class="clear">
+                            <fieldset>
+                                <?php if (!isset($_SESSION['id'])) { ?>
+                                    <div class="input_box input_info">
+                                        <label for="name" class="text_placeholder">닉네임</label>
+                                        <input id="name" class="input_text" type="text" name="name">
+                                    </div>
+                                    <div class="input_box input_info">
+                                        <label for="password" class="text_placeholder">비밀번호</label>
+                                        <input id="password" class="input_text" type="password" name="pw" maxlength="20">
+                                    </div>
+                                    <div class="input_box input_info">
+                                        <img src="../captcha_image.php?<?= time() ?>" alt="KCAPTCHA"
+                                            onclick="this.src='../captcha_image.php?' + new Date().getTime()"
+                                            style="cursor:pointer;">
+                                        <label for="captcha" class="text_placeholder">코드 입력</label>
+                                        <input id="captcha" class="input_text" type="text" name="captcha">
+                                    </div>
+                                <?php } ?>
+                                <div class="input_box input_write_title">
+                                    <label for="title" class="text_placeholder">제목을 입력하세요</label>
+                                    <input id="title" class="input_text" type="text" name="title" maxlength="40">
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="note_editor note_frame">
+                            <!-- <div class="note_editable" contenteditable="true" role="textbox" aria-multiline="true"
+                                spellcheck="true" autocorrect="true" style="height: 380px; min-height: 400px;">
+                                <p></p>
+                            </div> -->
+                            <textarea id="content" name="content" rows="5" cols="40" placeholder="내용을 입력하세요"></textarea>
+                        </div>
+                    </div>
+                    <div class="btn_box write fr">
+                        <button type="button" class="btn btn_grey"
+                            onclick="location.href='../main/index.php'">취소</button>
+                        <button type="submit" class="btn btn_blue">등록</button>
+                    </div>
+                </form>
+            </article>
+        </section>
+    </main>
+    <footer></footer>
 </body>
 <script>
     function confirm_empty(form) {
         const isLogin = <?= isset($_SESSION['id']) ? 'true' : 'false' ?>;
-        const title = form.querySelector('input[name="title"]').value.trim();
-        const content = form.querySelector('textarea[name = "content"]').value.trim();
+        const title = form.getElementId('#title').value.trim();
+        const content = form.getElementId('#content').value.trim();
 
         if (!isLogin) {
-            const username = form.querySelector('input[name = "name"]').value.trim();
-            const password = form.querySelector('input[name = "pw"]').value.trim();
+            const username = form.getElementId('#name').value.trim();
+            const password = form.getElementId('#password').value.trim();
             if (!username || !pw) {
                 alert("닉네임과 비밀번호를 입력해주세요.");
                 return false;

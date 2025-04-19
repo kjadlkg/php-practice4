@@ -14,18 +14,19 @@ a {
 }
 
 body,
+button,
 input,
 select,
-textarea. button {
+textarea {
   font-size: 12px;
   font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
     "Malgun Gothic", "맑은 고딕", arial, Dotum, 돋움, sans-serif;
 }
 
+button,
 input,
 select,
-textarea,
-button {
+textarea {
   border-radius: 0;
   vertical-align: middle;
 }
@@ -34,7 +35,15 @@ button {
   cursor: pointer;
 }
 
-article {
+article,
+aside,
+figcaption,
+figure,
+footer,
+header,
+main,
+nav,
+section {
   display: block;
 }
 
