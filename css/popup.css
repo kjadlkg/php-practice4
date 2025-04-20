@@ -1,0 +1,36 @@
+.empty_page_wrap {
+  width: 400px;
+  margin: 125px auto 125px;
+}
+
+.empty_page_wrap .pop_wrap {
+  position: static;
+}
+
+.pop_content {
+  overflow: hidden;
+  position: relative;
+}
+
+.pop_content.robot {
+  min-width: 300px;
+  font-size: 14px;
+  color: #29367c;
+  line-height: 24px;
+  text-align: center;
+  padding: 25px;
+}
+
+.pop_wrap {
+  position: absolute;
+  background: #fff;
+  text-align: left;
+}
+
+.pop_wrap .robot .btn_box {
+  padding: 15px 0 0;
+}
+
+.pop_wrap.type5 {
+  border: 3px solid #29367c;
+}

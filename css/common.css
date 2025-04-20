@@ -24,7 +24,7 @@
 }
 
 .btn {
-  width: 82px;
+  width: 85px;
   height: 35px;
   padding-right: 2px;
   line-height: 31px;
@@ -114,5 +114,15 @@
   outline: none;
   color: #333;
   font-size: 14px;
+  font-weight: bold;
+}
+
+.small {
+  height: 31px;
+  line-height: 29px;
+  margin-left: 3px;
+  border: 1px solid;
+  border-radius: 2px;
+  font-size: 12px;
   font-weight: bold;
 }

@@ -80,36 +80,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'check') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $boardTitle ?></title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/component.css">
+    <link rel="stylesheet" href="../css/contents.css">
+    <link rel="stylesheet" href="../css/popup.css">
+    <link rel="stylesheet" href="../css/page/board.css">
 </head>
 
 <body>
-    <?php if (!empty($boardPw) && !$showConfirmForm): ?>
-    <form method="POST">
-        <div>
-            <p>비밀번호를 입력하세요.</p>
-            <input type="password" name="pw">
-            <input type="hidden" name="step" value="check">
-        </div>
-        <div>
-            <button type="button" onclick="history.back()">취소</button>
-            <button type="submit">확인</button>
-        </div>
-    </form>
-
-    <?php else: ?>
-    <form method="POST">
-        <div>
-            <p>삭제된 게시물은 복구할 수 없습니다.</p>
-            <p>게시물을 삭제하시겠습니까?</p>
-            <input type="hidden" name="step" value="confirm">
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-        </div>
-        <div>
-            <button type="button" onclick="location.href='view.php?id=<?= $id ?>'">이전</button>
-            <button type="submit">삭제</button>
-        </div>
-    </form>
-    <?php endif; ?>
+    <header></header>
+    <main>
+        <section>
+            <?php if (!empty($boardPw) && !$showConfirmForm): ?>
+                <article>
+                    <div class="nonmember_wrap">
+                        <div class="nonmember_content">
+                            <h3 class="blind">비회원 글 수정, 삭제</h3>
+                            <form method="POST">
+                                <div class="inner">
+                                    <b class="text">비밀번호를 입력하세요.</b>
+                                    <input type="password" class="password" name="pw">
+                                    <input type="hidden" name="step" value="check">
+                                    <div class="btn_box">
+                                        <button type="button" class="btn btn_grey small"
+                                            onclick="history.back()">취소</button>
+                                        <button type="submit" class="btn btn_blue small">확인</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            <?php else: ?>
+                <form method="POST">
+                    <div class="empty_page_wrap">
+                        <div class="pop_wrap type5">
+                            <div class="pop_content robot">
+                                <div class="inner">
+                                    <b>삭제된 게시물은 복구할 수 없습니다.</b>
+                                    <br>
+                                    <b>게시물을 삭제하시겠습니까?</b>
+                                    <input type="hidden" name="step" value="confirm">
+                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                </div>
+                                <div class="btn_box">
+                                    <button type="button" class="btn btn_grey small"
+                                        onclick="location.href='view.php?id=<?= $id ?>'">이전</button>
+                                    <button type="submit" class="btn btn_blue small">삭제</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            <?php endif; ?>
+        </section>
+    </main>
 </body>
 
 </html>

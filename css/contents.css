@@ -34,8 +34,15 @@
   z-index: 1;
 }
 
+.nonmember_content {
+  width: 394px;
+  height: 165px;
+  padding-top: 48px;
+  border: 3px solid #29367c;
+  background: #fff;
+}
+
 .nonmember_content .btn_box {
-  position: relative;
   border-top: 0;
   padding: 15px 0 0;
 }
@@ -55,6 +62,15 @@
 .nonmember_wrap {
   width: 400px;
   margin: 125px auto 125px;
+}
+
+.nonmember_wrap .btn_box {
+  position: relative;
+}
+
+.nonmember_wrap .nonmember_content .btn_box button:nth-child(2) {
+  position: absolute;
+  margin-left: 5px;
 }
 
 .note_editor.note_frame {
