@@ -87,43 +87,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === 'check') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $boardTitle ?></title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/layout.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/component.css">
+    <link rel="stylesheet" href="../css/contents.css">
+    <link rel="stylesheet" href="../css/page/board.css">
 </head>
 
 <body>
-    <?php if (!empty($boardPw) && !$showEditForm): ?>
-    <form method="POST">
-        <div>
-            <p>비밀번호를 입력하세요.</p>
-            <input type="password" name="pw">
-            <input type="hidden" name="step" value="check">
-        </div>
-        <div>
-            <button type="button" onclick="history.back()">취소</button>
-            <button type="submit">확인</button>
-        </div>
-    </form>
-    <?php else: ?>
-    <h3>글 수정</h3>
-    <form method="POST">
-        <div>
-            <div>
-                <label>제목<input type="text" name="title" value="<?= $boardTitle ?>"></label>
-            </div>
-            <div>
-                <label>내용<textarea name="content" rows="5" cols="40"><?= $boardContent ?></textarea></label>
-            </div>
-        </div>
-        <div>
-            <input type="hidden" name="step" value="edit">
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-        </div>
-        <div>
-            <button type="button" onclick="location.href='view.php?id=<?= $id ?>'">취소</button>
-            <button type="submit">수정</button>
-        </div>
-    </form>
-    <?php endif; ?>
-    </div>
+    <header></header>
+    <main>
+        <section>
+            <header></header>
+            <article>
+                <h2 class="blind">글 수정</h2>
+            </article>
+            <?php if (!empty($boardPw) && !$showEditForm): ?>
+                <article>
+                    <div class="nonmember_wrap">
+                        <div class="nonmember_content">
+                            <h3 class="blind">비회원 글 수정, 삭제</h3>
+                            <form method="POST">
+                                <div class="inner">
+                                    <b class="text">비밀번호를 입력하세요.</b>
+                                    <input type="password" class="password" name="pw">
+                                    <input type="hidden" name="step" value="check">
+                                    <div class="btn_box">
+                                        <button type="button" class="btn btn_grey small"
+                                            onclick="history.back()">취소</button>
+                                        <button type="submit" class="btn btn_blue small">확인</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            <?php else: ?>
+                <article id="write_wrap" class="clear">
+                    <legend class="blind">글쓰기 영역</legend>
+                    <form method="POST">
+                        <div class="clear">
+                            <fieldset>
+                                <div class="input_box input_write_title">
+                                    <input class="input_text" type="text" name="title" value="<?= $boardTitle ?>">
+                                </div>
+                            </fieldset>
+                        </div>
+                        <div class="note_editor note_frame">
+                            <!-- <div class="note_editable" contenteditable="true" role="textbox" aria-multiline="true"
+                                spellcheck="true" autocorrect="true" style="height: 380px; min-height: 400px;">
+                                <p></p>
+                            </div> -->
+                            <textarea class="input_text" name="content" rows="5" cols="40"><?= $boardContent ?></textarea>
+                        </div>
+                        <div>
+                            <input type="hidden" name="step" value="edit">
+                            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                        </div>
+                        <div class="btn_box write fr">
+                            <button type="button" class="btn btn_grey"
+                                onclick="location.href='view.php?id=<?= $id ?>'">취소</button>
+                            <button type="submit" class="btn btn_blue">수정</button>
+                        </div>
+                    </form>
+                </article>
+            <?php endif; ?>
+        </section>
+    </main>
+    <footer></footer>
 </body>
 
 </html>

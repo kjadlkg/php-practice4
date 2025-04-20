@@ -34,6 +34,29 @@
   z-index: 1;
 }
 
+.nonmember_content .btn_box {
+  position: relative;
+  border-top: 0;
+  padding: 15px 0 0;
+}
+
+.nonmember_content .inner {
+  width: 176px;
+  margin: 0 auto;
+}
+
+.nonmember_content .inner .text {
+  display: block;
+  font-size: 15px;
+  color: #29367c;
+  text-align: center;
+}
+
+.nonmember_wrap {
+  width: 400px;
+  margin: 125px auto 125px;
+}
+
 .note_editor.note_frame {
   border: 1px solid #cecdce;
 }
@@ -45,6 +68,15 @@
   padding: 0 121px;
   position: relative;
   box-sizing: border-box;
+}
+
+.password {
+  width: 164px;
+  height: 37px;
+  padding: 0 5px;
+  margin-top: 14px;
+  background: #f3f3f3;
+  border: 1px solid #cecdce;
 }
 
 .input_box {
