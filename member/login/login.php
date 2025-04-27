@@ -87,29 +87,82 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인</title>
+    <link rel="stylesheet" href="../../css/base.css">
+    <link rel="stylesheet" href="../../css/common.css">
+    <link rel="stylesheet" href="../../css/component.css">
+    <link rel="stylesheet" href="../../css/contents.css">
+    <link rel="stylesheet" href="../../css/page/login.css">
 </head>
 
 <body>
-    <div>
-        <h1>로그인</h1>
+    <div class="width868 login_wrap">
+        <header class="header bg">
+            <div class="head">
+                <h1 class="logo">
+                    <a href="../../main/index.php">메인페이지</a>
+                    <a href="login.php">로그인</a>
+                </h1>
+            </div>
+        </header>
+        <main id="container center">
+            <div class="content login">
+                <article>
+                    <h2 class="blind">로그인</h2>
+                    <section>
+                        <h3 class="blind">로그인 정보 입력</h3>
+                        <div class="login_page">
+                            <div class="login_inputbox">
+                                <div class="inner">
+                                    <?php if (isset($_SESSION['error'])): ?>
+                                        <p style="color: red;">
+                                            <?php echo htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8'); ?>
+                                        </p>
+                                        <?php unset($_SESSION['error']); ?>
+                                    <?php endif; ?>
 
-        <?php if (isset($_SESSION['error'])): ?>
-            <p style="color: red;"><?php echo htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8'); ?></p>
-            <?php unset($_SESSION['error']); ?>
-        <?php endif; ?>
-
-        <form method="post" action="login.php">
-            <input type="text" name="id" placeholder="아이디" required
-                value="<?= isset($_COOKIE['saved_id']) ? htmlspecialchars($_COOKIE['saved_id'], ENT_QUOTES, 'UTF-8') : '' ?>" />
-            <input type="password" name="pw" placeholder="비밀번호" required />
-            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>" />
-            <input type="submit" value="로그인" />
-            <label for="idsave">
-                <input type="checkbox" name="idsave" id="idsave" />아이디 저장
-            </label>
-            <a href="../join/join.php">회원가입</a>
-            <a href="../forgot/index.php">비밀번호 찾기</a>
-        </form>
+                                    <form method="post" action="login.php">
+                                        <fieldset>
+                                            <legend class="blind">로그인</legend>
+                                            <div>
+                                                <input type="text" class="int bg" name="id" placeholder="아이디"
+                                                    maxlength="20"
+                                                    value="<?= isset($_COOKIE['saved_id']) ? htmlspecialchars($_COOKIE['saved_id'], ENT_QUOTES, 'UTF-8') : '' ?>" />
+                                                <input type="password" class="int bg" name="pw" placeholder="비밀번호"
+                                                    maxlength="40" />
+                                                <input type="hidden" name="csrf_token"
+                                                    value="<?= $_SESSION['csrf_token'] ?>" />
+                                            </div>
+                                            <button type="submit" class="btn btn_blue small btn_wfull">로그인</button>
+                                            <div class="id_checkbox clear">
+                                                <span class="checkbox">
+                                                    <input type="checkbox" name="idsave" id="idsave">
+                                                    <label for="idsave">아이디 저장</label>
+                                                </span>
+                                            </div>
+                                            <div class="login_option">
+                                                <a href="../join/join.php">회원가입</a>
+                                                <a href="../forgot/index.php">비밀번호 찾기</a>
+                                            </div>
+                                        </fieldset>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </article>
+            </div>
+        </main>
+        <footer class="footer">
+            <div class="info_policy">
+                <a href="">회사소개</a>
+                <a href="">제휴안내</a>
+                <a href="">광고안내</a>
+                <a href="">이용약관</a>
+                <a href="">개인정보처리방침</a>
+                <a href="">청소년보호정책</a>
+            </div>
+            <div class="copyright">Copyright ⓒ</div>
+        </footer>
     </div>
 </body>
 

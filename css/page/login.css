@@ -1,0 +1,76 @@
+.id_checkbox .checkbox {
+  float: left;
+}
+
+.content.login {
+  margin: 205px auto 233px;
+}
+
+.id_checkbox {
+  margin-top: 10px;
+}
+
+.id_checkbox .checkbox label {
+  vertical-align: -10px;
+}
+
+.login_inputbox {
+  float: left;
+  background: #fff;
+}
+
+.login_inputbox .inner {
+  width: 290px;
+  padding: 25px 0 0 56px;
+}
+
+.login_inputbox .inner input {
+  margin-top: 7px;
+}
+
+.login_inputbox .int.bg {
+  height: 41px;
+  border: none;
+  line-height: 41px;
+}
+
+.login_option {
+  border-top: 1px dashed #aaa;
+  margin-top: 16px;
+  padding-top: 15px;
+  text-align: center;
+}
+
+.login_option a {
+  font-size: 14px;
+  color: #000;
+}
+
+.login_option a::before {
+  content: "|";
+  display: inline-block;
+  font-size: 13px;
+  color: #d7d7d7;
+  padding: 0 4px 0 1px;
+  vertical-align: top;
+}
+
+.login_wrap #container {
+  margin-top: 37px;
+}
+
+.login_inputbox .inner input:first-of-type {
+  margin-top: 20px;
+}
+
+.login_wrap .login_page {
+  width: 700px;
+  height: 348px;
+  margin: 0 auto;
+  border: 2px solid #29367c;
+  border-radius: 3px;
+}
+
+section {
+  text-align: center;
+}
