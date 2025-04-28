@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-    <div class="width868 login_wrap">
+    <div id="top" class="width868 login_wrap">
         <header class="header bg">
             <div class="head">
                 <h1 class="logo">
@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </h1>
             </div>
         </header>
-        <main id="container center">
+        <main id="container">
             <div class="content login">
                 <article>
                     <h2 class="blind">로그인</h2>
@@ -114,10 +114,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="login_inputbox">
                                 <div class="inner">
                                     <?php if (isset($_SESSION['error'])): ?>
-                                        <p style="color: red;">
-                                            <?php echo htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8'); ?>
-                                        </p>
-                                        <?php unset($_SESSION['error']); ?>
+                                    <p style="color: red;">
+                                        <?php echo htmlspecialchars($_SESSION['error'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </p>
+                                    <?php unset($_SESSION['error']); ?>
                                     <?php endif; ?>
 
                                     <form method="post" action="login.php">

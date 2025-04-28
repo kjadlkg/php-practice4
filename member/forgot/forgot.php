@@ -80,38 +80,73 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>비밀번호 변경</title>
+    <title>비밀번호 재설정</title>
+    <link rel="stylesheet" href="../../css/base.css">
+    <link rel="stylesheet" href="../../css/common.css">
+    <link rel="stylesheet" href="../../css/component.css">
+    <link rel="stylesheet" href="../../css/contents.css">
+    <link rel="stylesheet" href="../../css/page/login.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
-    <div>
-        <h1>비밀번호 변경</h1>
-        <form method="post">
-            <span>최소 8자, 영문+숫자 조합</span>
-            <input type="password" id="pw" name="pw" placeholder="새 비밀번호" required />
-            <input type="password" id="pw_check" name="pw_check" placeholder="새 비밀번호 확인" required />
-            <span id="pw_result"></span>
-            <input type="submit" value="변경" />
-        </form>
+    <div id="top" class="width868 login_wrap">
+        <header class="header bg">
+            <div class="head">
+                <h1 class="logo">
+                    <a href="../../main/index.php">메인페이지</a>
+                </h1>
+            </div>
+        </header>
+        <main id="container">
+            <div class="content repw">
+                <article>
+                    <h2 class="blind">비밀번호 찾기</h2>
+                    <section>
+                        <div class="content_head">
+                            <h3 class="head_title">비밀번호 재설정</h3>
+                        </div>
+                        <div id="contentbox" class="content_box border">
+                            <div class="con innerbox">
+                                <h4 class="title">비밀번호 규칙은 다음과 같습니다.</h4>
+                                <div class="info_text">
+                                    <p>최소 8자, 영문+숫자 조합</p>
+                                </div>
+                                <div class="bg_box">
+                                    <div class="form_box">
+                                        <form method="post">
+                                            <input type="password" class="int" id="pw" name="pw" placeholder="새 비밀번호">
+                                            <input type="password" class="int" id="pw_check" name="pw_check"
+                                                placeholder="새 비밀번호 확인">
+                                            <p id="pw_result"></p>
+                                            <button type="submit" class="btn btn_blue small btn_wfull">확인</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </article>
+            </div>
+        </main>
     </div>
 
     <script>
-        $(document).ready(function () {
-            $("#pw, #pw_check").on("keyup", function () {
-                var new_pw = $("#pw").val();
-                var new_pw_check = $("#pw_check").val();
-                var pwPattern = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
+    $(document).ready(function() {
+        $("#pw, #pw_check").on("keyup", function() {
+            var new_pw = $("#pw").val();
+            var new_pw_check = $("#pw_check").val();
+            var pwPattern = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
 
-                if (!pwPattern.test(new_pw)) {
-                    $("#pw_result").text("최소 8자 이상, 영문과 숫자의 조합으로 작성해주세요").css("color", "black");
-                } else if (new_pw !== new_pw_check) {
-                    $("#pw_result").text("비밀번호가 불일치합니다").css("color", "red");
-                } else {
-                    $("#pw_result").text("비밀번호가 일치합니다").css("color", "blue");
-                }
-            });
+            if (!pwPattern.test(new_pw)) {
+                $("#pw_result").text("최소 8자 이상, 영문과 숫자의 조합으로 작성해주세요").css("color", "black");
+            } else if (new_pw !== new_pw_check) {
+                $("#pw_result").text("비밀번호가 불일치합니다").css("color", "red");
+            } else {
+                $("#pw_result").text("비밀번호가 일치합니다").css("color", "blue");
+            }
         });
+    });
     </script>
 </body>
 

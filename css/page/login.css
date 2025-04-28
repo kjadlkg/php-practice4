@@ -1,9 +1,9 @@
-.id_checkbox .checkbox {
-  float: left;
-}
-
 .content.login {
   margin: 205px auto 233px;
+}
+
+.id_checkbox .checkbox {
+  float: left;
 }
 
 .id_checkbox {
@@ -24,7 +24,8 @@
   padding: 25px 0 0 56px;
 }
 
-.login_inputbox .inner input {
+.login_inputbox .inner input,
+.form_box input {
   margin-top: 7px;
 }
 
@@ -55,8 +56,24 @@
   vertical-align: top;
 }
 
+.login_wrap .con.innerbox {
+  width: 605px;
+}
+
+.login_wrap .con.innerbox .bg_box {
+  margin-bottom: 0;
+  padding: 46px 0 46px;
+}
+
 .login_wrap #container {
   margin-top: 37px;
+}
+
+.login_wrap .info_text {
+  padding-top: 0;
+  margin-top: 8px;
+  color: #333;
+  line-height: 22px;
 }
 
 .login_inputbox .inner input:first-of-type {
@@ -69,8 +86,4 @@
   margin: 0 auto;
   border: 2px solid #29367c;
   border-radius: 3px;
-}
-
-section {
-  text-align: center;
 }
