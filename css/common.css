@@ -328,6 +328,18 @@
   font-weight: bold;
 }
 
+.tip_msgbox {
+  clear: both;
+  margin-top: 11px;
+  font-size: 12px;
+  color: #999;
+  text-align: left;
+}
+
+.tip_msg.error {
+  color: #d31900;
+}
+
 .width868 .head,
 .width868 #container,
 .width868 .info_policy,

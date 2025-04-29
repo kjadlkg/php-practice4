@@ -1,4 +1,20 @@
 <?php
+function getMaskedUserId($user_id)
+{
+    $parts = explode('_', $user_id);
+    if (count($parts) < 2)
+        return '';
+    return mask_ip($parts[0]);
+}
+
+function get_csrf_token()
+{
+    if (!isset($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION['csrf_token'];
+}
+
 function mask_ip($ip)
 {
     if (empty($ip)) {
@@ -19,22 +35,6 @@ function mask_ip($ip)
         return '';
     }
     return $ip_parts[0] . '.' . $ip_parts[1];
-}
-
-function getMaskedUserId($user_id)
-{
-    $parts = explode('_', $user_id);
-    if (count($parts) < 2)
-        return '';
-    return mask_ip($parts[0]);
-}
-
-function get_csrf_token()
-{
-    if (!isset($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    }
-    return $_SESSION['csrf_token'];
 }
 
 function update_recommend($db, $board_id, $type)
