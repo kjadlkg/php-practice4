@@ -131,7 +131,7 @@
 }
 
 .content_box.border {
-  min-height: 280px;
+  min-height: 398px;
   border: 1px solid #cecdce;
   border-radius: 5px;
 }
@@ -176,6 +176,47 @@
   margin: 0 auto;
 }
 
+.form_group {
+  margin-top: 25px;
+}
+
+.form_group:first-of-type {
+  margin-top: 0;
+}
+
+.form_group::after {
+  clear: both;
+  display: block;
+  visibility: hidden;
+  content: "";
+}
+
+.form_text {
+  width: 500px;
+}
+
+.form_title {
+  width: 177px;
+  height: 35px;
+  line-height: 35px;
+  font-size: 14px;
+  color: #333;
+  font-weight: bold;
+}
+
+.form_title,
+.form_text {
+  float: left;
+}
+
+.font_blue {
+  color: #1034ff;
+}
+
+.font_red {
+  color: #d31900;
+}
+
 .fr {
   float: right;
 }
@@ -208,6 +249,11 @@
 
 .header.bg .head {
   height: 85px;
+}
+
+.id .form_text .int {
+  float: left;
+  width: 386px;
 }
 
 .info_policy {
@@ -243,14 +289,56 @@
   background: #f3f3f3;
 }
 
-.login_wrap .con_innerbox .info_text {
-  padding-left: 13px;
-  word-break: keep-all;
+.int.pw_check {
+  margin-top: 7px;
 }
 
+.join_wrap .footer,
 .login_wrap .footer {
   margin-top: 80px;
   border-top: 1px solid #29367c;
+}
+
+.join_wrap .form_title,
+.login_wrap .form_title {
+  width: 193px;
+}
+
+.kcaptcha_box {
+  position: relative;
+  display: inline-block;
+  height: 33px;
+  border: 1px solid #cecdce;
+  font-size: 0;
+}
+
+.kcaptcha_box .input_kcaptcha {
+  display: inline-block;
+  width: 95px;
+  height: 33px;
+  line-height: 33px;
+  padding: 0 13px;
+  vertical-align: top;
+  border: none;
+  font-size: 14px;
+  color: #555;
+}
+
+.kcaptcha_box .kcaptcha_img {
+  display: inline-block;
+  width: 125px;
+  margin: 0;
+  line-height: 0;
+}
+
+.kcaptcha_box .kcaptcha_img img {
+  width: 125px;
+  height: 33px;
+}
+
+.login_wrap .con_innerbox .info_text {
+  padding-left: 13px;
+  word-break: keep-all;
 }
 
 .logo {
@@ -306,6 +394,69 @@
   font-weight: bold;
 }
 
+.pw_rule .checkbox {
+  display: block;
+  padding-left: 0;
+  line-height: 20px;
+  color: #666;
+}
+
+.pw_rule .checkbox.on .chklbl::before {
+  background-color: #4b58a7;
+}
+
+.pw_rule .chklbl {
+  position: relative;
+  display: inline-block;
+  padding-left: 20px;
+}
+
+.pw_rule .chklbl::before {
+  position: absolute;
+  content: "";
+  width: 14px;
+  height: 14px;
+  top: 3px;
+  left: 0;
+  background-color: #ccc;
+  border-radius: 50%;
+}
+
+.pw_rule .chklbl::after {
+  position: absolute;
+  content: "";
+  width: 10px;
+  height: 9px;
+  top: 0;
+  left: 0;
+  margin: 7px 0 0 2px;
+  border-radius: 50%;
+}
+
+.pw_rule .pw_step {
+  margin-top: 7px;
+}
+
+.pw_rule .pw_tip {
+  margin-top: 11px;
+}
+
+.pw_rule .step_title,
+.pw_rule .tip_title {
+  padding-left: 0;
+  line-height: 20px;
+  color: #333;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.pw_step .impossible_text {
+  padding: 0;
+  margin-top: 8px;
+  line-height: 18px;
+  color: #d31900;
+}
+
 .search {
   width: 295px;
   height: 31px;
@@ -326,6 +477,57 @@
   border-radius: 2px;
   font-size: 12px;
   font-weight: bold;
+}
+
+.step_box .btm_box {
+  position: relative;
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  background: #cfcfcf;
+  font-size: 0;
+  margin-top: 5px;
+}
+
+.step_box .btm_box .bar {
+  position: absolute;
+  width: 33.33%;
+  height: 100%;
+  top: 0;
+}
+
+.step_box .btm_box::after,
+.step_box .btm_box::before {
+  content: "";
+  width: 1px;
+  height: 100%;
+  background: #fff;
+  display: inline-block;
+  position: absolute;
+  z-index: 2;
+}
+
+.step_box .btm_box::after {
+  right: 33.33%;
+}
+
+.step_box .btm_box::before {
+  left: 33.33%;
+}
+
+.step_box.impossible .bar {
+  background: #d31900;
+  left: 0;
+}
+
+.step_box.normal .bar {
+  background: #ff9933;
+  left: 33.33%;
+}
+
+.step_box.safe .bar {
+  background: #008140;
+  right: 0;
 }
 
 .tip_msgbox {
