@@ -109,6 +109,12 @@
   margin: 0 auto;
 }
 
+.con.changeform_box {
+  width: 693px;
+  padding: 78px 0 73px;
+  position: relative;
+}
+
 .con.innerbox {
   width: 660px;
 }
@@ -134,6 +140,10 @@
   min-height: 398px;
   border: 1px solid #cecdce;
   border-radius: 5px;
+}
+
+.content_box.border.nomin {
+  min-height: auto;
 }
 
 .content_head {
@@ -374,6 +384,16 @@
   max-width: 420px;
   overflow: hidden;
   color: #29367c;
+}
+
+.page_menu a::after {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: 11px;
+  margin: 0 10px;
+  vertical-align: -1px;
+  background: #d7d7d7;
 }
 
 .paging_box {
