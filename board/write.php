@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <article id="write_wrap" class="clear">
                 <form method="POST" onsubmit="return confirm_empty(this)">
                     <?php if (isset($_SESSION['id'])) { ?>
-                        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?>">
+                        <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
                     <?php } ?>
                     <div>
                         <div class="clear">

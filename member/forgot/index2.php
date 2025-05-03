@@ -52,7 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <main id="container">
             <div class="content repw">
                 <article>
-                    <h2 class="blind">비밀번호 찾기</h2>
+                    <h2 class="blind">비밀번호 변경</h2>
                     <section>
                         <div class="content_head">
                             <h3 class="head_title">비밀번호 재설정</h3>

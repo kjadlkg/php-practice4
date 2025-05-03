@@ -7,8 +7,7 @@ if (!isset($_SESSION["id"])) {
     exit;
 }
 
-$id = $_SESSION["id"];
-$name = $_SESSION["name"];
+$id = $_SESSION['id'];
 
 $stmt = $db->prepare("SELECT user_email FROM user WHERE user_id = ?");
 $stmt->bind_param("s", $id);
@@ -53,7 +52,7 @@ if (!$user) {
                         <h2 class="blind">페이지 메뉴</h2>
                         <div class="page_menu fr clear">
                             <a href="../member/forgot/index2.php">비밀번호 변경</a>
-                            <a href="">회원 탈퇴</a>
+                            <a href="withdraw.php">회원 탈퇴</a>
                         </div>
                     </section>
                     <section>
@@ -62,7 +61,7 @@ if (!$user) {
                         </div>
                         <div class="content_box border nomin">
                             <div class="con changeform_box">
-                                <form method="post" action="change.php">
+                                <form method="POST" action="change.php">
                                     <fieldset>
                                         <legend class="blind">기본 정보 변경 폼</legend>
                                         <div class="form_group nick">
@@ -106,6 +105,33 @@ if (!$user) {
                 </article>
             </div>
         </main>
+        <script>
+            $(function () {
+                $('form').on('submit', function (e) {
+                    const name = $('#name').val().trim();
+                    const pw = $('#pw').val().trim();
+                    const email = $('#email').val().trim();
+
+                    if (name === '') {
+                        e.preventDefault();
+                        $('#name').focus();
+                        return;
+                    }
+
+                    if (pw === '') {
+                        e.preventDefault();
+                        $('#pw').focus();
+                        return;
+                    }
+
+                    if (email === '') {
+                        e.preventDefault();
+                        $('#email').focus();
+                        return;
+                    }
+                });
+            })
+        </script>
         <footer class="footer">
             <div class="info_policy">
                 <a href="">회사소개</a>

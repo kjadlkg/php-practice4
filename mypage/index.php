@@ -2,12 +2,12 @@
 session_start();
 include "../db.php";
 
-if (!isset($_SESSION['id'])) {
-    die('로그인이 필요합니다.');
+if (!isset($_SESSION["id"])) {
+    echo "<script>alert('로그인이 필요합니다.'); location.href='../member/login/login.php';</script>";
+    exit;
 }
 
 $id = $_SESSION['id'];
-$name = $_SESSION['name'];
 
 // 게시글
 $stmt = $db->prepare("
@@ -23,7 +23,7 @@ $stmt->execute();
 $board_result = $stmt->get_result();
 $stmt->close();
 
-// 댓글글
+// 댓글
 $stmt = $db->prepare("
 SELECT c.*,
 (SELECT board_title FROM board WHERE board_id = c.board_id) AS board_title
@@ -46,7 +46,6 @@ $post_count = $post_count_result->fetch_assoc()['total_post'];
 $stmt->close();
 
 // 댓글 개수
-
 $stmt = $db->prepare("SELECT COUNT(*) AS total_comment FROM comment WHERE comment_writer = ?");
 $stmt->bind_param("s", $name);
 $stmt->execute();
@@ -67,7 +66,7 @@ $stmt->close();
 <body>
     <div>
         <a href="../main/index.php">게시판 메인가기</a>
-        <a href="info.php">내 정보</a>
+        <a href="check.php">내 정보</a>
     </div>
     <div>
         <h3>게시글(<?= $post_count ?>)</h3>
