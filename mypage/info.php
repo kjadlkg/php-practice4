@@ -8,6 +8,7 @@ if (!isset($_SESSION["id"])) {
 }
 
 $id = $_SESSION['id'];
+$name = $_SESSION['name'];
 
 $stmt = $db->prepare("SELECT user_email FROM user WHERE user_id = ?");
 $stmt->bind_param("s", $id);
@@ -40,7 +41,7 @@ if (!$user) {
         <header class="header bg">
             <div class="head">
                 <h1 class="logo">
-                    <a href="../../main/index.php">메인페이지</a>
+                    <a href="../main/index.php">메인페이지</a>
                 </h1>
             </div>
         </header>

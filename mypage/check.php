@@ -26,10 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt = $db->prepare("SELECT user_pw FROM user WHERE user_id = ?");
     $stmt->bind_param("s", $id);
     $stmt->execute();
-    $stmt->bind_result($hashed_pw);
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
     $stmt->close();
 
-    if (!password_verify($pw, $hashed_pw)) {
+    if (!password_verify($pw, $row['user_pw'])) {
         echo "<script>alert('비밀번호를 확인해주세요.');</script>";
     } else {
         header("Location: info.php");
