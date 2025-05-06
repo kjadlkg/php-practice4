@@ -1,0 +1,394 @@
+.bar {
+  position: relative;
+  width: 1048px;
+  height: 66px;
+  padding: 17px 0 15px;
+  margin: 0 auto;
+  background: #29367c;
+  border: 1px solid #29367c;
+}
+
+.btn_search,
+.btn_greysearch {
+  float: left;
+  width: 29px;
+  height: 29px;
+  background-position: -166px -275px;
+}
+
+body {
+  overflow-y: auto;
+  min-width: 1200px;
+  position: relative;
+  background: #f1f1f1;
+}
+
+.board_linkbox {
+  position: relative;
+  padding-right: 0;
+  word-break: break-all;
+}
+
+.board_linkbox .link .boardtitle strong {
+  font-size: 13px;
+}
+
+/* .btn_search {
+  position: absolute;
+  top: 0;
+  right: 0;
+} */
+
+.choice_wrap {
+  font-size: 0;
+}
+
+.choice_wrap button {
+  position: relative;
+  padding-right: 14px;
+  font-size: 14px;
+  color: #29367c;
+  font-weight: bold;
+  line-height: 20px;
+  vertical-align: top;
+  overflow: visible;
+  letter-spacing: -0.075em;
+}
+
+.choice_wrap button.on {
+  color: #d31900;
+}
+
+.choice_wrap button .num {
+  font-weight: normal;
+}
+
+.choice_wrap button:first-child {
+  padding-left: 12px;
+}
+
+.choice_wrap button::before {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: 13px;
+  margin-right: 13px;
+  background: #29367c;
+  font-size: 0;
+  vertical-align: -1px;
+}
+
+.choice_wrap button:first-child::before {
+  display: none;
+}
+
+.choice_wrap button.on::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 2px;
+  position: absolute;
+  left: 0;
+  top: 30px;
+  background: #29367c;
+}
+
+.comment_num {
+  font-size: 12px;
+  color: #999;
+  margin-left: 3px;
+  vertical-align: top;
+}
+
+.content {
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+    "Malgun Gothic", "맑은 고딕", arial, 굴림, Gulim, sans-serif;
+  color: #333;
+}
+
+.content_box {
+  clear: both;
+  border-top: 2px solid #29367c;
+  margin: 0;
+}
+
+.content_head .title {
+  float: left;
+  padding: 2px 0 0 2px;
+  color: #d31900;
+  font-size: 14px;
+  letter-spacing: -0.075em;
+}
+
+.content_head .title .num {
+  padding-left: 1px;
+  font-weight: normal;
+}
+
+.content_listbox {
+  border: 1px solid #29367c;
+  border-width: 0 0 1px 0;
+}
+
+.content_listbox li {
+  border-top: 1px solid #ddd;
+  padding: 12px 0 14px 2px;
+}
+
+.content_listbox li:first-child {
+  border-top: none;
+}
+
+.content_listbox li::after {
+  clear: both;
+  display: block;
+  visibility: hidden;
+  content: "";
+}
+
+.content_listbox .board_linkbox a {
+  display: block;
+}
+
+.content_wrap {
+  width: 1160px;
+  box-sizing: border-box;
+  padding: 0 4.7% 0 4.75%;
+  margin: 0 auto;
+  background: #fff;
+}
+
+.content_wrap section:last-child .mypage_content {
+  padding-bottom: 0;
+}
+
+.datebox {
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.headbox {
+  height: 40px;
+  background: #fff;
+  position: relative;
+  z-index: 2;
+}
+
+.icon_main_page {
+  display: inline-block;
+  width: 5px;
+  height: 9px;
+  /* background-position: -186px -231px; */
+  margin-left: -1px;
+}
+
+.innerbox {
+  width: 1160px;
+  height: 100%;
+  margin: 0 auto;
+  background: #fff;
+  position: relative;
+}
+
+.innerbox::after,
+.wrap_right::after {
+  content: "";
+  display: block;
+  width: 1px;
+  min-height: 100%;
+  position: absolute;
+  left: 268px;
+  top: 0;
+  border-left: 1px solid #eee;
+}
+
+.main_page {
+  font-size: 11px;
+  color: #d31900;
+  vertical-align: -2px;
+}
+
+.mypage_content {
+  padding-bottom: 28px;
+  margin: 0 auto;
+}
+
+.mypage_content .boardtitle {
+  clear: both;
+  display: inline-block;
+  font-size: 0;
+}
+
+.mypage_content .content_head .title {
+  cursor: pointer;
+}
+
+.mypage_content.comments .boardtitle {
+  position: relative;
+  background: #edf1ff;
+  padding: 0 1px;
+  margin-top: 4px;
+  margin-bottom: 1px;
+  height: 18px;
+  line-height: 18px;
+}
+
+.mypage_content.comments .link .boardtitle strong {
+  text-decoration: none;
+  font-weight: normal;
+  font-size: 12px;
+}
+
+.mypage_menu li {
+  position: relative;
+  margin-top: 5px;
+}
+
+.mypage_menu li a {
+  display: block;
+  width: 180px;
+  height: 36px;
+  padding-left: 14px;
+  box-sizing: border-box;
+  padding-right: 1px;
+  line-height: 34px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+    "Malgun Gothic", "맑은 고딕", arial, Dotum, 돋움, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.mypage_menu li.on a {
+  color: #fff;
+  text-shadow: 0 -1px #1d2761;
+  border-color: #3b4890;
+  background: #3b4890;
+}
+
+.mypage_menu li:first-child {
+  margin-top: 0;
+}
+
+.mypage_menu::after {
+  clear: both;
+  display: block;
+  visibility: hidden;
+  content: "";
+}
+
+.mypage_wrap {
+  width: 1160px;
+  margin: 0 auto;
+  background: #fff;
+}
+
+.mypage_wrap .area_links {
+  top: 12px;
+}
+
+.mypage_wrap .comments .board_linkbox .datebox {
+  margin-top: 4px;
+  line-height: 14px;
+}
+
+.mypage_wrap .content_head {
+  position: relative;
+  border-bottom: none;
+}
+
+.mypage_wrap .footer {
+  padding-bottom: 0;
+}
+
+.mypage_wrap .info_policy {
+  width: 803px;
+  margin-top: 0;
+  padding-top: 40px;
+}
+
+.mypage_wrap .bottom_paging_box {
+  padding: 37px 0 10px;
+  margin: 0;
+}
+
+.mypage_wrap.width1160 .head {
+  width: 1050px;
+  height: 28px;
+  padding-top: 12px;
+}
+
+.search {
+  width: 300px;
+  height: 29px;
+  position: relative;
+}
+
+.search .in_keyword {
+  width: 252px;
+  height: 27px;
+  font-size: 12px;
+  color: #555;
+  vertical-align: top;
+  line-height: 27px;
+  font-weight: normal;
+}
+
+.search .inner_search {
+  position: relative;
+  width: 270px;
+  height: 27px;
+  margin: 0;
+  border: 1px solid #ccc;
+  border-width: 1px 0 1px 1px;
+}
+
+.search_box {
+  margin-left: 5px;
+}
+
+.search_wrap {
+  position: absolute;
+  right: 3px;
+  top: -7px;
+}
+
+#top {
+  position: relative;
+}
+
+.top_bar {
+  width: 1050px;
+  margin: 0 auto;
+  background: #29367c;
+  font-size: 14px;
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+
+.user_data {
+  left: inherit;
+  margin-top: 0;
+}
+
+.width1160 .copyright {
+  width: 803px;
+  margin-top: 0;
+  padding: 10px 0 50px;
+}
+
+.wrap_left {
+  float: left;
+  position: relative;
+  padding-top: 30px;
+}
+
+.wrap_right {
+  float: right;
+  width: 803px;
+  padding-left: 33px;
+  padding-top: 32px;
+}

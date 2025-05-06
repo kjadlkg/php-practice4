@@ -61,18 +61,18 @@ $e_page = min($total_page, $s_page + $page_num - 1);
 <body>
     <header>
         <div class="main_head">
-            <div class="area_links">
+            <div>
                 <ul class="fl clear">
                     <?php if (!isset($_SESSION["id"])) { ?>
-                    <li><a href="../member/login/login.php">로그인</a></li>
-                    <li><a href="../member/join/join.php">회원가입</a></li>
+                        <li><a href="../member/login/login.php">로그인</a></li>
+                        <li><a href="../member/join/join.php">회원가입</a></li>
                     <?php } else { ?>
-                    <li><a
-                            href="../mypage/index.php"><?= htmlspecialchars($_SESSION['name'], ENT_QUOTES, 'UTF-8') ?></a>
-                        님
-                    </li>
-                    <li><a href="../mypage/index.php">마이페이지</a></li>
-                    <li><a href="../member/login/logout.php">로그아웃</a></li>
+                        <li><a
+                                href="../mypage/index.php"><?= htmlspecialchars($_SESSION['name'], ENT_QUOTES, 'UTF-8') ?></a>
+                            님
+                        </li>
+                        <li><a href="../mypage/index.php">마이페이지</a></li>
+                        <li><a href="../member/login/logout.php">로그아웃</a></li>
                     <?php } ?>
                 </ul>
             </div>
@@ -124,27 +124,27 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                     </thead>
                     <tbody>
                         <?php while ($row = $result->fetch_assoc()) { ?>
-                        <tr>
-                            <td><?= $row['board_id'] ?></td>
-                            <td>
-                                <a href="../board/view.php?id=<?= $row['board_id'] ?>">
-                                    <?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?>
-                                    [<?= $row['comment_count'] ?>]
-                                </a>
-                            </td>
-                            <td>
-                                <?= htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8') ?>
-                                <?php if (!empty($row['ip'])) {
+                            <tr>
+                                <td><?= $row['board_id'] ?></td>
+                                <td>
+                                    <a href="../board/view.php?id=<?= $row['board_id'] ?>">
+                                        <?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?>
+                                        [<?= $row['comment_count'] ?>]
+                                    </a>
+                                </td>
+                                <td>
+                                    <?= htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8') ?>
+                                    <?php if (!empty($row['ip'])) {
                                         $mask_ip = mask_ip($row['ip']);
                                         if (!empty($mask_ip)) {
                                             echo "($mask_ip)";
                                         }
                                     } ?>
-                            </td>
-                            <td><?= $row['created_at'] ?></td>
-                            <td><?= $row['board_views'] ?></td>
-                            <td><?= $row['recommend_up'] ?></td>
-                        </tr>
+                                </td>
+                                <td><?= $row['created_at'] ?></td>
+                                <td><?= $row['board_views'] ?></td>
+                                <td><?= $row['recommend_up'] ?></td>
+                            </tr>
                         <?php } ?>
                     </tbody>
                 </table>
@@ -153,22 +153,22 @@ $e_page = min($total_page, $s_page + $page_num - 1);
             <div class="paging_wrap">
                 <div class="paging_box">
                     <?php if ($page > 1) { ?>
-                    <a href="index.php?page=<?= $page - 1 ?>">이전</a>
+                        <a href="index.php?page=<?= $page - 1 ?>">이전</a>
                     <?php } else { ?>
-                    <span>이전</span>
+                        <span>이전</span>
                     <?php } ?>
                     <?php for ($i = $s_page; $i <= $e_page; $i++) { ?>
-                    <?php if ($i == $page) { ?>
-                    <em><?= $i ?></em>
-                    <?php } else { ?>
-                    <a href="index.php?page=<?= $i ?>"><?= $i ?></a>
-                    <?php } ?>
+                        <?php if ($i == $page) { ?>
+                            <em><?= $i ?></em>
+                        <?php } else { ?>
+                            <a href="index.php?page=<?= $i ?>"><?= $i ?></a>
+                        <?php } ?>
                     <?php } ?>
 
                     <?php if ($page < $total_page) { ?>
-                    <a href="index.php?page=<?= $page + 1 ?>">다음</a>
+                        <a href="index.php?page=<?= $page + 1 ?>">다음</a>
                     <?php } else { ?>
-                    <span>다음</span>
+                        <span>다음</span>
                     <?php } ?>
                 </div>
             </div>
