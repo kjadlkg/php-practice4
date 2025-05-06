@@ -81,7 +81,7 @@ $e_page = min($total_page, $s_page + $page_num - 1);
     <main>
         <div>
             <form method="GET" action="../search/search.php">
-                <input type="text" class="search" name="search" placeholder="제목+내용 검색">
+                <input type="text" class="main_search" name="search" placeholder="제목+내용 검색">
                 <button type="submit" class="btn btn_blue">검색</button>
             </form>
         </div>

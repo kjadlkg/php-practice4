@@ -16,6 +16,15 @@
   background-position: -166px -275px;
 }
 
+.btn_listdel {
+  position: absolute;
+  top: -5px;
+  right: 7px;
+  width: 13px;
+  height: 13px;
+  background-position: -182px -911px;
+}
+
 body {
   overflow-y: auto;
   min-width: 1200px;
@@ -320,6 +329,22 @@ body {
   padding-top: 12px;
 }
 
+.option_sort.mypage {
+  margin: 9px 0 9px 3px;
+  font-size: 0;
+}
+
+.option_sort.mypage .select_arraybox {
+  min-width: 137px;
+  width: auto;
+  height: 26px;
+  line-height: 26px;
+}
+
+.option_sort.mypage ~ .content_listbox li:first-child {
+  border-top: 1px solid #ddd;
+}
+
 .search {
   width: 300px;
   height: 29px;
@@ -391,4 +416,8 @@ body {
   width: 803px;
   padding-left: 33px;
   padding-top: 32px;
+}
+
+.wrap_right > section {
+  min-height: 600px;
 }
