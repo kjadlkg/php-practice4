@@ -26,11 +26,6 @@
   float: left;
 }
 
-.area_links ul {
-  overflow: hidden;
-  line-height: 17px;
-}
-
 .area_links li::before {
   content: "|";
   color: #ccc;
@@ -44,6 +39,20 @@
   content: "";
   font-size: 0;
   padding: 0 12px 0 0;
+}
+
+.area_links ul {
+  overflow: visible;
+  line-height: 17px;
+}
+
+.area_links .user_data_list > li {
+  float: none;
+  line-height: 25px;
+}
+
+.area_links .user_data_list > li::before {
+  display: none;
 }
 
 .area_nick .btn_user_data {

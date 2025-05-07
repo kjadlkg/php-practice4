@@ -50,7 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../css/component.css">
     <link rel="stylesheet" href="../css/contents.css">
     <link rel="stylesheet" href="../css/page/login.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -86,19 +85,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </section>
             </div>
         </main>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-            $(function () {
-                $('form').on('submit', function (e) {
-                    const pw = $('#pw').val().trim();
+        $(function() {
+            $('form').on('submit', function(e) {
+                const pw = $('#pw').val().trim();
 
-                    if (pw === '') {
-                        alert("비밀번호를 입력해주세요.");
-                        e.preventDefault();
-                        $('#pw').focus();
-                        return;
-                    }
-                });
-            })
+                if (pw === '') {
+                    alert("비밀번호를 입력해주세요.");
+                    e.preventDefault();
+                    $('#pw').focus();
+                    return;
+                }
+            });
+        })
         </script>
         <footer class="footer">
             <div class="info_policy">

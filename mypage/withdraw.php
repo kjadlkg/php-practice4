@@ -2,7 +2,7 @@
 session_start();
 include "../db.php";
 
-if (!isset($_SESSION['id'])) {
+if (!isset($_SESSION['id'], $_SESSION['name'])) {
     echo "<script>alert('로그인이 필요합니다.'); location.href='../member/login/login.php';</script>";
     exit;
 }
@@ -44,7 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="../css/component.css">
     <link rel="stylesheet" href="../css/contents.css">
     <link rel="stylesheet" href="../css/page/login.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
@@ -119,15 +118,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </article>
             </div>
         </main>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-            $(function () {
-                $('form').on('submit', function (e) {
-                    if (!$('#term_agree').prop('checked')) {
-                        alert("탈퇴 동의에 체크 해주시길 바랍니다.");
-                        e.preventDefault();
-                    }
-                });
-            })
+        $(function() {
+            $('form').on('submit', function(e) {
+                if (!$('#term_agree').prop('checked')) {
+                    alert("탈퇴 동의에 체크 해주시길 바랍니다.");
+                    e.preventDefault();
+                }
+            });
+        })
         </script>
         <footer class="footer">
             <div class="info_policy">

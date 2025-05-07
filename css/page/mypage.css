@@ -13,7 +13,7 @@
   float: left;
   width: 29px;
   height: 29px;
-  background-position: -166px -275px;
+  /* background-position: -166px -275px; */
 }
 
 .btn_listdel {
@@ -22,7 +22,7 @@
   right: 7px;
   width: 13px;
   height: 13px;
-  background-position: -182px -911px;
+  /* background-position: -182px -911px;; */
 }
 
 body {
@@ -318,6 +318,12 @@ body {
   padding-top: 40px;
 }
 
+.mypage_wrap .mark {
+  background: #fff200;
+  color: #333;
+  padding: 1px;
+}
+
 .mypage_wrap .bottom_paging_box {
   padding: 37px 0 10px;
   margin: 0;
@@ -396,7 +402,20 @@ body {
 
 .user_data {
   left: inherit;
+  right: 0;
+  top: 25px;
   margin-top: 0;
+}
+
+.user_data_list li {
+  height: 25px;
+  padding: 0 9px;
+  line-height: 27px;
+  border-top: 1px solid #ccc;
+}
+
+.user_data_list li:first-child {
+  border-top: none;
 }
 
 .width1160 .copyright {

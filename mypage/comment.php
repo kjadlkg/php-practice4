@@ -2,24 +2,59 @@
 session_start();
 include "../db.php";
 
-if (!isset($_SESSION['id'])) {
-    echo "<script>alert('로그인이 필요합니다.'); history.back();</script>";
+if (!isset($_SESSION['id'], $_SESSION['name'])) {
+    echo "<script>alert('로그인이 필요합니다.'); location.href='../member/login/login.php';</script>";
     exit;
 }
 
 $id = $_SESSION['id'];
 $name = $_SESSION['name'];
+$keyword = $_GET['keyword'] ?? '';
 
-$stmt = $db->prepare("
-SELECT c.*,
-(SELECT board_title FROM board WHERE board_id = c.board_id) AS board_title
-FROM comment c
-WHERE comment_writer = ?
-ORDER BY comment_id DESC
-");
-$stmt->bind_param("s", $name);
+if (!empty($keyword)) {
+    $stmt = $db->prepare("
+    SELECT c.*, b.board_title
+    FROM comment c
+    JOIN board b ON c.board_id = b.board_id
+    WHERE c.comment_writer = ? && comment_content = ?
+    ORDER BY c.comment_id DESC
+    LIMIT 5
+    ");
+    $search_keyword = "%$keyword%";
+    $stmt->bind_param("ss", $name, $search_keyword);
+} else {
+    $stmt = $db->prepare("
+    SELECT c.*, b.board_title
+    FROM comment c
+    JOIN board b ON c.board_id = b.board_id
+    WHERE c.comment_writer = ?
+    ORDER BY c.comment_id DESC
+    LIMIT 5
+    ");
+    $stmt->bind_param("s", $name);
+}
 $stmt->execute();
 $comment_result = $stmt->get_result();
+$comments = [];
+
+while ($row = $comment_result->fetch_assoc()) {
+    $content = htmlspecialchars($row['comment_content'], ENT_QUOTES, 'UTF-8');
+    if (!empty($keyword)) {
+        $safe_keyword = htmlspecialchars($keyword, ENT_QUOTES, 'UTF-8');
+        $content = preg_replace(
+            '/' . preg_quote($safe_keyword, '/') . '/iu',
+            '<span class="mark">$0</span>',
+            $content
+        );
+    }
+
+    $comments[] = [
+        'board_id' => $row['board_id'],
+        'comment_content' => $content,
+        'created_at' => date("Y.m.d", strtotime($row['created_at'])),
+        'board_title' => htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8')
+    ];
+}
 $stmt->close();
 
 
@@ -76,11 +111,11 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                     <div class="area_links clear">
                         <ul class="fl clear">
                             <li class="area_nick">
-                                <a class="btn_user_data"><?= $name ?>님</a>
-                                <div class="user_data">
+                                <a href="javascript:;" class="btn_user_data"><?= $name ?>님</a>
+                                <div class="user_data" style="display: none;">
                                     <ul class="user_data_list">
-                                        <li><a>마이페이지</a></li>
-                                        <li><a>내 정보</a></li>
+                                        <li><a href="index.php">마이페이지</a></li>
+                                        <li><a href="info.php">내 정보</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -148,53 +183,53 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                                             <span class="greybox"></span>
                                         </div>
                                         <ul class="content_listbox">
-                                            <?php if ($comment_result->num_rows == 0): ?>
-                                                <p>작성한 글이 없습니다</p>
+                                            <?php if (empty($comments)): ?>
+                                            <p>작성한 댓글이 없습니다</p>
                                             <?php else: ?>
-                                                <?php while ($row = $comment_result->fetch_assoc()): ?>
-                                                    <li>
-                                                        <div class="content">
-                                                            <div class="board_linkbox">
-                                                                <a class="link"
-                                                                    href="../board/view.php?id=<?= htmlspecialchars($row['board_id']) ?>"
-                                                                    target="_blank">
-                                                                    <p class="text">
-                                                                        <?= htmlspecialchars($row['comment_content'], ENT_QUOTES, 'UTF-8'); ?>
-                                                                    </p>
-                                                                    <div class="datebox">
-                                                                        <span><?= date("Y.m.d", strtotime($row['created_at'])) ?></span>
-                                                                    </div>
-                                                                    <div class="boardtitle">
-                                                                        <strong>
-                                                                            <?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?>
-                                                                        </strong>
-                                                                    </div>
-                                                                </a>
-                                                                <button type="button" class="btn_delete btn_listdel">
-                                                                    <span>삭제</span>
-                                                                </button>
+                                            <?php foreach ($comments as $comment): ?>
+                                            <li>
+                                                <div class="content">
+                                                    <div class="board_linkbox">
+                                                        <a class="link"
+                                                            href="../board/view.php?id=<?= $comment['board_id'] ?>"
+                                                            target="_blank">
+                                                            <p class="text">
+                                                                <?= $comment['comment_content'] ?>
+                                                            </p>
+                                                            <div class="datebox">
+                                                                <span><?= $comment['created_at'] ?></span>
                                                             </div>
-                                                        </div>
-                                                    </li>
-                                                <?php endwhile; ?>
+                                                            <div class="boardtitle">
+                                                                <strong>
+                                                                    <?= $comment['board_title'] ?>
+                                                                </strong>
+                                                            </div>
+                                                        </a>
+                                                        <button type="button" class="btn_delete btn_listdel">
+                                                            <span>삭제</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <?php endforeach; ?>
                                             <?php endif; ?>
                                         </ul>
                                         <div class="bottom_paging_box">
                                             <?php if ($page > 1): ?>
-                                                <a href="comment.php?page=<?= $page - 1 ?>">이전</a>
+                                            <a href="comment.php?page=<?= $page - 1 ?>">이전</a>
                                             <?php else: ?>
                                             <?php endif; ?>
 
                                             <?php for ($i = $s_page; $i <= $e_page; $i++): ?>
-                                                <?php if ($i == $page): ?>
-                                                    <em><?= $i ?></em>
-                                                <?php else: ?>
-                                                    <a href="comment.php?page=<?= $i ?>"><?= $i ?></a>
-                                                <?php endif; ?>
+                                            <?php if ($i == $page): ?>
+                                            <em><?= $i ?></em>
+                                            <?php else: ?>
+                                            <a href="comment.php?page=<?= $i ?>"><?= $i ?></a>
+                                            <?php endif; ?>
                                             <?php endfor; ?>
 
                                             <?php if ($page < $total_page): ?>
-                                                <a href="comment.php?page=<?= $page + 1 ?>">다음</a>
+                                            <a href="comment.php?page=<?= $page + 1 ?>">다음</a>
                                             <?php else: ?>
                                             <?php endif; ?>
                                         </div>
@@ -218,6 +253,35 @@ $e_page = min($total_page, $s_page + $page_num - 1);
             </main>
         </div>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(function() {
+        $('.btn_user_data').on('click', function(e) {
+            e.stopPropagation();
+            var $btn = $(this);
+            var $menu = $btn.siblings('.user_data');
+
+            $btn.toggleClass('on');
+
+            if ($btn.hasClass('on')) {
+                $menu.show();
+            } else {
+                $menu.hide();
+            }
+        });
+
+        // 외부 클릭 시 닫힘
+        $(document).on('click', function() {
+            $('.btn_user_data').removeClass('on');
+            $('.user_data').hide();
+        });
+
+        // 내부 클릭 시 닫힘 방지
+        $('.user_data').on('click', function(e) {
+            e.stopPropagation();
+        });
+    });
+    </script>
 </body>
 
 </html>

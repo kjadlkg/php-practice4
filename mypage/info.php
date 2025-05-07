@@ -2,7 +2,7 @@
 session_start();
 include "../db.php";
 
-if (!isset($_SESSION["id"])) {
+if (!isset($_SESSION['id'], $_SESSION['name'])) {
     echo "<script>alert('로그인이 필요합니다.'); location.href='../member/login/login.php';</script>";
     exit;
 }
@@ -106,32 +106,33 @@ if (!$user) {
                 </article>
             </div>
         </main>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-            $(function () {
-                $('form').on('submit', function (e) {
-                    const name = $('#name').val().trim();
-                    const pw = $('#pw').val().trim();
-                    const email = $('#email').val().trim();
+        $(function() {
+            $('form').on('submit', function(e) {
+                const name = $('#name').val().trim();
+                const pw = $('#pw').val().trim();
+                const email = $('#email').val().trim();
 
-                    if (name === '') {
-                        e.preventDefault();
-                        $('#name').focus();
-                        return;
-                    }
+                if (name === '') {
+                    e.preventDefault();
+                    $('#name').focus();
+                    return;
+                }
 
-                    if (pw === '') {
-                        e.preventDefault();
-                        $('#pw').focus();
-                        return;
-                    }
+                if (pw === '') {
+                    e.preventDefault();
+                    $('#pw').focus();
+                    return;
+                }
 
-                    if (email === '') {
-                        e.preventDefault();
-                        $('#email').focus();
-                        return;
-                    }
-                });
-            })
+                if (email === '') {
+                    e.preventDefault();
+                    $('#email').focus();
+                    return;
+                }
+            });
+        })
         </script>
         <footer class="footer">
             <div class="info_policy">
