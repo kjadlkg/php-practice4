@@ -6,14 +6,34 @@ header("Expires: 0");
 include "../db.php";
 include "../function.php";
 
-if (!isset($_SESSION["id"])) {
-    unset($_SESSION["name"]);
-}
 
 // paging
 $list_num = 10;
 $page_num = 10;
 
+$page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+
+// 전체 게시글 수
+$count_stmt = $db->prepare("SELECT COUNT(*) AS total FROM board");
+$count_stmt->execute();
+$count_result = $count_stmt->get_result();
+$total_rows = $count_result->fetch_assoc()['total'];
+$count_stmt->close();
+
+$total_page = max(1, ceil($total_rows / $list_num));
+
+if ($page > $total_page)
+    $page = $total_page;
+
+$start = max(0, ($page - 1) * $list_num);
+
+$total_block = ceil($total_page / $page_num);
+$now_block = ceil($page / $page_num);
+
+$s_page = max(1, ($now_block - 1) * $page_num + 1);
+$e_page = min($total_page, $s_page + $page_num - 1);
+
+// 게시글
 $page_stmt = $db->prepare("
 SELECT b.*,
 (SELECT COUNT(*) FROM comment WHERE board_id = b.board_id) AS comment_count
@@ -25,22 +45,6 @@ $page_stmt->bind_param("ii", $start, $list_num);
 $page_stmt->execute();
 $result = $page_stmt->get_result();
 $page_stmt->close();
-
-$count_stmt = $db->prepare("SELECT COUNT(*) AS total FROM board");
-$count_stmt->execute();
-$count_result = $count_stmt->get_result();
-$total_rows = $count_result->fetch_assoc()['total'];
-$count_stmt->close();
-
-$total_page = max(1, ceil($total_rows / $list_num));
-
-$page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
-$start = max(0, ($page - 1) * $list_num);
-
-$total_block = ceil($total_page / $page_num);
-$now_block = ceil($page / $page_num);
-$s_page = max(1, ($now_block - 1) * $page_num + 1);
-$e_page = min($total_page, $s_page + $page_num - 1);
 ?>
 
 <!DOCTYPE html>
@@ -152,29 +156,48 @@ $e_page = min($total_page, $s_page + $page_num - 1);
 
             <div class="paging_wrap">
                 <div class="paging_box">
-                    <?php if ($page > 1) { ?>
-                        <a href="index.php?page=<?= $page - 1 ?>">이전</a>
-                    <?php } else { ?>
-                        <span>이전</span>
-                    <?php } ?>
-                    <?php for ($i = $s_page; $i <= $e_page; $i++) { ?>
-                        <?php if ($i == $page) { ?>
-                            <em><?= $i ?></em>
-                        <?php } else { ?>
-                            <a href="index.php?page=<?= $i ?>"><?= $i ?></a>
-                        <?php } ?>
-                    <?php } ?>
+                    <?php if ($now_block > 1): ?>
+                        <a href="index.php?page=<?= $s_page - 1 ?>">이전블록</a>
+                    <?php else: ?>
+                    <?php endif; ?>
 
-                    <?php if ($page < $total_page) { ?>
+                    <?php if ($page > 1): ?>
+                        <a href="index.php?page=<?= $page - 1 ?>">이전</a>
+                    <?php else: ?>
+                    <?php endif; ?>
+
+                    <?php for ($i = $s_page; $i <= $e_page; $i++): ?>
+                        <?php if ($i == $page): ?>
+                            <em><?= $i ?></em>
+                        <?php else: ?>
+                            <a href="index.php?page=<?= $i ?>"><?= $i ?></a>
+                        <?php endif; ?>
+                    <?php endfor; ?>
+
+                    <?php if ($page < $total_page): ?>
                         <a href="index.php?page=<?= $page + 1 ?>">다음</a>
-                    <?php } else { ?>
-                        <span>다음</span>
-                    <?php } ?>
+                    <?php else: ?>
+                    <?php endif; ?>
+
+                    <?php if ($now_block < $total_block): ?>
+                        <a href="index.php?page=<?= $e_page + 1 ?>">다음블록</a>
+                    <?php else: ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </article>
     </main>
-    <footer></footer>
+    <footer class="footer">
+        <div class="info_policy">
+            <a href="">회사소개</a>
+            <a href="">제휴안내</a>
+            <a href="">광고안내</a>
+            <a href="">이용약관</a>
+            <a href="">개인정보처리방침</a>
+            <a href="">청소년보호정책</a>
+        </div>
+        <div class="copyright">Copyright ⓒ</div>
+    </footer>
 </body>
 
 </html>

@@ -60,6 +60,30 @@ $stmt->close();
 $list_num = 10;
 $page_num = 10;
 
+$page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+
+// 전체 게시글 수
+$count_stmt = $db->prepare("SELECT COUNT(*) AS total FROM board WHERE board_writer = ?");
+$count_stmt->bind_param("s", $name);
+$count_stmt->execute();
+$count_result = $count_stmt->get_result();
+$total_rows = $count_result->fetch_assoc()['total'];
+$count_stmt->close();
+
+$total_page = max(1, ceil($total_rows / $list_num));
+
+if ($page > $total_page)
+    $page = $total_page;
+
+$start = max(0, ($page - 1) * $list_num);
+
+$total_block = ceil($total_page / $page_num);
+$now_block = ceil($page / $page_num);
+
+$s_page = max(1, ($now_block - 1) * $page_num + 1);
+$e_page = min($total_page, $s_page + $page_num - 1);
+
+// 게시글
 $page_stmt = $db->prepare("
 SELECT b.*,
 (SELECT COUNT(*) FROM comment WHERE board_id = b.board_id) AS comment_count
@@ -71,23 +95,6 @@ $page_stmt->bind_param("ii", $start, $list_num);
 $page_stmt->execute();
 $result = $page_stmt->get_result();
 $page_stmt->close();
-
-$count_stmt = $db->prepare("SELECT COUNT(*) AS total FROM board WHERE board_writer = ?");
-$count_stmt->bind_param("s", $name);
-$count_stmt->execute();
-$count_result = $count_stmt->get_result();
-$total_rows = $count_result->fetch_assoc()['total'];
-$count_stmt->close();
-
-$total_page = max(1, ceil($total_rows / $list_num));
-
-$page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
-$start = max(0, ($page - 1) * $list_num);
-
-$total_block = ceil($total_page / $page_num);
-$now_block = ceil($page / $page_num);
-$s_page = max(1, ($now_block - 1) * $page_num + 1);
-$e_page = min($total_page, $s_page + $page_num - 1);
 ?>
 
 <!DOCTYPE html>
@@ -189,52 +196,52 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                                         </div>
                                         <ul class="content_listbox">
                                             <?php if (empty($posts)): ?>
-                                            <p>작성한 글이 없습니다</p>
+                                                <p>작성한 글이 없습니다</p>
                                             <?php else: ?>
-                                            <?php foreach ($posts as $post): ?>
-                                            <li>
-                                                <div class="content">
-                                                    <div class="board_linkbox">
-                                                        <a class="link"
-                                                            href="../board/view.php?id=<?= $post['board_id'] ?>"
-                                                            target="_blank">
-                                                            <div class="boardtitle">
-                                                                <strong>
-                                                                    <?= $post['board_title'] ?>
-                                                                    <span
-                                                                        class="comment_num">[<?= $post['comment_count'] ?>]</span>
+                                                <?php foreach ($posts as $post): ?>
+                                                    <li>
+                                                        <div class="content">
+                                                            <div class="board_linkbox">
+                                                                <a class="link"
+                                                                    href="../board/view.php?id=<?= $post['board_id'] ?>"
+                                                                    target="_blank">
+                                                                    <div class="boardtitle">
+                                                                        <strong>
+                                                                            <?= $post['board_title'] ?>
+                                                                            <span
+                                                                                class="comment_num">[<?= $post['comment_count'] ?>]</span>
+                                                                    </div>
+                                                                    <div class="datebox">
+                                                                        <span class="date">
+                                                                            <?= $post['created_at'] ?>
+                                                                        </span>
+                                                                    </div>
+                                                                </a>
+                                                                <button type="button" class="btn_delete btn_listdel">
+                                                                    <span>삭제</span>
+                                                                </button>
                                                             </div>
-                                                            <div class="datebox">
-                                                                <span class="date">
-                                                                    <?= $post['created_at'] ?>
-                                                                </span>
-                                                            </div>
-                                                        </a>
-                                                        <button type="button" class="btn_delete btn_listdel">
-                                                            <span>삭제</span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <?php endforeach; ?>
+                                                        </div>
+                                                    </li>
+                                                <?php endforeach; ?>
                                             <?php endif; ?>
                                         </ul>
                                         <div class="bottom_paging_box">
-                                            <?php if ($page > 1): ?>
-                                            <a href="posting.php?page=<?= $page - 1 ?>">이전</a>
+                                            <?php if ($now_block > 1): ?>
+                                                <a href="posting.php?page=<?= $s_page - 1 ?>">이전블록</a>
                                             <?php else: ?>
                                             <?php endif; ?>
 
                                             <?php for ($i = $s_page; $i <= $e_page; $i++): ?>
-                                            <?php if ($i == $page): ?>
-                                            <em><?= $i ?></em>
-                                            <?php else: ?>
-                                            <a href="posting.php?page=<?= $i ?>"><?= $i ?></a>
-                                            <?php endif; ?>
+                                                <?php if ($i == $page): ?>
+                                                    <em><?= $i ?></em>
+                                                <?php else: ?>
+                                                    <a href="posting.php?page=<?= $i ?>"><?= $i ?></a>
+                                                <?php endif; ?>
                                             <?php endfor; ?>
 
-                                            <?php if ($page < $total_page): ?>
-                                            <a href="posting.php?page=<?= $page + 1 ?>">다음</a>
+                                            <?php if ($now_block < $total_block): ?>
+                                                <a href="posting.php?page=<?= $e_page + 1 ?>">다음블록</a>
                                             <?php else: ?>
                                             <?php endif; ?>
                                         </div>
@@ -260,32 +267,32 @@ $e_page = min($total_page, $s_page + $page_num - 1);
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-    $(function() {
-        $('.btn_user_data').on('click', function(e) {
-            e.stopPropagation();
-            var $btn = $(this);
-            var $menu = $btn.siblings('.user_data');
+        $(function () {
+            $('.btn_user_data').on('click', function (e) {
+                e.stopPropagation();
+                var $btn = $(this);
+                var $menu = $btn.siblings('.user_data');
 
-            $btn.toggleClass('on');
+                $btn.toggleClass('on');
 
-            if ($btn.hasClass('on')) {
-                $menu.show();
-            } else {
-                $menu.hide();
-            }
+                if ($btn.hasClass('on')) {
+                    $menu.show();
+                } else {
+                    $menu.hide();
+                }
+            });
+
+            // 외부 클릭 시 닫힘
+            $(document).on('click', function () {
+                $('.btn_user_data').removeClass('on');
+                $('.user_data').hide();
+            });
+
+            // 내부 클릭 시 닫힘 방지
+            $('.user_data').on('click', function (e) {
+                e.stopPropagation();
+            });
         });
-
-        // 외부 클릭 시 닫힘
-        $(document).on('click', function() {
-            $('.btn_user_data').removeClass('on');
-            $('.user_data').hide();
-        });
-
-        // 내부 클릭 시 닫힘 방지
-        $('.user_data').on('click', function(e) {
-            e.stopPropagation();
-        });
-    });
     </script>
 </body>
 

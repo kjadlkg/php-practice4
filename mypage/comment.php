@@ -62,12 +62,9 @@ $stmt->close();
 $list_num = 10;
 $page_num = 10;
 
-$page_stmt = $db->prepare("SELECT * FROM comment ORDER BY comment_id DESC LIMIT ?, ?");
-$page_stmt->bind_param("ii", $start, $list_num);
-$page_stmt->execute();
-$result = $page_stmt->get_result();
-$page_stmt->close();
+$page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
 
+// 전체 댓글 수
 $count_stmt = $db->prepare("SELECT COUNT(*) AS total FROM comment WHERE comment_writer = ?");
 $count_stmt->bind_param("s", $name);
 $count_stmt->execute();
@@ -77,13 +74,23 @@ $count_stmt->close();
 
 $total_page = max(1, ceil($total_rows / $list_num));
 
-$page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+if ($page > $total_page)
+    $page = $total_page;
+
 $start = max(0, ($page - 1) * $list_num);
 
 $total_block = ceil($total_page / $page_num);
 $now_block = ceil($page / $page_num);
+
 $s_page = max(1, ($now_block - 1) * $page_num + 1);
 $e_page = min($total_page, $s_page + $page_num - 1);
+
+// 댓글
+$page_stmt = $db->prepare("SELECT * FROM comment ORDER BY comment_id DESC LIMIT ?, ?");
+$page_stmt->bind_param("ii", $start, $list_num);
+$page_stmt->execute();
+$result = $page_stmt->get_result();
+$page_stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -215,8 +222,8 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                                             <?php endif; ?>
                                         </ul>
                                         <div class="bottom_paging_box">
-                                            <?php if ($page > 1): ?>
-                                            <a href="comment.php?page=<?= $page - 1 ?>">이전</a>
+                                            <?php if ($now_block > 1): ?>
+                                            <a href="comment.php?page=<?= $s_page - 1 ?>">이전블록</a>
                                             <?php else: ?>
                                             <?php endif; ?>
 
@@ -228,8 +235,8 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                                             <?php endif; ?>
                                             <?php endfor; ?>
 
-                                            <?php if ($page < $total_page): ?>
-                                            <a href="comment.php?page=<?= $page + 1 ?>">다음</a>
+                                            <?php if ($now_block < $total_block): ?>
+                                            <a href="comment.php?page=<?= $e_page + 1 ?>">다음블록</a>
                                             <?php else: ?>
                                             <?php endif; ?>
                                         </div>
