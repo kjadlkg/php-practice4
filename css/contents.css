@@ -1,3 +1,33 @@
+.array_tab {
+  display: table-cell;
+  width: 1%;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.array_tab.left_box {
+  font-size: 0;
+}
+
+.array_tab button {
+  width: 82px;
+  height: 32px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: 2px;
+  background: #fff;
+  padding-bottom: 2px;
+}
+
+.array_tab button.on {
+  border: 1px solid #29367c;
+  background: #3b4890;
+  color: #fff;
+  text-shadow: 0 -1px #1d2761;
+}
+
 .board_list {
   width: 100%;
   border-bottom: 1px solid #29367c;
@@ -11,6 +41,71 @@
 
 .board_list td {
   padding: 0px 4px;
+  height: 25px;
+}
+
+.board_list .board_num,
+.board_list .board_date,
+.board_list .board_count,
+.board_list .board_rocommend {
+  font-family: tahoma, sans-serif;
+  font-size: 11px;
+  padding-top: 1px;
+}
+
+.board_title {
+  position: relative;
+  text-align: left;
+  font-size: 13px;
+}
+
+.board_title a {
+  display: inline-block;
+  max-width: 82%;
+  vertical-align: middle;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-top: 1px;
+  line-height: 100%;
+}
+
+.board_title a.comment_numbox {
+  width: auto;
+  vertical-align: text-bottom;
+  letter-spacing: -0.05em;
+}
+
+.board_title a:visited {
+  color: #770888;
+}
+
+.board_writer {
+  cursor: pointer;
+}
+
+.bottom_movebox {
+  display: inline-block;
+  position: absolute;
+  top: 11px;
+  right: 0;
+}
+
+.bottom_paging_wrap {
+  display: inline-block;
+  width: 100%;
+  margin-top: 20px;
+  padding: 0 121px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.btn_box {
+  width: 1%;
+  display: table-cell;
+  white-space: nowrap;
+  font-size: 0;
+  vertical-align: top;
 }
 
 .btn_box.write {
@@ -18,13 +113,89 @@
   margin-top: 26px;
 }
 
+.btn_shortmove {
+  padding: 0 9px 0 10px;
+  height: 26px;
+  line-height: 24px;
+  font-size: 14px;
+  color: #333;
+  margin-left: 7px;
+  vertical-align: 0;
+}
+
+.btn_write {
+  width: 21px;
+  height: 21px;
+  display: inline-block;
+  line-height: 0;
+}
+
+.btn_write.text {
+  width: 66px;
+  box-sizing: border-box;
+  padding: 0 6px;
+  border: 1px solid #29367c;
+  background: #fff;
+  font-weight: bold;
+  font-size: 12px;
+  color: #29367c;
+  line-height: 19px;
+  vertical-align: top;
+  letter-spacing: -0.025em;
+  text-align: center;
+}
+
+.center_box {
+  position: relative;
+  display: table-cell;
+  line-height: 0;
+}
+
+.comment_num {
+  font-size: 12px;
+  color: #999;
+}
+
 .input_box {
   position: relative;
 }
 
+.input_info {
+  float: left;
+  width: 230px;
+  margin: 10px 10px 0 0;
+}
+
+.input_text {
+  width: 204px;
+  height: 33px;
+  padding: 0 12px;
+  line-height: 35px;
+  border: 1px solid #cecdce;
+}
+
+.input_text,
+.input_box label {
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+    "Malgun Gothic", "맑은 고딕", arial, 굴림, Gulim, sans-serif;
+  color: #999;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.input_write_title {
+  float: left;
+  width: 728px;
+  margin: 10px 0 0 0;
+}
+
+.input_write_title .input_text {
+  width: 702px;
+}
+
 .list_array_option {
   display: table;
-  width: 100%;
+  width: 840px;
   height: 32px;
   margin: 15px 0 5px;
 }
@@ -32,6 +203,17 @@
 .list_array_option .right_box {
   position: relative;
   z-index: 1;
+}
+
+.list_bottom_btnbox {
+  margin-top: 12px;
+}
+
+.list_bottom_btnbox::before {
+  clear: both;
+  display: block;
+  visibility: hidden;
+  content: "";
 }
 
 .nonmember_content {
@@ -77,15 +259,6 @@
   border: 1px solid #cecdce;
 }
 
-.paging_wrap {
-  display: inline-block;
-  width: 100%;
-  margin-top: 20px;
-  padding: 0 121px;
-  position: relative;
-  box-sizing: border-box;
-}
-
 .password {
   width: 164px;
   height: 37px;
@@ -95,50 +268,13 @@
   border: 1px solid #cecdce;
 }
 
-.input_box {
-  position: relative;
-}
-
-.input_info {
-  float: left;
-  width: 230px;
-  margin: 10px 10px 0 0;
-}
-
-.input_text {
-  width: 204px;
-  height: 33px;
-  padding: 0 12px;
-  line-height: 35px;
-  border: 1px solid #cecdce;
-}
-
-.input_text,
-.input_box label {
-  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-    "Malgun Gothic", "맑은 고딕", arial, 굴림, Gulim, sans-serif;
-  color: #999;
-  font-size: 13px;
-  font-weight: bold;
-}
-
-.input_write_title {
-  float: left;
-  width: 728px;
-  margin: 10px 0 0 0;
-}
-
-.input_write_title .input_text {
-  width: 702px;
-}
-
 .right_box {
   float: right;
-  min-width: 9px;
+  min-width: 90px;
   height: 21px;
   width: max-content;
   vertical-align: top;
-  /* padding-top: 11px; */
+  padding-top: 11px;
 }
 
 td {

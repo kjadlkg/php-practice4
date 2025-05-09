@@ -75,6 +75,10 @@
   vertical-align: top;
 }
 
+.login_option a:first-child::before {
+  display: none;
+}
+
 .login_wrap .btn_box {
   margin-top: 30px;
 }
