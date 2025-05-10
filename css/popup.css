@@ -1,3 +1,20 @@
+.btn_notice_alldel,
+.btn_notice_setting {
+  outline: none;
+  color: #333;
+}
+
+.btn_notice_setting {
+  margin-right: 11px;
+}
+
+.btn_notice_setting::before {
+  content: "|";
+  color: #ccc;
+  line-height: 30px;
+  margin: 0 8px 0 3px;
+}
+
 .btn_pop_layer_close {
   line-height: 0;
   /* font-size: 0; */
@@ -16,6 +33,24 @@
 
 .empty_page_wrap .pop_wrap {
   position: static;
+}
+
+.notice_list {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  width: 390px;
+  height: 179px;
+  padding: 11px 14px 7px;
+  line-height: 23px;
+}
+
+.notice_list_wrap,
+.notice_setting {
+  width: 418px;
+}
+
+.notice_setting .pop_inner {
+  padding: 13px 0 11px 14px;
 }
 
 .pop_content {
@@ -87,11 +122,27 @@
   width: 286px;
 }
 
+.pop_inner_text {
+  color: #333;
+}
+
 .pop_wrap {
   position: absolute;
   background: #fff;
   text-align: left;
   z-index: 4001;
+}
+
+.pop_wrap .btn_box {
+  padding: 14px 0 20px;
+  border-top: 1px solid #cecdce;
+  text-align: center;
+}
+
+.pop_wrap .notice_setting .btn_box {
+  float: none;
+  border-top: 0;
+  padding: 0 0 22px;
 }
 
 .pop_wrap .robot .btn_box {
@@ -108,11 +159,44 @@
   height: 36px;
   padding: 0 20px 0 13px;
   line-height: 35px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #ccc;
   font-size: 14px;
   color: #29367c;
 }
 
 .pop_wrap.type5 {
   border: 3px solid #29367c;
+}
+
+.setting_element_box {
+  position: relative;
+  padding: 0 85px 0 0;
+  color: #333;
+}
+
+.setting_element_box .pop_inner_text {
+  line-height: 30px;
+}
+
+.setting_element_box .setting_onoff {
+  top: 16px;
+  right: 16px;
+}
+
+.setting_element::after {
+  content: "|";
+  color: #ccc;
+  line-height: 30px;
+  margin: 0 9px 0 7px;
+}
+
+.setting_onoff {
+  position: absolute;
+  bottom: 9px;
+  right: 14px;
+}
+
+.setting_onoff button {
+  width: 66px;
+  height: 23px;
 }

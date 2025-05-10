@@ -1,3 +1,18 @@
+.array_num {
+  display: table-cell;
+}
+
+.array_num a {
+  display: inline-block;
+  width: 41px;
+  padding: 0 5px;
+}
+
+.array_num .select_area {
+  padding: 0;
+  width: 51px;
+}
+
 .array_tab {
   display: table-cell;
   width: 1%;
@@ -203,6 +218,10 @@
 .list_array_option .right_box {
   position: relative;
   z-index: 1;
+}
+
+.list_array_option .right_box .array_num .option_box li > a {
+  padding: 0;
 }
 
 .list_bottom_btnbox {

@@ -8,10 +8,9 @@ include "../function.php";
 
 
 // paging
-$list_num = 10;
 $page_num = 10;
-
 $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+$list_num = isset($_GET['list_num']) ? max(10, (int) $_GET['list_num']) : 10;
 
 // 전체 게시글 수
 $count_stmt = $db->prepare("SELECT COUNT(*) AS total FROM board");
@@ -86,8 +85,8 @@ $board_stmt->close();
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/component.css">
     <link rel="stylesheet" href="../css/contents.css">
-    <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/popup.css">
+    <link rel="stylesheet" href="../css/page/main.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -164,7 +163,7 @@ $board_stmt->close();
                             </div>
                             <div class="center_box"></div>
                             <div class="right_box">
-                                <div class="fr clear">
+                                <div class="output_array clear">
                                     <div class="select_box array_num">
                                         <select>
                                             <option value="30">30개</option>
@@ -172,12 +171,17 @@ $board_stmt->close();
                                             <option value="100">100개</option>
                                         </select>
                                         <div class="select_area">
-                                            <a href="#" onclick=""></a>
+                                            <a href="#" onclick="$('.option_box').toggle();">
+                                                <?= $list_num ?>개
+                                                <span class="blind">페이지당 게시물 노출 옵션</span>
+                                                <em>▼</em>
+                                            </a>
                                         </div>
-                                        <ul>
-                                            <li></li>
-                                            <li></li>
-                                            <li></li>
+                                        <ul class="option_box" style="left: 0; top: 20px; display: none;">
+                                            <li><a>10개</a></li>
+                                            <li><a>30개</a></li>
+                                            <li><a>50개</a></li>
+                                            <li><a>100개</a></li>
                                         </ul>
                                     </div>
                                     <div class="btn_box">
@@ -298,7 +302,8 @@ $board_stmt->close();
                                 </div>
                                 <button type="button" class="btn_pop_layer_close"
                                     onclick="$('.move_page_layer').hide();">
-                                    <span>레이어 닫기</span>
+                                    <span class="blind">레이어 닫기</span>
+                                    <em>X</em>
                                 </button>
                             </div>
                         </div>
@@ -306,21 +311,121 @@ $board_stmt->close();
                 </section>
                 <section class="right_content">
                     <h2 class="blind">오른쪽 컨텐츠 영역</h2>
+                    <script type="text/javascript" src="../js/alarm.js"></script>
                     <div class="login_box">
                         <div class="user_info">
-                            <strong onclick="location.href='../member/login/login.php'" style="cursor: pointer">로그인
-                                해주세요</strong>
+                            <?php if (!isset($_SESSION['id'])): ?>
+                                <a href="../member/login/login.php">
+                                    <strong>로그인 해주세요</strong>
+                                </a>
+                            <?php else: ?>
+                                <a href="../mypage/index.php" class="fl">
+                                    <strong class="nickname"><em><?= $_SESSION['name'] ?></em></strong>님
+                                </a>
+                                <a href="../mypage/index.php">
+                                    <strong>></strong>
+                                </a>
+                                <div class="logout_box fr">
+                                    <button type="button" class="btn_logout"
+                                        onclick="location.href='../member/login/logout.php'">로그아웃</button>
+                                </div>
+                            <?php endif; ?>
                         </div>
                         <div class="user_option">
+                            <?php if (!isset($_SESSION['id'])): ?>
+                                <span>
+                                    <a href="javascript:;" onclick="alert('로그인이 필요합니다.');">마이페이지</a>
+                                </span>
+                                <span>
+                                    <a href="javascript:;" onclick="alert('로그인이 필요합니다.');">즐겨찾기</a>
+                                </span>
+                            <?php else: ?>
+                                <span>
+                                    <a href="javascript:;" onclick="window.open('../mypage/index.php');">마이페이지</a>
+                                </span>
+                                <span>
+                                    <a href="javascript:;" onclick="">즐겨찾기</a>
+                                </span>
+                            <?php endif; ?>
                             <span>
-                                <a href="javascript:;" onclick="alert('로그인이 필요합니다.');">마이페이지</a>
+                                <a href="javascript:;" onclick="$('#alarmList').show();">알림</a>
                             </span>
-                            <span>
-                                <a href="javascript:;" onclick="alert('로그인이 필요합니다.');">즐겨찾기</a>
-                            </span>
-                            <span>
-                                <a>알림</a>
-                            </span>
+                        </div>
+                        <div id="alarmConf" class="pop_wrap type3" style="right: -1px; top: 79px; display: none;">
+                            <div class="pop_content notice_setting">
+                                <div class="pop_head">
+                                    <h3>알림 설정</h3>
+                                </div>
+                                <div class="pop_inner">
+                                    <div class="setting_element_box">
+                                        <p class="pop_inner_text">
+                                            <span class="setting_element">
+                                                <b>전체 알림</b>
+                                            </span>
+                                            알림 팝업 ON/OFF
+                                        </p>
+                                        <div class="setting_onoff popup">
+                                            <button type="button" class="on" onclick="alarmConfToggle('popup');">
+                                                <span>on</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="setting_element_box">
+                                        <p class="pop_inner_text">
+                                            <span class="setting_element">
+                                                <b>└ 댓글 알림</b>
+                                            </span>
+                                            내 글에 댓글이 달린 경우 알려줍니다
+                                        </p>
+                                        <div class="setting_onoff reply">
+                                            <button type="button" class="on" onclick="alarmConfToggle('reply');">
+                                                <span>on</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="setting_element_box">
+                                        <p class="pop_inner_text">
+                                            <span class="setting_element">
+                                                <b>└ 답글 알림</b>
+                                            </span>
+                                            내 글에 답글이 달린 경우 알려줍니다
+                                        </p>
+                                        <div class="setting_onoff reReply">
+                                            <button type="button" class="on" onclick="alarmConfToggle('reReply');">
+                                                <span>on</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="btn_box">
+                                    <button type="button" class="btn btn_grey small"
+                                        onclick="$('#alarmConf').hide();">닫기</button>
+                                    <button type="button" class="btn btn_blue small"
+                                        onclick="alarmConfSave()">저장</button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn_pop_layer_close" onclick="$('#alarmConf').hide();">
+                                <span class="blind">레이어 닫기</span>
+                                <em>X</em>
+                            </button>
+                        </div>
+                        <div id="alarmList" class="pop_wrap type3" style="right: -1px; top: 79px; display: none;">
+                            <div class="pop_content notice_list_wrap">
+                                <div class="pop_head clear">
+                                    <h3 class="fl">알림</h3>
+                                    <div class="fr">
+                                        <button type="button" class="btn_notice_alldel" onclick="">전체삭제</button>
+                                        <button type="button" class="btn_notice_setting"
+                                            onclick="$('#alarmList').hide(); $('#alarmConf').show();">설정</button>
+                                    </div>
+                                </div>
+                                <ul class="notice_list">
+                                </ul>
+                            </div>
+                            <button type="button" class="btn_pop_layer_close" onclick="$('#alarmlist').hide();">
+                                <span class="blind">레이어 닫기</span>
+                                <em>X</em>
+                            </button>
                         </div>
                     </div>
                 </section>
@@ -351,6 +456,19 @@ $board_stmt->close();
             <div class="copyright">Copyright ⓒ</div>
         </footer>
     </div>
+    <script>
+        $(function () {
+            $('.option_box li a').on('click', function () {
+                const selectNum = $(this).text().replace('개', '').trim();
+                const url = new URLSearchParams(window.location.search);
+
+                url.set('list_num', selectNum);
+                url.set('page', 1);
+
+                window.location.search = url.toString();
+            });
+        });
+    </script>
 </body>
 
 </html>

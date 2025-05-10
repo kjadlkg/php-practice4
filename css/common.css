@@ -198,6 +198,19 @@
   border-radius: 50px;
 }
 
+.btn_logout {
+  width: 63px;
+  height: 27px;
+  line-height: 25px;
+  border: 1px solid #29367c;
+  background: #3b4890;
+  text-align: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 0 1px #1d2761;
+}
+
 .btn_search {
   float: left;
   width: 45px;
@@ -566,6 +579,11 @@
   background: #fff;
 }
 
+.login_box .logout_box {
+  line-height: 100%;
+  padding-top: 9px;
+}
+
 .login_wrap .con.innerbox .info_text {
   padding-left: 13px;
   word-break: keep-all;
@@ -603,6 +621,44 @@
 
 .mypage_wrap.width1160 #container {
   margin: 0 auto;
+}
+
+.output_array {
+  float: right;
+  padding-top: 15px;
+}
+
+.output_array .select_area {
+  width: 41px;
+  height: 19px;
+  line-height: 19px;
+  padding: 0 5px;
+  border: 1px solid #ccc;
+  background: #fff;
+  font-size: 11px;
+}
+
+.output_array .select_box {
+  margin: 0 2px 0 0;
+}
+
+.option_box {
+  position: absolute;
+  width: 100%;
+  box-sizing: border-box;
+  background: #f3f3f3;
+  border: 1px solid #ccc;
+  padding: 6px 5px 4px;
+  z-index: 20;
+}
+
+.option_box {
+  line-height: 16px;
+  font-size: 11px;
+  color: #555;
+  font-weight: normal;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+    "Malgun Gothic", "맑은 고딕", arial, Dotum, 돋움, sans-serif;
 }
 
 .option_sort .select_arraybox {
@@ -727,6 +783,11 @@
   color: #d31900;
 }
 
+.right_box .output_array {
+  display: block;
+  padding-top: 0;
+}
+
 .right_content {
   float: right;
   width: 300px;
@@ -762,6 +823,10 @@
 .select_box {
   position: relative;
   float: left;
+}
+
+.select_box select {
+  display: none;
 }
 
 .small {
@@ -895,6 +960,9 @@
 
 .user_info {
   height: 43px;
+}
+
+.user_info a {
   line-height: 44px;
   font-size: 14px;
   color: #29367c;
@@ -955,6 +1023,10 @@
   box-sizing: border-box;
 }
 
+.visit_bookmark .visit_history::before {
+  border-width: 0 1px 1px;
+}
+
 .width868 .head,
 .width868 #container,
 .width868 .info_policy,
@@ -981,4 +1053,8 @@
 
 .width1160 .left_content {
   width: 840px;
+}
+
+.width1160 .visit_history {
+  margin: 0;
 }
