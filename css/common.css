@@ -44,11 +44,9 @@
 
 .area_links li::before {
   content: "|";
-  color: #ccc;
   font-size: 10px;
-  line-height: 10px;
+  color: #ccc;
   padding: 0 5px 0 4px;
-  vertical-align: 1px;
 }
 
 .area_links li:first-child::before {
@@ -88,6 +86,21 @@
   margin-left: 2px;
   vertical-align: 2px;
   background: url();
+}
+
+.attached_file {
+  overflow: hidden;
+  margin: 0 0 0 -7px;
+}
+
+.attached_file_box {
+  margin-top: 15px;
+  padding: 8px 13px 9px;
+  border: 1px solid #d5d5d5;
+}
+
+.attached_file_box strong {
+  font-size: 12px;
 }
 
 .bg_box {
@@ -148,6 +161,11 @@
   color: #d31900;
 }
 
+.bottom_paging_box a:first-child,
+.bottom_paging_box em:first-child {
+  margin-left: 0;
+}
+
 .btn {
   width: 85px;
   height: 35px;
@@ -198,6 +216,13 @@
   border-radius: 50px;
 }
 
+.btn_lightblue {
+  background: #626da6;
+  border-color: #3b4890;
+  text-shadow: 0px -1px #4b559c;
+  color: #fff;
+}
+
 .btn_logout {
   width: 63px;
   height: 27px;
@@ -244,6 +269,164 @@
   height: 17px;
 }
 
+.comment_box {
+  position: relative;
+  border-top: 2px solid #3b4890;
+}
+
+.comment_box .nickname {
+  font-size: 12px;
+  color: #777;
+  vertical-align: top;
+}
+
+.comment_count {
+  height: 38px;
+  line-height: 38px;
+  font-weight: bold;
+}
+
+.comment_count .fr > *::before,
+.comment_option > *::before {
+  content: "|";
+  margin: 0 5px 0 5px;
+  font-weight: 100;
+  font-size: 12px;
+  color: #ccc;
+}
+
+.comment_count .fr > *:first-child::before,
+.comment_option > *:first-child::before {
+  display: none;
+}
+
+.comment_info {
+  position: relative;
+  padding: 9px 12px 7px;
+  border-top: 1px solid #eee;
+}
+
+.comment_list li:first-child .comment_info {
+  border-top: none;
+}
+
+.comment_nickbox {
+  float: left;
+  width: 132px;
+  margin-right: 33px;
+  margin-top: 3px;
+  line-height: 13px;
+}
+
+.comment_option {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-top: 23px;
+  font-size: 0;
+}
+.comment_option em,
+.comment_option span {
+  margin-left: 0;
+}
+
+.comment_paging {
+  padding: 23px 272px 28px 235px;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+    "Malgun Gothic", "맑은 고딕", arial, Dotum, 돋움, sans-serif;
+}
+
+.comment_sort {
+  display: inline-block;
+  font-size: 0;
+}
+
+.comment_sort .radiobox {
+  margin-left: 10px;
+}
+
+.comment_sort .radiobox:first-child {
+  margin-left: 5px;
+}
+
+.comment_text {
+  overflow: hidden;
+  float: left;
+  line-height: 20px;
+  word-break: break-all;
+  cursor: pointer;
+}
+
+.comment_textbox {
+  float: left;
+  width: 820px;
+  cursor: pointer;
+}
+
+.comment_text_content {
+  float: right;
+}
+
+.comment_text_content textarea {
+  width: 956px;
+  height: 78px;
+  padding: 13px;
+  border: 1px solid #cecdce;
+  background: #fff;
+  font-size: 13px;
+  color: #333;
+  line-height: 18px;
+}
+
+.comment_wrap {
+  overflow: hidden;
+  width: 100%;
+  height: 38px;
+  margin-top: 15px;
+  font-size: 13px;
+  color: #333;
+}
+
+.comment_wrap.show {
+  overflow: visible;
+  height: 100%;
+}
+
+.comment_wrap .bottom_paging_box {
+  border-top: 1px solid #eee;
+}
+
+.comment_wrap .containerGo {
+  vertical-align: middle;
+  line-height: 14px;
+}
+
+.comment_write {
+  position: relative;
+}
+
+.comment_write_box {
+  padding: 12px 12px 12px;
+  background: #fafafa;
+  border-top: 2px solid #3b4890;
+  border-bottom: 2px solid #3b4890;
+}
+
+.comment_write_box .kcaptcha_img {
+  margin-top: 0;
+  border: 1px solid #cecdce;
+  border-width: 0 1px 1px 1px;
+}
+
+.comment_write_box .kcaptcha_img img {
+  display: block;
+  height: 38px;
+}
+
+.comment_write_bottom {
+  margin-top: 8px;
+}
+
 .con {
   padding: 58px 0 58px;
   margin: 0 auto;
@@ -278,6 +461,16 @@
 #container {
   width: 1050px;
   margin: 20px auto 0;
+}
+
+.comment_wrap .opt,
+.comment_wrap .opt span {
+  font-size: 13px;
+  font-weight: bold;
+  color: #333;
+  outline: none;
+  margin-top: -1px;
+  line-height: normal;
 }
 
 .content_box {
@@ -315,12 +508,6 @@
   display: block;
   visibility: hidden;
   content: "";
-}
-
-.clearfix::after {
-  content: "";
-  display: table;
-  clear: both;
 }
 
 .fl {
@@ -442,13 +629,9 @@
 }
 
 .info_policy a::before {
-  content: "";
-  display: inline-block;
-  width: 1px;
-  height: 11px;
+  content: "|";
   margin: 0 10px;
-  vertical-align: -1px;
-  background: #d7d7d7;
+  color: #d7d7d7;
 }
 
 .info_policy a:first-child::before {
@@ -549,6 +732,16 @@
   height: 33px;
 }
 
+.kcaptcha_img {
+  width: 140px;
+  margin-top: 9px;
+}
+
+.kcaptcha_img img {
+  width: 100%;
+  height: 31px;
+}
+
 .left_content {
   float: left;
   width: 728px;
@@ -570,6 +763,11 @@
 .list_wrap .visit_bookmark + .main_inner_wrap #container .issue_contentbox {
   border-bottom: 1px solid #d5d5d5;
   margin-bottom: 0;
+}
+
+.list_wrap,
+.view_wrap {
+  min-height: 1515px;
 }
 
 .login_box {
@@ -692,14 +890,14 @@
   color: #29367c;
 }
 
+.page_head h2 a {
+  color: #29367c;
+}
+
 .page_menu a::after {
-  content: "";
-  display: inline-block;
-  width: 1px;
-  height: 11px;
+  content: "|";
   margin: 0 10px;
-  vertical-align: -1px;
-  background: #d7d7d7;
+  color: #d7d7d7;
 }
 
 .paging_box {
@@ -744,7 +942,7 @@
   height: 14px;
   top: 3px;
   left: 0;
-  background-color: #ccc;
+  background: #ccc;
   border-radius: 50%;
 }
 
@@ -781,6 +979,19 @@
   margin-top: 8px;
   line-height: 18px;
   color: #d31900;
+}
+
+.radiobox {
+  position: relative;
+  display: inline-block;
+  vertical-align: 0;
+  line-height: 15px;
+}
+
+.radiobox input ~ label {
+  font-size: 13px;
+  margin-left: 0;
+  cursor: pointer;
 }
 
 .right_box .output_array {
@@ -968,6 +1179,29 @@
   color: #29367c;
 }
 
+.user_info_input {
+  position: relative;
+  width: 140px;
+  height: 30px;
+  margin-top: 5px;
+  border: 1px solid #cecdce;
+  background: #fff;
+}
+
+.user_info_input input {
+  width: 126px;
+  height: 28px;
+  line-height: 29px;
+  padding: 1px 7px 1px;
+  border: none;
+  font-size: 12px;
+  vertical-align: top;
+}
+
+.user_info_input:first-child {
+  margin-top: 0;
+}
+
 .user_option {
   height: 36px;
   line-height: 36px;
@@ -987,11 +1221,31 @@
   font-size: 11px;
   color: #ccc;
   padding: 0 18px 0 13px;
-  vertical-align: 1px;
 }
 
 .user_option span:first-child::before {
   display: none;
+}
+
+.view_comment {
+  position: relative;
+}
+
+.view_comment .comment_info {
+  padding: 9px 3px 7px 3px;
+}
+
+.view_content_wrap {
+  font-size: 13px;
+  color: #333;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+    "Malgun Gothic", "맑은 고딕", arial, 굴림, Gulim, sans-serif;
+}
+
+.view_wrap .btn {
+  width: 82px;
+  height: 35px;
+  line-height: 31px;
 }
 
 .visit_bookmark {

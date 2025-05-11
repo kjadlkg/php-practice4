@@ -3,23 +3,23 @@ session_start();
 include "../db.php";
 include "../function.php";
 
-$id = $_GET['id'] ?? null;
+$board_id = $_GET['id'] ?? null;
 $is_login = isset($_SESSION['id']);
 
-if (!$id || !is_numeric($id)) {
+if (!$board_id || !is_numeric(value: $board_id)) {
     echo "<script>alert('잘못된 접근입니다.'); location.href='../main/index.php';</script>";
     exit;
 }
 
-$id = (int) $id;
+$board_id = (int) $board_id;
 
-// view count
+// 조회수 계산
 $stmt = $db->prepare("UPDATE board SET board_views = board_views + 1 WHERE board_id = ?");
-$stmt->bind_param("i", $id);
+$stmt->bind_param("i", $board_id);
 $stmt->execute();
 $stmt->close();
 
-// board
+// board 게시물
 $stmt = $db->prepare(
     "SELECT b.*, u.user_id
         FROM board b
@@ -27,7 +27,7 @@ $stmt = $db->prepare(
         ON b.board_writer = u.user_name
         WHERE b.board_id = ?"
 );
-$stmt->bind_param("i", $id);
+$stmt->bind_param("i", $board_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $row = $result->fetch_array(MYSQLI_ASSOC);
@@ -38,22 +38,54 @@ if (!$row) {
     exit;
 }
 
-$boardPw = $row['board_pw'];
-$boardWriter = $row['board_writer'];
+$user_ip = !empty($row['ip']) ? mask_ip($row['ip']) : '';
+$board_writer = $row['board_writer'];
+$board_pw = $row['board_pw'];
+$board_views = $row['board_views'];
+$recommend = $row['recommend_up'];
+$created_at = date("Y.m.d H:m:s", strtotime($row['created_at']));
+$board_title = htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8');
+$board_content = htmlspecialchars($row['board_content'], ENT_QUOTES, 'UTF-8');
 $is_writer = $is_login && $_SESSION['id'] == $row['user_id'];
-$boardTitle = htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8');
-$boardContent = htmlspecialchars($row['board_content'], ENT_QUOTES, 'UTF-8');
 
-// comment
+// comment 댓글
 $stmt = $db->prepare("
     SELECT c.*, u.user_name
     FROM comment c LEFT JOIN user u
     ON c.comment_writer = u.user_name
     WHERE c.board_id = ? ORDER BY c.created_at
     ");
-$stmt->bind_param("i", $id);
+$stmt->bind_param("i", $board_id);
 $stmt->execute();
 $comment_result = $stmt->get_result();
+$comments = [];
+
+while ($comment_row = $comment_result->fetch_assoc()) {
+    $comment_date = strtotime($comment_row['created_at']);
+    $now = time();
+
+    if (date("Y", $comment_date) === date("Y", $now)) {
+        $formatted_time = date("m.d H:m:s", $comment_date);
+    } else {
+        $formatted_time = date("y.m.d H:m:s", $comment_date);
+    }
+
+    $comments[] = [
+        'comment_writer' => htmlspecialchars($comment_row['comment_writer'], ENT_QUOTES, 'UTF-8'),
+        'comment_content' => nl2br(htmlspecialchars($comment_row['comment_content'], ENT_QUOTES, 'UTF-8')),
+        'user_ip' => !empty($comment_row['ip']) ? mask_ip($comment_row['ip']) : '',
+        'created_at' => $formatted_time,
+    ];
+}
+$stmt->close();
+
+
+// comment total 댓글 수 
+$stmt = $db->prepare("SELECT COUNT(*) AS total FROM comment WHERE board_id = ?");
+$stmt->bind_param("s", $board_id);
+$stmt->execute();
+$count_result = $stmt->get_result();
+$count = $count_result->fetch_assoc()['total'];
 $stmt->close();
 ?>
 
@@ -63,141 +95,312 @@ $stmt->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $boardTitle ?></title>
+    <title><?= $board_title ?></title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/component.css">
+    <link rel="stylesheet" href="../css/contents.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
-    <div>
-        <h3><?= $boardTitle ?></h3>
-        <div>
-            <p><?= $boardWriter ?>
-                <?php if (!empty($row['ip'])) {
-                    $mask_ip = mask_ip($row['ip']);
-                    if (!empty($mask_ip)) {
-                        echo "($mask_ip)";
-                    }
-                } ?>
-                | <?= $row['created_at'] ?> | 조회 <?= (int) $row['board_views'] ?>
-            </p>
-        </div>
-        <br>
-        <div>
-            <?= $boardContent ?>
-        </div>
-        <br>
-        <div>
-            <button onclick="location.href='../main/index.php'">목록</button>
-            <?php if ($is_writer || !empty($boardPw)) { ?>
-                <form method="POST" action="modify.php?id=<?= $id ?>">
-                    <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-                    <button type="submit">수정</button>
-                </form>
-                <form method="POST" action="delete.php?id=<?= $id ?>">
-                    <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-                    <button type="submit">삭제</button>
-                </form>
-            <?php } ?>
-        </div>
-    </div>
-
-    <!-- recommend -->
-    <div>
-        <?php if (!$is_login) { ?>
-            <img src="../captcha_image.php?<?= time() ?>" alt="KCAPTCHA"
-                onclick="this.src='../captcha_image.php?' + new Date().getTime()" style="cursor:pointer;">
-            <input type="text" id="captcha_input" name="captcha" placeholder="코드입력">
-        <?php } ?>
-        <div>
-            <p id="recom_up_count"><?= (int) $row['recommend_up'] ?></p>
-            <button type="button" onclick="recommend(<?= $id ?>, 'up')">추천</button>
-            <button type="button" onclick="recommend(<?= $id ?>, 'down')">비추천</button>
-            <p id="recom_down_count"><?= (int) $row['recommend_down'] ?></p>
-        </div>
-    </div>
-
-    <!-- comment -->
-    <h3>댓글 목록</h3>
-    <?php while ($comment = $comment_result->fetch_assoc()) { ?>
-        <div class="comment_delete">
-            <span><?= htmlspecialchars($comment['comment_writer'], ENT_QUOTES, 'UTF-8') ?></span>
-            <?php if (!empty($comment['ip'])) {
-                $mask_ip = mask_ip($comment['ip']);
-                if (!empty($mask_ip)) {
-                    echo "($mask_ip)";
-                }
-            } ?>
-            <p><?= nl2br(htmlspecialchars($comment['comment_content'], ENT_QUOTES, 'UTF-8')) ?></p>
-            <span><?= $comment['created_at'] ?></span>
-            <!-- delete -->
-            <?php
-            $is_comment_writer = $is_login && $_SESSION['name'] === $comment['comment_writer'];
-            $comment_id = $comment['comment_id'];
-            if ($is_comment_writer): ?>
-                <form method="POST" action="../comment/delete.php">
-                    <div>
-                        <input type="hidden" name="comment_id" value="<?= $comment_id ?>">
-                        <input type="hidden" name="board_id" value="<?= $id ?>">
-                        <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-                    </div>
-                    <div>
-                        <button type="submit" onclick="return confirm('댓글을 삭제하시겠습니까?')">X</button>
-                    </div>
-                </form>
-            <?php elseif (!empty($comment['comment_pw'])): ?>
-                <button onclick="showPasswordForm(<?= $comment_id ?>)">X</button>
-                <div id="delete-box-<?= $comment_id ?>" class="delete-box" style="display: none;">
-                    <form method="POST" action="../comment/delete.php" onsubmit="return checkDeletePassword(this)">
-                        <div>
-                            <input type="hidden" name="comment_id" value="<?= $comment_id ?>">
-                            <input type="hidden" name="board_id" value="<?= $id ?>">
-                            <input type="password" name="pw" placeholder="비밀번호">
-                            <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-                        </div>
-                        <div>
-                            <button type="submit">확인</button>
-                            <button type="button" onclick="hidePasswordForm(<?= $comment_id ?>)">X</button>
-                        </div>
+    <div id="top" class="width1160 view_wrap">
+        <header class="header">
+            <div class="head">
+                <h1 class="logo">
+                    <a href="../main/index.php">메인페이지</a>
+                </h1>
+                <div class="search_wrap">
+                    <form method="GET" action="../search/search.php">
+                        <h2 class="blind">메인 검색</h2>
+                        <fieldset>
+                            <legend class="blind">통합 검색</legend>
+                            <div class="top_search clear">
+                                <div class="inner_search">
+                                    <input type="text" class="in_keyword" name="search" placeholder="제목+내용 검색">
+                                </div>
+                                <button type="submit" class="btn_search">검색</button>
+                            </div>
+                        </fieldset>
                     </form>
                 </div>
-            <?php endif; ?>
-            <hr>
+                <div class="area_links clear">
+                    <ul class="fl clear">
+                        <?php if (!isset($_SESSION["id"])): ?>
+                            <li><a href="../member/login/login.php">로그인</a></li>
+                            <li><a href="../member/join/join.php">회원가입</a></li>
+                        <?php else: ?>
+                            <li class="area_nick"><a href="javascript:;" class="btn_user_data"><?= $_SESSION['name'] ?>님</a>
+                            </li>
+                            <li><a href="../mypage/index.php">마이페이지</a></li>
+                            <li><a class="btn_top_logout" href="../member/login/logout.php">로그아웃</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </div>
+            </div>
+        </header>
+        <div class="gnb_bar">
+            <div class="gnb clear">
+                <h2 class="blind">GNB</h2>
+            </div>
         </div>
-    <?php } ?>
+        <div class="visit_bookmark">
+            <div class="visit_history">
 
-    <div class="comment_add">
-        <?php if ($is_login) { ?>
-            <form method="POST" action="../comment/comment.php" onsubmit="return confirm_empty(this)">
-                <div>
-                    <input type="hidden" name="board_id" value="<?= $id ?>">
-                    <input type="hidden" name="name" value="<?= htmlspecialchars($_SESSION['name']) ?>">
+            </div>
+        </div>
+        <div class="main_inner_wrap">
+            <main id="container" class="board_view clear">
+                <section>
+                    <header>
+                        <div class="page_head clear">
+                            <div class="fl clear">
+                                <h2>
+                                    <a href="../main/index.php">게시판</a>
+                                </h2>
+                            </div>
+                            <div class="fr issuebox">
+                            </div>
+                        </div>
+                    </header>
+                    <article>
+                        <h2 class="blind">게시판 이슈 박스</h2>
+                        <div class="issue_wrap">
+                            <div class="issuebox">
+                            </div>
+                        </div>
+                    </article>
+                    <article>
+                        <h2 class="blind">본문 영역</h2>
+                        <div class="view_content_wrap">
+                            <header>
+                                <div class="view_head clear">
+                                    <h3 class="view_title">
+                                        <span class="title_subject"><?= $board_title ?></span>
+                                    </h3>
+                                    <div class="view_writer">
+                                        <div class="fl">
+                                            <span class="nickname">
+                                                <?= $board_writer ?>
+                                                <?php if (!empty($user_ip)): ?>
+                                                    (<?= $user_ip ?>)
+                                                <?php endif; ?>
+                                            </span>
+                                            <span class="date"><?= $created_at ?></span>
+                                        </div>
+                                        <div class="fr">
+                                            <span class="view">조회 <?= $board_views ?></span>
+                                            <span class="recommend">추천 <?= $recommend ?></span>
+                                            <span class="comment">
+                                                <a href="#comment">댓글 <?= $count ?></a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </header>
+                            <div class="view_content">
+                                <div class="inner clear">
+                                    <div class="view_writing_box">
+                                        <?= $board_content ?>
+                                    </div>
+                                </div>
+                                <?php if (!$is_login): ?>
+                                    <div class="recommend_kcaptcha">
+                                        <div class="kcaptcha_img">
+                                            <img src="../captcha_image.php?<?= time() ?>" class="kcaptcha" alt="KCAPTCHA">
+                                        </div>
+                                        <input type="text" id="captcha_input" name="captcha"
+                                            class="recommend_kcaptcha_input" placeholder="코드입력">
+                                    </div>
+                                <?php endif; ?>
+                                <div class="recommend_box">
+                                    <h3 class="blind">추천</h3>
+                                    <div class="innerbox">
+                                        <div class="inner">
+                                            <div class="up_num_box">
+                                                <p class="up_num font_red" id="recom_up_count">
+                                                    <?= $row['recommend_up'] ?>
+                                                </p>
+                                            </div>
+                                            <button type="button" class="btn_recom_up"
+                                                onclick="recommend(<?= $id ?>, 'up')">
+                                                <span>추천</span>
+                                            </button>
+                                        </div>
+                                        <div class="inner">
+                                            <button type="button" class="btn_recom_down"
+                                                onclick="recommend(<?= $id ?>, 'down')">
+                                                <span>비추천</span>
+                                            </button>
+                                            <div class="down_num_box">
+                                                <p id="recom_down_count"><?= (int) $row['recommend_down'] ?></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="recommend_bottom_box">
+                                        <button type="button" class="btn_sns">공유</button>
+                                        <button type="button" class="btn_report">신고</button>
+                                    </div>
+                                </div>
+                                <div id="comment" class="attached_file_box">
+                                    <strong>원본 첨부 파일<em class="font_red"></em></strong>
+                                    <ul class="attached_file"></ul>
+                                </div>
+                            </div>
+                            <div class="view_comment_wrap">
+                                <h2 class="blind">댓글 영역</h2>
+                                <div class="comment_wrap show">
+                                    <div class="comment_count">
+                                        <div class="fl">
+                                            전체 댓글
+                                            <em class="font_red"><?= $count ?></em>개
+                                            <div class="comment_sort">
+                                                <span class="radiobox">
+                                                    <input type="radio" id="radio1" name="commentSort"
+                                                        checked="checked">
+                                                    <em>√</em>
+                                                    <label for="radio1">등록순</label>
+                                                </span>
+                                                <span class="radiobox">
+                                                    <input type="radio" id="radio2" name="commentSort">
+                                                    <em>√</em>
+                                                    <label for="radio2">최신순</label>
+                                                </span>
+                                                <span class="radiobox">
+                                                    <input type="radio" id="radio3" name="commentSort">
+                                                    <em>√</em>
+                                                    <label for="radio3">답글순</label>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="fr">
+                                            <a href="#container" class="containerGo opt">본문 보기</a>
+                                            <button type="button" class="btn_comment_close opt">
+                                                <span>댓글닫기</span>
+                                                <em></em>
+                                            </button>
+                                            <button type="button" class="btn_comment_refresh opt">새로고침</button>
+                                        </div>
+                                    </div>
+                                    <div class="comment_box">
+                                        <ul class="comment_list">
+                                            <?php foreach ($comments as $comment): ?>
+                                                <li>
+                                                    <div class="comment_info">
+                                                        <div class="comment_nickbox">
+                                                            <span class="view_writer">
+                                                                <span class="nickname">
+                                                                    <em><?= $comment['comment_writer'] ?></em>
+                                                                </span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="comment_textbox btn_reply_write_all clear">
+                                                            <p class="comment_text">
+                                                                <?= $comment['comment_content'] ?>
+                                                            </p>
+                                                        </div>
+                                                        <div class="fr clear">
+                                                            <span class="date">
+                                                                <?= $comment['created_at'] ?>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                        <div class="bottom_paging_box">
+                                            <div class="comment_paging">
+                                                <em></em>
+                                            </div>
+                                            <div class="comment_option">
+                                                <a href="#container" class="containerGo opt">본문 보기</a>
+                                                <button type="button" class="btn_comment_close opt">
+                                                    <span>댓글닫기</span>
+                                                    <em></em>
+                                                </button>
+                                                <button type="button" class="btn_comment_refresh opt">새로고침</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="comment_write_box clear">
+                                    <div class="fl">
+                                        <?php if ($is_login): ?>
+                                            <div class="user_info_input">
+                                                <input type="text" name="name" value="<?= $_SESSION['name'] ?>"
+                                                    maxlength="20">
+                                            </div>
+                                        <?php else: ?>
+                                            <div class="user_info_input">
+                                                <input type="text" name="name" placeholder="닉네임" maxlength="20">
+                                            </div>
+                                            <div class="user_info_input">
+                                                <input type="password" name="pw" placeholder="비밀번호" maxlength="20">
+                                            </div>
+                                            <div class="user_info_input">
+                                                <input type="text" name="captcha" placeholder="코드입력">
+                                            </div>
+                                            <div class="kcaptcha_img">
+                                                <img src="../captcha_image.php?<?= time() ?>" class="kcaptcha"
+                                                    alt="KCAPTCHA">
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="comment_text_content">
+                                        <div class="comment_write">
+                                            <textarea name="content" autocomplete="off" maxlength="400"></textarea>
+                                        </div>
+                                        <div class="comment_write_bottom">
+                                            <div class="fr">
+                                                <button type="button" class="btn btn_blue small">등록</button>
+                                                <button type="button" class="btn btn_lightblue small">등록+추천</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="view_bottom_btnbox clear">
+                            <div class="fl">
+                                <button type="button" class="btn btn_blue"
+                                    onclick="location.href='../main/index.php'">전체글</button>
+                            </div>
+                            <div class="fr">
+                                <button type="button" class="btn btn_blue"
+                                    onclick="location.href='write.php'">글쓰기</button>
+                            </div>
+                        </div>
+                    </article>
+                    <article>
+                        <h2 class="blind">하단 게시판 리스트 영역</h2>
+                    </article>
+                </section>
+            </main>
+        </div>
+        <footer class="footer">
+            <div class="board_all">
+                <div class="all_box">
+                    <div class="all_list"></div>
+                    <div class="all_bottom">
+                        <span class="bottom_menu">
+                            <a class="menu_link" href="#top">
+                                <em></em>
+                                맨위로
+                            </a>
+                        </span>
+                    </div>
                 </div>
-                <div>
-                    <textarea name="content" autocomplete="off"></textarea>
-                    <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-                </div>
-                <div>
-                    <button type="submit">등록</button>
-                </div>
-            </form>
-        <?php } else { ?>
-            <form method="POST" action="../comment/comment.php" onsubmit="return confirm_empty(this)">
-                <div>
-                    <input type="hidden" name="board_id" value="<?= $id ?>">
-                    <input type="text" name="name" placeholder="닉네임">
-                    <input type="password" name="pw" placeholder="비밀번호">
-                    <img src="../captcha_image.php?<?= time() ?>" alt="KCAPTCHA"
-                        onclick="this.src='../captcha_image.php?' + new Date().getTime()" style="cursor:pointer;">
-                    <input type="text" name="captcha" placeholder="코드입력">
-                </div>
-                <div>
-                    <textarea name="content" autocomplete="off"></textarea>
-                    <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-                </div>
-                <div>
-                    <button type="submit">등록</button>
-                </div>
-            </form>
-        <?php } ?>
+            </div>
+            <div class="info_policy">
+                <a href="">회사소개</a>
+                <a href="">제휴안내</a>
+                <a href="">광고안내</a>
+                <a href="">이용약관</a>
+                <a href="">개인정보처리방침</a>
+                <a href="">청소년보호정책</a>
+            </div>
+            <div class="copyright">Copyright ⓒ</div>
+        </footer>
     </div>
 </body>
 <script>
@@ -247,6 +450,12 @@ $stmt->close();
     function hidePasswordForm(id) {
         document.getElementById('delete-box-' + id).style.display = 'none';
     }
+
+    const kcaptchaImg = document.getElementsByClassName("kcaptcha");
+
+    kcaptchaImg.addEventListener('click', function () {
+        this.src = '../captcha_image.php?' + new Date().getTime();
+    });
 
     function recommend(boardId, type) {
         if (!['up', 'down'].includes(type)) return;
@@ -300,6 +509,7 @@ $stmt->close();
             .catch(error => {
                 alert('요청 중 오류가 발생했습니다: ' + error.message);
             });
+
     }
 </script>
 
