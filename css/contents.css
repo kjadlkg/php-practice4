@@ -128,16 +128,27 @@
   margin-top: 26px;
 }
 
+.btn_recom_up,
 .btn_recom_down {
-  float: left;
+  display: inline-block;
   width: 56px;
-  outline: none;
+  height: 56px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.btn_recom_down {
+  width: 50px;
+  height: 50px;
+  background: #ccc;
+  border-radius: 50px;
 }
 
 .btn_recom_up {
-  float: right;
-  width: 56px;
-  outline: none;
+  width: 50px;
+  height: 50px;
+  background: #3b4890;
+  border-radius: 50px;
 }
 
 .btn_shortmove {
@@ -330,14 +341,6 @@
   background: #fff;
 }
 
-.recommend_box .inner {
-  overflow: hidden;
-  display: inline-block;
-  width: 139px;
-  margin-bottom: 2px;
-  padding: 0;
-}
-
 .recommend_box .innerbox {
   text-align: center;
   font-size: 0;
@@ -451,6 +454,14 @@ tr:first-child td {
 
 .view_content .inner {
   margin-bottom: 50px;
+}
+
+.view_content .recommend_box .inner {
+  overflow: hidden;
+  display: inline-block;
+  width: 139px;
+  margin-bottom: 2px;
+  padding: 0;
 }
 
 .view_head {

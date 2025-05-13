@@ -106,7 +106,7 @@ $board_stmt->close();
                                 <div class="inner_search">
                                     <input type="text" class="in_keyword" name="search" placeholder="제목+내용 검색">
                                 </div>
-                                <button type="submit" class="btn btn_search">검색</button>
+                                <button type="submit" class="btn_search">검색</button>
                             </div>
                         </fieldset>
                     </form>

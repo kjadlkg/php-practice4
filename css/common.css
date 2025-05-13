@@ -237,9 +237,9 @@
 }
 
 .btn_search {
-  float: left;
   width: 45px;
   height: 44px;
+  color: #fff;
 }
 
 .checkbox {
@@ -274,10 +274,19 @@
   border-top: 2px solid #3b4890;
 }
 
+.comment_box .bottom_paging_box {
+  margin-top: 0;
+}
+
 .comment_box .nickname {
   font-size: 12px;
   color: #777;
   vertical-align: top;
+}
+
+.comment_box .nickname .ip {
+  display: inline-block;
+  vertical-align: 1px;
 }
 
 .comment_count {
@@ -499,8 +508,8 @@
   text-align: center;
   letter-spacing: 0;
   font-size: 12px;
-  font-family: tahoma, sans-serif;
   color: #333;
+  font-family: tahoma, sans-serif;
 }
 
 .clear::after {
@@ -508,6 +517,14 @@
   display: block;
   visibility: hidden;
   content: "";
+}
+
+.date_time {
+  float: left;
+  font-size: 12px;
+  color: #999;
+  vertical-align: top;
+  margin-top: 1px;
 }
 
 .fl {
@@ -639,10 +656,9 @@
 }
 
 .inner_search {
-  float: left;
-  width: 313px;
+  flex: 1;
   background: #fff;
-  margin: 4px 0 0 4px;
+  margin-left: 4px;
 }
 
 .in_keyword {
@@ -675,6 +691,12 @@
 
 .int.pw_check {
   margin-top: 7px;
+}
+
+.ip {
+  font-size: 11px;
+  color: #999;
+  font-family: tahoma, sans-serif;
 }
 
 .issuebox {
@@ -882,12 +904,12 @@
 
 .page_head h2 {
   font-size: 24px;
+  color: #29367c;
   font-family: "Nanum Gothic", sans-serif;
   letter-spacing: -1px;
   margin: 2px 8px 0 3px;
   max-width: 420px;
   overflow: hidden;
-  color: #29367c;
 }
 
 .page_head h2 a {
@@ -1147,7 +1169,8 @@
 }
 
 .top_search {
-  width: 346px;
+  display: flex;
+  align-items: center;
   height: 46px;
   background: #3b4890;
 }
@@ -1227,11 +1250,15 @@
   display: none;
 }
 
-.view_comment {
+.view_comment_wrap {
   position: relative;
 }
 
-.view_comment .comment_info {
+.view_comment_wrap .bottom_paging_box {
+  height: 69px;
+}
+
+.view_comment_wrap .comment_info {
   padding: 9px 3px 7px 3px;
 }
 
