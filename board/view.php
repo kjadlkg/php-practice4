@@ -4,7 +4,7 @@ include "../db.php";
 include "../function.php";
 
 $board_id = $_GET['id'] ?? null;
-$is_login = isset($_SESSION['id']);
+$is_login = isset($_SESSION['id']) && !empty($_SESSION['id']);
 
 if (!$board_id || !is_numeric(value: $board_id)) {
     echo "<script>alert('잘못된 접근입니다.'); location.href='../main/index.php';</script>";
@@ -508,6 +508,7 @@ $stmt->close();
     Array.from(document.getElementsByClassName("kcaptcha")).forEach(function (img) {
         img.addEventListener('click', function () {
             this.src = '../captcha_image.php?' + Date.now();
+            document.getElementById('captcha_input').value = '';
         });
     });
 
@@ -526,7 +527,7 @@ $stmt->close();
             captcha = captchaInput.value.trim();
         }
 
-        fetch('recommend.php', {
+        fetch('../recommend/recommend.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -535,7 +536,9 @@ $stmt->close();
             body: JSON.stringify({
                 id: boardId,
                 type: type,
-                captcha: captcha
+                ...(isLogin ? {} : {
+                    captcha: captcha
+                })
             })
         })
             .then(response => {
@@ -557,7 +560,7 @@ $stmt->close();
             })
             .catch(error => {
                 console.error('Error: ', error);
-                alert('오류가 발생했습니다.');
+                alert('요청 처리 중 오류가 발생했습니다.');
             });
     }
 </script>

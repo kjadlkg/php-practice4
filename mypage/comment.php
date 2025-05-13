@@ -16,7 +16,7 @@ if (!empty($keyword)) {
     SELECT c.*, b.board_title
     FROM comment c
     JOIN board b ON c.board_id = b.board_id
-    WHERE c.comment_writer = ? && comment_content = ?
+    WHERE c.comment_writer = ? AND comment_content = ?
     ORDER BY c.comment_id DESC
     LIMIT 5
     ");
@@ -191,52 +191,52 @@ $page_stmt->close();
                                         </div>
                                         <ul class="content_listbox">
                                             <?php if (empty($comments)): ?>
-                                            <p>작성한 댓글이 없습니다</p>
+                                                <p>작성한 댓글이 없습니다</p>
                                             <?php else: ?>
-                                            <?php foreach ($comments as $comment): ?>
-                                            <li>
-                                                <div class="content">
-                                                    <div class="board_linkbox">
-                                                        <a class="link"
-                                                            href="../board/view.php?id=<?= $comment['board_id'] ?>"
-                                                            target="_blank">
-                                                            <p class="text">
-                                                                <?= $comment['comment_content'] ?>
-                                                            </p>
-                                                            <div class="datebox">
-                                                                <span><?= $comment['created_at'] ?></span>
+                                                <?php foreach ($comments as $comment): ?>
+                                                    <li>
+                                                        <div class="content">
+                                                            <div class="board_linkbox">
+                                                                <a class="link"
+                                                                    href="../board/view.php?id=<?= $comment['board_id'] ?>"
+                                                                    target="_blank">
+                                                                    <p class="text">
+                                                                        <?= $comment['comment_content'] ?>
+                                                                    </p>
+                                                                    <div class="datebox">
+                                                                        <span><?= $comment['created_at'] ?></span>
+                                                                    </div>
+                                                                    <div class="boardtitle">
+                                                                        <strong>
+                                                                            <?= $comment['board_title'] ?>
+                                                                        </strong>
+                                                                    </div>
+                                                                </a>
+                                                                <button type="button" class="btn_delete btn_listdel">
+                                                                    <span>삭제</span>
+                                                                </button>
                                                             </div>
-                                                            <div class="boardtitle">
-                                                                <strong>
-                                                                    <?= $comment['board_title'] ?>
-                                                                </strong>
-                                                            </div>
-                                                        </a>
-                                                        <button type="button" class="btn_delete btn_listdel">
-                                                            <span>삭제</span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <?php endforeach; ?>
+                                                        </div>
+                                                    </li>
+                                                <?php endforeach; ?>
                                             <?php endif; ?>
                                         </ul>
                                         <div class="bottom_paging_box">
                                             <?php if ($now_block > 1): ?>
-                                            <a href="comment.php?page=<?= $s_page - 1 ?>">이전블록</a>
+                                                <a href="comment.php?page=<?= $s_page - 1 ?>">이전블록</a>
                                             <?php else: ?>
                                             <?php endif; ?>
 
                                             <?php for ($i = $s_page; $i <= $e_page; $i++): ?>
-                                            <?php if ($i == $page): ?>
-                                            <em><?= $i ?></em>
-                                            <?php else: ?>
-                                            <a href="comment.php?page=<?= $i ?>"><?= $i ?></a>
-                                            <?php endif; ?>
+                                                <?php if ($i == $page): ?>
+                                                    <em><?= $i ?></em>
+                                                <?php else: ?>
+                                                    <a href="comment.php?page=<?= $i ?>"><?= $i ?></a>
+                                                <?php endif; ?>
                                             <?php endfor; ?>
 
                                             <?php if ($now_block < $total_block): ?>
-                                            <a href="comment.php?page=<?= $e_page + 1 ?>">다음블록</a>
+                                                <a href="comment.php?page=<?= $e_page + 1 ?>">다음블록</a>
                                             <?php else: ?>
                                             <?php endif; ?>
                                         </div>
@@ -262,32 +262,32 @@ $page_stmt->close();
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-    $(function() {
-        $('.btn_user_data').on('click', function(e) {
-            e.stopPropagation();
-            var $btn = $(this);
-            var $menu = $btn.siblings('.user_data');
+        $(function () {
+            $('.btn_user_data').on('click', function (e) {
+                e.stopPropagation();
+                var $btn = $(this);
+                var $menu = $btn.siblings('.user_data');
 
-            $btn.toggleClass('on');
+                $btn.toggleClass('on');
 
-            if ($btn.hasClass('on')) {
-                $menu.show();
-            } else {
-                $menu.hide();
-            }
+                if ($btn.hasClass('on')) {
+                    $menu.show();
+                } else {
+                    $menu.hide();
+                }
+            });
+
+            // 외부 클릭 시 닫힘
+            $(document).on('click', function () {
+                $('.btn_user_data').removeClass('on');
+                $('.user_data').hide();
+            });
+
+            // 내부 클릭 시 닫힘 방지
+            $('.user_data').on('click', function (e) {
+                e.stopPropagation();
+            });
         });
-
-        // 외부 클릭 시 닫힘
-        $(document).on('click', function() {
-            $('.btn_user_data').removeClass('on');
-            $('.user_data').hide();
-        });
-
-        // 내부 클릭 시 닫힘 방지
-        $('.user_data').on('click', function(e) {
-            e.stopPropagation();
-        });
-    });
     </script>
 </body>
 

@@ -16,7 +16,7 @@ if (!empty($keyword)) {
     SELECT b.*,
     (SELECT COUNT(*) FROM comment WHERE board_id = b.board_id) AS comment_count
     FROM board b
-    WHERE board_writer = ? && board_title like ?
+    WHERE board_writer = ? AND board_title like ?
     ORDER BY board_id DESC
     ");
     $search_keyword = "%$keyword%";
