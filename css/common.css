@@ -194,7 +194,7 @@
 }
 
 /* .btn_wfull {
-  border-radius: 0;
+border-radius: 0;
   width: 100%;
   height: 41px;
   line-height: 39px;
@@ -202,6 +202,12 @@
   font-size: 14px;
   overflow: hidden;
 } */
+
+.btn_comment_pw_close {
+  width: 30px;
+  height: 31px;
+  background: #29367c;
+}
 
 .btn_grey {
   background: #666;
@@ -309,6 +315,53 @@
   display: none;
 }
 
+.comment_delete {
+  float: right;
+  position: relative;
+  margin-left: 6px;
+  z-index: 1;
+}
+
+.comment_delete button {
+  color: #999;
+}
+
+.comment_delete .btn_ok {
+  float: left;
+  width: 49px;
+  height: 31px;
+  line-height: 32px;
+  background: #3b4890;
+  color: #fff;
+  font-weight: bold;
+  text-shadow: 0 1px #1d2761;
+}
+
+.comment_delpw {
+  float: left;
+  width: 129px;
+  height: 31px;
+  line-height: 34px;
+  padding: 0 5px;
+  border: 0;
+  background: #fff;
+  font-size: 14px;
+}
+
+.comment_delpw_box {
+  overflow: hidden;
+  position: absolute;
+  width: 218px;
+  height: 31px;
+  border: 2px solid #29367c;
+  margin: -16px 0 0 -242px;
+  display: none;
+}
+
+.comment_delpw_box.active {
+  display: block;
+}
+
 .comment_info {
   position: relative;
   padding: 9px 12px 7px;
@@ -341,8 +394,8 @@
 
 .comment_paging {
   padding: 23px 272px 28px 235px;
-  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-    "Malgun Gothic", "맑은 고딕", arial, Dotum, 돋움, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", arial, Dotum,
+    돋움, sans-serif;
 }
 
 .comment_sort {
@@ -877,8 +930,8 @@
   font-size: 11px;
   color: #555;
   font-weight: normal;
-  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-    "Malgun Gothic", "맑은 고딕", arial, Dotum, 돋움, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", arial, Dotum,
+    돋움, sans-serif;
 }
 
 .option_sort .select_arraybox {
@@ -1258,6 +1311,10 @@
   height: 69px;
 }
 
+.view_comment_wrap .comment_delete {
+  top: -3px;
+}
+
 .view_comment_wrap .comment_info {
   padding: 9px 3px 7px 3px;
 }
@@ -1265,8 +1322,8 @@
 .view_content_wrap {
   font-size: 13px;
   color: #333;
-  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-    "Malgun Gothic", "맑은 고딕", arial, 굴림, Gulim, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", arial, 굴림,
+    Gulim, sans-serif;
 }
 
 .view_wrap .btn {

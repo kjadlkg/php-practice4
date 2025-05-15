@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $content = htmlspecialchars(strip_tags($content), ENT_QUOTES, 'UTF-8');
 
     if (isset($_SESSION['id'])) {
+        $user_id = $_SESSION['id'];
         $user_name = $_SESSION['name'];
         $board_pw = null;
         $csrf_token = $_POST['csrf_token'] ?? '';
@@ -25,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } else {
         $ip = $_SERVER['REMOTE_ADDR'];
-        $user_id = $ip . "_" . time();
         $user_name = $_POST['name'] ?? '';
         $user_pw = $_POST['pw'] ?? '';
         $captcha_input = $_POST['captcha'] ?? '';
@@ -61,8 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $stmt = $db->prepare("INSERT INTO board (board_title, board_content, board_writer, board_pw, ip) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssss", $title, $content, $user_name, $board_pw, $ip);
+    $stmt = $db->prepare("INSERT INTO board (board_title, board_content, board_writer, board_writer_id, board_pw, ip) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssss", $title, $content, $user_name, $user_id, $board_pw, $ip);
 
     try {
         if ($stmt->execute()) {
@@ -103,27 +103,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <article id="write_wrap" class="clear">
                 <form method="POST" onsubmit="return confirm_empty(this)">
                     <?php if (isset($_SESSION['id'])) { ?>
-                        <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
+                    <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
                     <?php } ?>
                     <div>
                         <div class="clear">
                             <fieldset>
                                 <?php if (!isset($_SESSION['id'])) { ?>
-                                    <div class="input_box input_info">
-                                        <label for="name" class="text_placeholder">닉네임</label>
-                                        <input id="name" class="input_text" type="text" name="name">
-                                    </div>
-                                    <div class="input_box input_info">
-                                        <label for="password" class="text_placeholder">비밀번호</label>
-                                        <input id="password" class="input_text" type="password" name="pw" maxlength="20">
-                                    </div>
-                                    <div class="input_box input_info">
-                                        <img src="../captcha_image.php?<?= time() ?>" alt="KCAPTCHA"
-                                            onclick="this.src='../captcha_image.php?' + new Date().getTime()"
-                                            style="cursor:pointer;">
-                                        <label for="captcha" class="text_placeholder">코드 입력</label>
-                                        <input id="captcha" class="input_text" type="text" name="captcha">
-                                    </div>
+                                <div class="input_box input_info">
+                                    <label for="name" class="text_placeholder">닉네임</label>
+                                    <input id="name" class="input_text" type="text" name="name">
+                                </div>
+                                <div class="input_box input_info">
+                                    <label for="password" class="text_placeholder">비밀번호</label>
+                                    <input id="password" class="input_text" type="password" name="pw" maxlength="20">
+                                </div>
+                                <div class="input_box input_info">
+                                    <img src="../captcha_image.php?<?= time() ?>" alt="KCAPTCHA"
+                                        onclick="this.src='../captcha_image.php?' + new Date().getTime()"
+                                        style="cursor:pointer;">
+                                    <label for="captcha" class="text_placeholder">코드 입력</label>
+                                    <input id="captcha" class="input_text" type="text" name="captcha">
+                                </div>
                                 <?php } ?>
                                 <div class="input_box input_write_title">
                                     <label for="title" class="text_placeholder">제목을 입력하세요</label>
@@ -151,27 +151,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <footer></footer>
 </body>
 <script>
-    function confirm_empty(form) {
-        const isLogin = <?= isset($_SESSION['id']) ? 'true' : 'false' ?>;
-        const title = form.getElementId('#title').value.trim();
-        const content = form.getElementId('#content').value.trim();
+function confirm_empty(form) {
+    const isLogin = <?= isset($_SESSION['id']) ? 'true' : 'false' ?>;
+    const title = form.getElementId('#title').value.trim();
+    const content = form.getElementId('#content').value.trim();
 
-        if (!isLogin) {
-            const username = form.getElementId('#name').value.trim();
-            const password = form.getElementId('#password').value.trim();
-            if (!username || !pw) {
-                alert("닉네임과 비밀번호를 입력해주세요.");
-                return false;
-            }
-        }
-
-        if (!title || !content) {
-            alert("제목과 내용을 입력해주세요.");
+    if (!isLogin) {
+        const username = form.getElementId('#name').value.trim();
+        const password = form.getElementId('#password').value.trim();
+        if (!username || !pw) {
+            alert("닉네임과 비밀번호를 입력해주세요.");
             return false;
         }
-
-        return true;
     }
+
+    if (!title || !content) {
+        alert("제목과 내용을 입력해주세요.");
+        return false;
+    }
+
+    return true;
+}
 </script>
 
 </html>

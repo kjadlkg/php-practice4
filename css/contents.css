@@ -43,6 +43,10 @@
   text-shadow: 0 -1px #1d2761;
 }
 
+.array_tab button:first-child {
+  margin-left: 0;
+}
+
 .board_list {
   width: 100%;
   border-bottom: 1px solid #29367c;
@@ -274,6 +278,10 @@
   display: block;
   visibility: hidden;
   content: "";
+}
+
+.list_bottom_btnbox button:first-child {
+  margin-left: 0;
 }
 
 .nonmember_content {
