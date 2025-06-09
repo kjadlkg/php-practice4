@@ -6,11 +6,11 @@ include "../db.php";
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception('오류가 발생했습니다: Invalid request method');
+        throw new Exception('오류가 발생했습니다.');
     }
 
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_token'] ?? '')) {
-        throw new Exception('오류가 발생했습니다: Invalid CSRF token');
+        throw new Exception('오류가 발생했습니다.');
     }
 
     $board_id = filter_input(INPUT_POST, 'board_id', FILTER_VALIDATE_INT)

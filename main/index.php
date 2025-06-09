@@ -184,7 +184,7 @@ $board_stmt->close();
                                             <li><a>100개</a></li>
                                         </ul>
                                     </div>
-                                    <div class="btn_box">
+                                    <div class="btn_write_box">
                                         <button type="button" class="btn_write text"
                                             onclick="location.href='../board/write.php'">글쓰기</button>
                                     </div>
