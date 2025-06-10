@@ -8,13 +8,11 @@ include "../function.php";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_token'] ?? '')) {
-            throw new Exception('오류가 발생했습니다.');
+            throw new Exception('잘못된 접근입니다.');
         }
 
-        $title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_FULL_SPECIAL_CHARS)
-            ?: throw new Exception('제목을 입력해주세요.');
-        $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_FULL_SPECIAL_CHARS)
-            ?: throw new Exception('내용을 입력해주세요.');
+        $title = filter_input(INPUT_POST, 'title') ?: throw new Exception('제목을 입력해주세요.');
+        $content = filter_input(INPUT_POST, 'content') ?: throw new Exception('내용을 입력해주세요.');
 
         $title = htmlspecialchars(strip_tags($title), ENT_QUOTES, 'UTF-8');
         $content = htmlspecialchars(strip_tags($content), ENT_QUOTES, 'UTF-8');
@@ -41,8 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             unset($_SESSION['captcha_keystring']);
-
-            $user_name = htmlspecialchars(strip_tags($user_name), ENT_QUOTES, 'UTF-8');
             $board_pw = password_hash($user_pw, PASSWORD_DEFAULT);
 
             $stmt = $db->prepare("SELECT COUNT(*) FROM user WHERE user_name = ?");
@@ -69,6 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         header("Location: ../main/index.php");
         exit;
+
     } catch (Exception $e) {
         $error_message = $e->getMessage();
         echo "<script>alert('$error_message'); history.back();</script>";
@@ -152,12 +149,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <a href="../main/index.php">게시판</a>
                             </h2>
                         </div>
-                        <div class="fr"></div>
                     </div>
                 </header>
                 <article>
-                    <h2 class="blind"></h2>
-                    <div class="issue_wrap"></div>
+                    <h2 class="blind">게시판 이슈 박스</h2>
+                    <div class="issue_wrap">
+                        <div class="issuebox">
+                            <div class="issue_contentbox clear">
+                            </div>
+                        </div>
+                    </div>
                 </article>
                 <article id="write_wrap" class="clear">
                     <h2 class="blind">게시판 글쓰기 영역</h2>
@@ -190,7 +191,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                             </fieldset>
                             <div class="write_infobox">
-                                <p>※ 쉬운 비밀번호는 타인이 수정, 삭제가 쉽습니다.</p>
+                                <?php if (!isset($_SESSION['id'])): ?>
+                                    <p>※ 쉬운 비밀번호는 타인이 수정, 삭제가 쉽습니다.</p>
+                                <?php endif; ?>
                                 <p>※ 음란물, 차별, 비하, 혐오 및 초상권, 저작권 침해 게시물은 민, 형사상의 책임을 질 수 있습니다.
                                     <button type="button">[저작권법 안내]</button>
                                     <button type="button">[게시물 이용 안내]</button>

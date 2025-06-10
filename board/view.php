@@ -450,7 +450,7 @@ $stmt->close();
                      </div>
                      <div class="fr">
                         <?php if ($is_writer || empty($board_writer_id)): ?>
-                           <?php $step = empty($board_writer_id) ? 'edit' : 'check'; ?>
+                           <?php $step = empty($board_pw) ? 'edit' : 'check'; ?>
                            <button type="button" class="btn btn_grey"
                               onclick="location.href='modify.php?id=<?= $board_id ?>&step=<?= $step ?>'">수정</button>
                            <button type="button" class="btn btn_grey"

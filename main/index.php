@@ -142,7 +142,9 @@ $board_stmt->close();
                     <header>
                         <div class="page_head clear">
                             <div class="fl clear">
-                                <h2>게시판</h2>
+                                <h2>
+                                    <a href="../main/index.php">게시판</a>
+                                </h2>
                             </div>
                         </div>
                     </header>

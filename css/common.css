@@ -168,7 +168,7 @@
 
 .btn {
   width: 85px;
-  height: 35px;
+  height: 40px;
   padding-right: 2px;
   line-height: 31px;
   margin-left: 3px;
@@ -960,7 +960,7 @@ border-radius: 0;
   color: #29367c;
   font-family: "Nanum Gothic", sans-serif;
   letter-spacing: -1px;
-  margin: -2px 6px 0 3px;
+  margin: -2px 6px 0 2px;
   max-width: 420px;
   text-overflow: ellipsis;
   overflow: hidden;
