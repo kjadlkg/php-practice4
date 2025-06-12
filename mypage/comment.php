@@ -223,8 +223,8 @@ $page_stmt->close();
                                         </ul>
                                         <div class="bottom_paging_box">
                                             <?php if ($now_block > 1): ?>
+                                                <a href="comment.php?page=1">맨처음</a>
                                                 <a href="comment.php?page=<?= $s_page - 1 ?>">이전블록</a>
-                                            <?php else: ?>
                                             <?php endif; ?>
 
                                             <?php for ($i = $s_page; $i <= $e_page; $i++): ?>
@@ -237,7 +237,7 @@ $page_stmt->close();
 
                                             <?php if ($now_block < $total_block): ?>
                                                 <a href="comment.php?page=<?= $e_page + 1 ?>">다음블록</a>
-                                            <?php else: ?>
+                                                <a href="comment.php?page=<?= $total_page ?>">맨끝</a>
                                             <?php endif; ?>
                                         </div>
                                     </div>

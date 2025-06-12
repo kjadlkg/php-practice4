@@ -3,13 +3,50 @@ include "../db.php";
 include "../function.php";
 
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$valid_sort = ['new', 'accuracy'];
+$sort = isset($_GET['sort']) && in_array($_GET['sort'], $valid_sort) ? $_GET['sort'] : 'new';   // 기본값 최신순
+
+$escaped_search = $db->real_escape_string($search);
+
+
+if ($sort === 'accuracy') {
+    $order_by = "(board_title LIKE '%$escaped_search%' OR board_content LIKE '%$escaped_search%') DESC, created_at DESC";
+} else {
+    $order_by = "created_at DESC";
+}
+
+// 페이징
+$page_num = 10;
+$page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+$list_num = isset($_GET['list_num']) ? max(10, (int) $_GET['list_num']) : 10;
 
 if ($search) {
-    $stmt = $db->prepare("SELECT * FROM board WHERE board_title LIKE ? OR board_content LIKE ?");
     $search_text = "%$search%";
-    $stmt->bind_param("ss", $search_text, $search_text);
+
+    // 총 게시글 수
+    $count_stmt = $db->prepare("SELECT COUNT(*) AS total FROM board WHERE board_title LIKE ? OR board_content LIKE ?");
+    $count_stmt->bind_param("ss", $search_text, $search_text);
+    $count_stmt->execute();
+    $count_result = $count_stmt->get_result();
+    $total_rows = $count_result->fetch_assoc()['total'];
+    $count_stmt->close();
+
+    $total_page = max(1, ceil($total_rows / $list_num));
+    if ($page > $total_page)
+        $page = $total_page;
+    $start = max(0, ($page - 1) * $list_num);
+
+    $total_block = ceil($total_page / $page_num);
+    $now_block = ceil($page / $page_num);
+    $s_page = max(1, ($now_block - 1) * $page_num + 1);
+    $e_page = min($total_page, $s_page + $page_num - 1);
+
+    // 검색 게시글 수
+    $stmt = $db->prepare("SELECT * FROM board WHERE board_title LIKE ? OR board_content LIKE ? ORDER BY $order_by LIMIT ?, ?");
+    $stmt->bind_param("ssii", $search_text, $search_text, $start, $list_num);
     $stmt->execute();
     $result = $stmt->get_result();
+    $stmt->close();
 } else {
     echo "<script>alert('검색어를 입력해주세요'); history.back();</script>";
     exit;
@@ -86,8 +123,10 @@ if ($search) {
                             <div class="integrate_content_head clear">
                                 <h3 class="fl">게시물</h3>
                                 <div class="btn_sort_box fr">
-                                    <button type="button" class="btn_sort new">최신순</button>
-                                    <button type="button" class="btn_sort accuracy">정확도순</button>
+                                    <a href="search.php?search=<?= urlencode($search) ?>&sort=new"
+                                        class="btn_sort <?= $sort === 'new' ? 'new' : '' ?>">최신순</a>
+                                    <a href="search.php?search=<?= urlencode($search) ?>&sort=accuracy"
+                                        class="btn_sort <?= $sort === 'accuracy' ? 'accuracy' : '' ?>">정확도순</a>
                                 </div>
                             </div>
                             <ul class="search_result_list">
@@ -119,21 +158,45 @@ if ($search) {
                         </div>
                     </div>
                     <div class="intergrate_bottom_search">
-                        <!-- 페이징 -->
-                        <form method="GET">
-                            <fieldset>
-                                <legend class="blind">통합검색</legend>
-                                <div class="bottom_search_wrap clear">
-                                    <div class="bottom_search fl clear">
-                                        <div class="inner_search">
-                                            <input type="text" class="in_keyword" name="search" value="<?= $search ?>">
+                        <div class="bottom_paging_wrap">
+                            <div class="bottom_paging_box">
+                                <?php if ($now_block > 1): ?>
+                                    <a href="search.php?search=<?= urlencode($search) ?>&sort=<?= $sort ?>&page=1">맨처음</a>
+                                    <a
+                                        href="search.php?search=<?= urlencode($search) ?>&sort=<?= $sort ?>&page=<?= $s_page - 1 ?>">이전블록</a>
+                                <?php endif; ?>
+
+                                <?php for ($i = $s_page; $i <= $e_page; $i++): ?>
+                                    <?php if ($i == $page): ?>
+                                        <em><?= $i ?></em>
+                                    <?php else: ?>
+                                        <a
+                                            href="search.php?search=<?= urlencode($search) ?>&sort=<?= $sort ?>&page=<?= $i ?>"><?= $i ?></a>
+                                    <?php endif; ?>
+                                <?php endfor; ?>
+
+                                <?php if ($now_block < $total_block): ?>
+                                    <a
+                                        href="search.php?search=<?= urlencode($search) ?>&sort=<?= $sort ?>&page=<?= $e_page + 1 ?>">다음블록</a>
+                                    <a
+                                        href="search.php?search=<?= urlencode($search) ?>&sort=<?= $sort ?>&page=<?= $total_page ?>">맨끝</a>
+                                <?php endif; ?>
+                            </div>
+                            <form method="GET">
+                                <fieldset>
+                                    <legend class="blind">통합검색</legend>
+                                    <div class="bottom_search_wrap clear">
+                                        <div class="bottom_search fl clear">
+                                            <div class="inner_search">
+                                                <input type="text" class="in_keyword" name="search"
+                                                    value="<?= $search ?>">
+                                            </div>
+                                            <button type="submit" class="btn_search">검색</button>
                                         </div>
-                                        <button type="submit" class="btn_search">검색</button>
                                     </div>
-                                </div>
-                            </fieldset>
-                        </form>
-                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
                 </section>
                 <section class="right_content">
                     <h2 class="blind">오른쪽 컨텐츠 영역</h2>

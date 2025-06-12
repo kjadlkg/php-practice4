@@ -364,13 +364,8 @@ $stmt->close();
                                  <div class="bottom_paging_box">
                                     <div class="comment_paging">
                                        <?php if ($now_block > 1): ?>
-                                          <a href="index.php?page=1">맨처음</a>
-                                       <?php else: ?>
-                                       <?php endif; ?>
-
-                                       <?php if ($now_block > 1): ?>
+                                          <a href="view.php?page=1">맨처음</a>
                                           <a href="view.php?id=<?= $board_id ?>&page=<?= $s_page - 1 ?>">이전블록</a>
-                                       <?php else: ?>
                                        <?php endif; ?>
 
                                        <?php for ($i = $s_page; $i <= $e_page; $i++): ?>
@@ -383,12 +378,7 @@ $stmt->close();
 
                                        <?php if ($now_block < $total_block): ?>
                                           <a href="view.php?id=<?= $board_id ?>&page=<?= $e_page + 1 ?>">다음블록</a>
-                                       <?php else: ?>
-                                       <?php endif; ?>
-
-                                       <?php if ($now_block < $total_block): ?>
-                                          <a href="index.php?page=<?= $total_block ?>">맨끝</a>
-                                       <?php else: ?>
+                                          <a href="view.php?page=<?= $total_page ?>">맨끝</a>
                                        <?php endif; ?>
                                     </div>
                                     <div class="comment_option">
