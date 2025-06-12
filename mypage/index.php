@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "../db.php";
+include "../resource/db.php";
 
 if (!isset($_SESSION['id'], $_SESSION['name'])) {
     echo "<script>alert('로그인이 필요합니다.'); location.href='../member/login/login.php';</script>";
@@ -62,11 +62,11 @@ $stmt->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마이페이지</title>
-    <link rel="stylesheet" href="../css/base.css">
-    <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/component.css">
-    <link rel="stylesheet" href="../css/contents.css">
-    <link rel="stylesheet" href="../css/page/mypage.css">
+    <link rel="stylesheet" href="../resource/css/base.css">
+    <link rel="stylesheet" href="../resource/css/common.css">
+    <link rel="stylesheet" href="../resource/css/component.css">
+    <link rel="stylesheet" href="../resource/css/contents.css">
+    <link rel="stylesheet" href="../resource/css/page/mypage.css">
 </head>
 
 <body>
@@ -126,30 +126,30 @@ $stmt->close();
                                         <div class="content_box">
                                             <ul class="content_listbox">
                                                 <?php if ($board_result->num_rows == 0): ?>
-                                                <p>작성한 글이 없습니다</p>
+                                                    <p>작성한 글이 없습니다</p>
                                                 <?php else: ?>
-                                                <?php while ($row = $board_result->fetch_assoc()): ?>
-                                                <li>
-                                                    <div class="content">
-                                                        <div class="board_linkbox">
-                                                            <a class="link"
-                                                                href="../board/view.php?id=<?= htmlspecialchars($row['board_id']) ?>"
-                                                                target="_blank">
-                                                                <div class="boardtitle">
-                                                                    <strong><?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?></strong>
-                                                                    <span
-                                                                        class="comment_num">[<?= $row['comment_count'] ?>]</span>
+                                                    <?php while ($row = $board_result->fetch_assoc()): ?>
+                                                        <li>
+                                                            <div class="content">
+                                                                <div class="board_linkbox">
+                                                                    <a class="link"
+                                                                        href="../board/view.php?id=<?= htmlspecialchars($row['board_id']) ?>"
+                                                                        target="_blank">
+                                                                        <div class="boardtitle">
+                                                                            <strong><?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?></strong>
+                                                                            <span
+                                                                                class="comment_num">[<?= $row['comment_count'] ?>]</span>
+                                                                        </div>
+                                                                        <div class="datebox">
+                                                                            <span class="date">
+                                                                                <?= date("Y.m.d", strtotime($row['created_at'])) ?>
+                                                                            </span>
+                                                                        </div>
+                                                                    </a>
                                                                 </div>
-                                                                <div class="datebox">
-                                                                    <span class="date">
-                                                                        <?= date("Y.m.d", strtotime($row['created_at'])) ?>
-                                                                    </span>
-                                                                </div>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                <?php endwhile; ?>
+                                                            </div>
+                                                        </li>
+                                                    <?php endwhile; ?>
                                                 <?php endif; ?>
                                             </ul>
                                         </div>
@@ -168,31 +168,31 @@ $stmt->close();
                                         <div class="content_box">
                                             <ul class="content_listbox">
                                                 <?php if ($comment_result->num_rows == 0): ?>
-                                                <p>작성한 댓글이 없습니다</p>
+                                                    <p>작성한 댓글이 없습니다</p>
                                                 <?php else: ?>
-                                                <?php while ($row = $comment_result->fetch_assoc()) { ?>
-                                                <li>
-                                                    <div class="content">
-                                                        <div class="board_linkbox">
-                                                            <a class="link"
-                                                                href="../board/view.php?id=<?= htmlspecialchars($row['board_id']) ?>"
-                                                                target="_blank">
-                                                                <p class="text">
-                                                                    <?= htmlspecialchars($row['comment_content'], ENT_QUOTES, 'UTF-8'); ?>
-                                                                </p>
-                                                                <div class="datebox">
-                                                                    <span><?= date("Y.m.d", strtotime($row['created_at'])) ?></span>
+                                                    <?php while ($row = $comment_result->fetch_assoc()) { ?>
+                                                        <li>
+                                                            <div class="content">
+                                                                <div class="board_linkbox">
+                                                                    <a class="link"
+                                                                        href="../board/view.php?id=<?= htmlspecialchars($row['board_id']) ?>"
+                                                                        target="_blank">
+                                                                        <p class="text">
+                                                                            <?= htmlspecialchars($row['comment_content'], ENT_QUOTES, 'UTF-8'); ?>
+                                                                        </p>
+                                                                        <div class="datebox">
+                                                                            <span><?= date("Y.m.d", strtotime($row['created_at'])) ?></span>
+                                                                        </div>
+                                                                        <div class="boardtitle">
+                                                                            <strong>
+                                                                                <?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?>
+                                                                            </strong>
+                                                                        </div>
+                                                                    </a>
                                                                 </div>
-                                                                <div class="boardtitle">
-                                                                    <strong>
-                                                                        <?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?>
-                                                                    </strong>
-                                                                </div>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                <?php } ?>
+                                                            </div>
+                                                        </li>
+                                                    <?php } ?>
                                                 <?php endif; ?>
                                             </ul>
                                         </div>
@@ -218,32 +218,32 @@ $stmt->close();
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-    $(function() {
-        $('.btn_user_data').on('click', function(e) {
-            e.stopPropagation();
-            var $btn = $(this);
-            var $menu = $btn.siblings('.user_data');
+        $(function () {
+            $('.btn_user_data').on('click', function (e) {
+                e.stopPropagation();
+                var $btn = $(this);
+                var $menu = $btn.siblings('.user_data');
 
-            $btn.toggleClass('on');
+                $btn.toggleClass('on');
 
-            if ($btn.hasClass('on')) {
-                $menu.show();
-            } else {
-                $menu.hide();
-            }
+                if ($btn.hasClass('on')) {
+                    $menu.show();
+                } else {
+                    $menu.hide();
+                }
+            });
+
+            // 외부 클릭 시 닫힘
+            $(document).on('click', function () {
+                $('.btn_user_data').removeClass('on');
+                $('.user_data').hide();
+            });
+
+            // 내부 클릭 시 닫힘 방지
+            $('.user_data').on('click', function (e) {
+                e.stopPropagation();
+            });
         });
-
-        // 외부 클릭 시 닫힘
-        $(document).on('click', function() {
-            $('.btn_user_data').removeClass('on');
-            $('.user_data').hide();
-        });
-
-        // 내부 클릭 시 닫힘 방지
-        $('.user_data').on('click', function(e) {
-            e.stopPropagation();
-        });
-    });
     </script>
 </body>
 

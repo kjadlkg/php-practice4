@@ -1,6 +1,8 @@
 <?php
-session_start();
-include "../../db.php";
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+include "../../resource/db.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = trim($_POST['id']);
@@ -33,11 +35,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>비밀번호 재설정</title>
-    <link rel="stylesheet" href="../../css/base.css">
-    <link rel="stylesheet" href="../../css/common.css">
-    <link rel="stylesheet" href="../../css/component.css">
-    <link rel="stylesheet" href="../../css/contents.css">
-    <link rel="stylesheet" href="../../css/page/login.css">
+    <link rel="stylesheet" href="../../resource/css/base.css">
+    <link rel="stylesheet" href="../../resource/css/common.css">
+    <link rel="stylesheet" href="../../resource/css/component.css">
+    <link rel="stylesheet" href="../../resource/css/contents.css">
+    <link rel="stylesheet" href="../../resource/css/page/login.css">
 </head>
 
 <body>

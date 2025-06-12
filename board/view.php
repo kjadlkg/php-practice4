@@ -2,8 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
    session_start();
 }
-include "../db.php";
-include "../function.php";
+include "../resource/db.php";
+include "../resource/function.php";
 
 $board_id = $_GET['id'] ?? null;
 $is_login = isset($_SESSION['id']) && !empty($_SESSION['id']);
@@ -122,10 +122,10 @@ $stmt->close();
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title><?= $board_title ?></title>
-   <link rel="stylesheet" href="../css/base.css">
-   <link rel="stylesheet" href="../css/common.css">
-   <link rel="stylesheet" href="../css/component.css">
-   <link rel="stylesheet" href="../css/contents.css">
+   <link rel="stylesheet" href="../resource/css/base.css">
+   <link rel="stylesheet" href="../resource/css/common.css">
+   <link rel="stylesheet" href="../resource/css/component.css">
+   <link rel="stylesheet" href="../resource/css/contents.css">
    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -233,7 +233,7 @@ $stmt->close();
                         <?php if (!$is_login): ?>
                            <div class="recommend_kcaptcha">
                               <div class="kcaptcha_img">
-                                 <img src="../captcha_image.php?<?= time() ?>" class="kcaptcha" alt="KCAPTCHA">
+                                 <img src="../resource/captcha_image.php?<?= time() ?>" class="kcaptcha" alt="KCAPTCHA">
                               </div>
                               <input type="text" id="captcha_input" name="captcha" class="recommend_kcaptcha_input"
                                  placeholder="코드입력">
@@ -412,7 +412,8 @@ $stmt->close();
                                        <input type="text" name="captcha" placeholder="코드입력">
                                     </div>
                                     <div class="kcaptcha_img">
-                                       <img src="../captcha_image.php?<?= time() ?>" class="kcaptcha" alt="KCAPTCHA">
+                                       <img src="../resource/captcha_image.php?<?= time() ?>" class="kcaptcha"
+                                          alt="KCAPTCHA">
                                     </div>
                                  <?php endif; ?>
                                  <input type="hidden" name="board_id" value="<?= $board_id ?>">
@@ -486,7 +487,7 @@ $stmt->close();
    // 캡차 클릭 시 이미지 변경
    Array.from(document.getElementsByClassName('kcaptcha')).forEach(function (img) {
       img.addEventListener('click', function () {
-         this.src = '../captcha_image.php?' + Date.now();
+         this.src = '../resource/captcha_image.php?' + Date.now();
          document.getElementById('captcha_input').value = '';
       });
    });

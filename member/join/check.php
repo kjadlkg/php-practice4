@@ -1,5 +1,5 @@
 <?php
-include "../../db.php";
+include "../../resource/db.php";
 
 if (isset($_POST['id'])) {
     $id = trim($_POST['id']);

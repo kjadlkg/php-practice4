@@ -2,7 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include "../db.php";
+include "../resource/db.php";
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

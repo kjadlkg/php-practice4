@@ -1,5 +1,5 @@
 <?php
-include "../../db.php";
+include "../../resource/db.php";
 
 if (isset($_SESSION['id'])) {
     echo "<script>alert('이미 로그인 하셨습니다.');</script>";
@@ -80,11 +80,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입</title>
-    <link rel="stylesheet" href="../../css/base.css">
-    <link rel="stylesheet" href="../../css/common.css">
-    <link rel="stylesheet" href="../../css/component.css">
-    <link rel="stylesheet" href="../../css/contents.css">
-    <link rel="stylesheet" href="../../css/page/join.css">
+    <link rel="stylesheet" href="../../resource/css/base.css">
+    <link rel="stylesheet" href="../../resource/css/common.css">
+    <link rel="stylesheet" href="../../resource/css/component.css">
+    <link rel="stylesheet" href="../../resource/css/contents.css">
+    <link rel="stylesheet" href="../../resource/css/page/join.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -130,7 +130,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             style="display: none;">사용
                                                             가능한 아이디입니다</p>
                                                         <p class="tip_msg font_red mt6" id="idc_unable"
-                                                            style="display: none;">중복된 아이디 입니다</p>
+                                                            style="display: none;">중복된 아이디
+                                                            입니다</p>
                                                     </div>
                                                 </div>
                                             </div>
@@ -186,9 +187,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="form_text">
                                                 <div class="kcaptcha_box">
                                                     <div class="kcaptcha_img">
-                                                        <img src="../../captcha_image.php?<?= time() ?>" alt="자동등록방지"
-                                                            onclick="this.src='../../captcha_image.php?' + new Date().getTime()"
-                                                            style="cursor:pointer;">
+                                                        <img src="../../resource/captcha_image.php?<?= time() ?>"
+                                                            class="kcaptcha" alt="KCAPTCHA">
                                                     </div>
                                                     <input type="text" class="input_kcaptcha" id="captcha"
                                                         name="captcha" placeholder="코드 입력">
@@ -210,181 +210,188 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </main>
         <script>
-        $(function() {
-            var isIdChecked = false;
+            // 캡차 클릭 시 이미지 변경
+            Array.from(document.getElementsByClassName('kcaptcha')).forEach(function (img) {
+                img.addEventListener('click', function () {
+                    this.src = '../../resource/captcha_image.php?' + Date.now();
+                    document.getElementById('captcha_input').value = '';
+                });
+            });
+            $(function () {
+                var isIdChecked = false;
 
-            $("#id_check").click(function() {
-                var user_id = $("#id").val().trim();
+                $("#id_check").click(function () {
+                    var user_id = $("#id").val().trim();
 
-                if (user_id === "") {
-                    isIdChecked = false;
-                    $('#id').focus();
-                    $('#idc_info').show();
-                    $('#idc_enable').hide();
-                    $('#idc_unable').hide();
-                    return;
-                }
-
-                $.ajax({
-                    type: "POST",
-                    url: "check.php",
-                    data: {
-                        id: user_id
-                    },
-                    success: function(response) {
-                        if (response === "exists") {
-                            isIdChecked = false;
-                            $('#idc_info').hide();
-                            $('#idc_enable').hide();
-                            $('#idc_unable').show();
-
-                        } else if (response === 'available') {
-                            isIdChecked = true;
-                            $('#idc_info').hide();
-                            $('#idc_enable').show();
-                            $('#idc_unable').hide();
-                        } else {
-                            isIdChecked = false;
-                            $('#idc_info').show();
-                            $('#idc_enable').hide();
-                            $('#idc_unable').hide();
-                        }
-                    },
-                    error: function() {
+                    if (user_id === "") {
                         isIdChecked = false;
-                        alert("서버에 오류가 발생했습니다.");
-                        header("join.php");
-                        exit();
+                        $('#id').focus();
+                        $('#idc_info').show();
+                        $('#idc_enable').hide();
+                        $('#idc_unable').hide();
+                        return;
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "check.php",
+                        data: {
+                            id: user_id
+                        },
+                        success: function (response) {
+                            if (response === "exists") {
+                                isIdChecked = false;
+                                $('#idc_info').hide();
+                                $('#idc_enable').hide();
+                                $('#idc_unable').show();
+
+                            } else if (response === 'available') {
+                                isIdChecked = true;
+                                $('#idc_info').hide();
+                                $('#idc_enable').show();
+                                $('#idc_unable').hide();
+                            } else {
+                                isIdChecked = false;
+                                $('#idc_info').show();
+                                $('#idc_enable').hide();
+                                $('#idc_unable').hide();
+                            }
+                        },
+                        error: function () {
+                            isIdChecked = false;
+                            alert("서버에 오류가 발생했습니다.");
+                            header("join.php");
+                            exit();
+                        }
+                    });
+                });
+
+                $('#pw').on('input', function () {
+                    const id = $('#id').val();
+                    const nickname = $('#name').val();
+
+                    const pw = $(this).val();
+                    const hasUpper = /[A-Z]/;
+                    const strPattern = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])/;
+                    const lenPattern = /^.{8,20}$/;
+                    const repeatPattern = /(.)\1\1/;
+                    const sequencePattern =
+                        /(?:(abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz|012|123|234|345|456|567|678|789|890))/i;
+
+                    const isIncludeId = id && pw.includes(id);
+                    const isIncludeNick = nickname && pw.includes(nickname);
+
+                    // 비밀번호 필수 조건 충족 여부
+                    if (strPattern.test(pw)) {
+                        $('.chkStr').addClass('on');
+                    } else {
+                        $('.chkStr').removeClass('on');
+                    }
+
+                    if (lenPattern.test(pw)) {
+                        $('.chkLen').addClass('on');
+                    } else {
+                        $('.chkLen').removeClass('on');
+                    }
+
+                    // 닉네임, 아이디 포함 여부
+                    if (isIncludeId || isIncludeNick) {
+                        $('.tip2').show();
+                    } else {
+                        $('.tip2').hide();
+                    }
+
+                    // 연속, 반복 3자리 포함 여부
+                    if (repeatPattern.test(pw) || sequencePattern.test(pw)) {
+                        $('.tip3').show();
+                    } else {
+                        $('.tip3').hide();
+                    }
+
+                    // 비밀번호 안전 정도 충족 여부
+                    $('.step_box').removeClass('impossible normal safe');
+
+                    if (!strPattern.test(pw) || !lenPattern.test(pw) || isIncludeId || isIncludeNick ||
+                        repeatPattern.test(pw) || sequencePattern.test(pw)) {
+                        $('.step_box').addClass('impossible');
+                    } else if (hasUpper.test(pw)) {
+                        $('.step_box').addClass('safe');
+                    } else {
+                        $('.step_box').addClass('normal');
+                    }
+                });
+
+                $('#pw_check').on('keyup', function () {
+                    const pw = $('#pw').val();
+                    const pwCheck = $(this).val();
+
+                    if (pwCheck !== '' && pw !== pwCheck) {
+                        $('.tip1').show();
+                    } else {
+                        $('.tip1').hide();
+                    }
+                });
+
+
+                $('form').on('submit', function (e) {
+                    const pw = $('#pw').val().trim();
+                    const pwCheck = $('#pw_check').val().trim();
+                    const nickname = $('#name').val().trim();
+                    const email = $('#email').val().trim();
+                    const captcha = $('#captcha').val().trim();
+
+                    // 아이디 중복 확인 여부
+                    if (!isIdChecked) {
+                        e.preventDefault();
+                        $('#id').focus();
+                        return;
+                    }
+
+                    // 빈칸 존재 여부
+                    if (nickname === '') {
+                        e.preventDefault();
+                        $('#name').focus();
+                        return;
+                    }
+
+                    if (email === '') {
+                        e.preventDefault();
+                        $('#email').focus();
+                        return;
+                    }
+
+                    if (captcha === '') {
+                        e.preventDefault();
+                        $('#captcha').focus();
+                        return;
+                    }
+
+                    if (pw === '') {
+                        e.preventDefault();
+                        $('#pw').focus();
+                        return;
+                    }
+
+                    if (pwCheck === '') {
+                        e.preventDefault();
+                        $('#pw_check').focus();
+                        return;
+                    }
+
+                    if (pw !== pwCheck) {
+                        e.preventDefault();
+                        $('#pw_check').focus();
+                        return;
+                    }
+
+                    // impossible 클래스 존재 여부
+                    if ($('.step_box').hasClass('impossible')) {
+                        e.preventDefault();
+                        $('#pw').focus();
+                        return;
                     }
                 });
             });
-
-            $('#pw').on('input', function() {
-                const id = $('#id').val();
-                const nickname = $('#name').val();
-
-                const pw = $(this).val();
-                const hasUpper = /[A-Z]/;
-                const strPattern = /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])/;
-                const lenPattern = /^.{8,20}$/;
-                const repeatPattern = /(.)\1\1/;
-                const sequencePattern =
-                    /(?:(abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz|012|123|234|345|456|567|678|789|890))/i;
-
-                const isIncludeId = id && pw.includes(id);
-                const isIncludeNick = nickname && pw.includes(nickname);
-
-                // 비밀번호 필수 조건 충족 여부
-                if (strPattern.test(pw)) {
-                    $('.chkStr').addClass('on');
-                } else {
-                    $('.chkStr').removeClass('on');
-                }
-
-                if (lenPattern.test(pw)) {
-                    $('.chkLen').addClass('on');
-                } else {
-                    $('.chkLen').removeClass('on');
-                }
-
-                // 닉네임, 아이디 포함 여부
-                if (isIncludeId || isIncludeNick) {
-                    $('.tip2').show();
-                } else {
-                    $('.tip2').hide();
-                }
-
-                // 연속, 반복 3자리 포함 여부
-                if (repeatPattern.test(pw) || sequencePattern.test(pw)) {
-                    $('.tip3').show();
-                } else {
-                    $('.tip3').hide();
-                }
-
-                // 비밀번호 안전 정도 충족 여부
-                $('.step_box').removeClass('impossible normal safe');
-
-                if (!strPattern.test(pw) || !lenPattern.test(pw) || isIncludeId || isIncludeNick ||
-                    repeatPattern.test(pw) || sequencePattern.test(pw)) {
-                    $('.step_box').addClass('impossible');
-                } else if (hasUpper.test(pw)) {
-                    $('.step_box').addClass('safe');
-                } else {
-                    $('.step_box').addClass('normal');
-                }
-            });
-
-            $('#pw_check').on('keyup', function() {
-                const pw = $('#pw').val();
-                const pwCheck = $(this).val();
-
-                if (pwCheck !== '' && pw !== pwCheck) {
-                    $('.tip1').show();
-                } else {
-                    $('.tip1').hide();
-                }
-            });
-
-
-            $('form').on('submit', function(e) {
-                const pw = $('#pw').val().trim();
-                const pwCheck = $('#pw_check').val().trim();
-                const nickname = $('#name').val().trim();
-                const email = $('#email').val().trim();
-                const captcha = $('#captcha').val().trim();
-
-                // 아이디 중복 확인 여부
-                if (!isIdChecked) {
-                    e.preventDefault();
-                    $('#id').focus();
-                    return;
-                }
-
-                // 빈칸 존재 여부
-                if (nickname === '') {
-                    e.preventDefault();
-                    $('#name').focus();
-                    return;
-                }
-
-                if (email === '') {
-                    e.preventDefault();
-                    $('#email').focus();
-                    return;
-                }
-
-                if (captcha === '') {
-                    e.preventDefault();
-                    $('#captcha').focus();
-                    return;
-                }
-
-                if (pw === '') {
-                    e.preventDefault();
-                    $('#pw').focus();
-                    return;
-                }
-
-                if (pwCheck === '') {
-                    e.preventDefault();
-                    $('#pw_check').focus();
-                    return;
-                }
-
-                if (pw !== pwCheck) {
-                    e.preventDefault();
-                    $('#pw_check').focus();
-                    return;
-                }
-
-                // impossible 클래스 존재 여부
-                if ($('.step_box').hasClass('impossible')) {
-                    e.preventDefault();
-                    $('#pw').focus();
-                    return;
-                }
-            });
-        });
         </script>
         <footer class="footer">
             <div class="info_policy">

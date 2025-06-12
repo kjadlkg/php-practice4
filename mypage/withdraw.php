@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "../db.php";
+include "../resource/db.php";
 
 if (!isset($_SESSION['id'], $_SESSION['name'])) {
     echo "<script>alert('로그인이 필요합니다.'); location.href='../member/login/login.php';</script>";
@@ -39,11 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원 탈퇴</title>
-    <link rel="stylesheet" href="../css/base.css">
-    <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/component.css">
-    <link rel="stylesheet" href="../css/contents.css">
-    <link rel="stylesheet" href="../css/page/login.css">
+    <link rel="stylesheet" href="../resource/css/base.css">
+    <link rel="stylesheet" href="../resource/css/common.css">
+    <link rel="stylesheet" href="../resource/css/component.css">
+    <link rel="stylesheet" href="../resource/css/contents.css">
+    <link rel="stylesheet" href="../resource/css/page/login.css">
 </head>
 
 <body>
@@ -120,14 +120,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </main>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-        $(function() {
-            $('form').on('submit', function(e) {
-                if (!$('#term_agree').prop('checked')) {
-                    alert("탈퇴 동의에 체크 해주시길 바랍니다.");
-                    e.preventDefault();
-                }
-            });
-        })
+            $(function () {
+                $('form').on('submit', function (e) {
+                    if (!$('#term_agree').prop('checked')) {
+                        alert("탈퇴 동의에 체크 해주시길 바랍니다.");
+                        e.preventDefault();
+                    }
+                });
+            })
         </script>
         <footer class="footer">
             <div class="info_policy">

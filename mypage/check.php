@@ -1,7 +1,7 @@
 <?php
 session_start();
-include "../db.php";
-include "../function.php";
+include "../resource/db.php";
+include "../resource/function.php";
 
 if (!isset($_SESSION["id"])) {
     echo "<script>alert('로그인이 필요합니다.'); location.href='../member/login/login.php';</script>";
@@ -45,11 +45,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>비밀번호 확인</title>
-    <link rel="stylesheet" href="../css/base.css">
-    <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/component.css">
-    <link rel="stylesheet" href="../css/contents.css">
-    <link rel="stylesheet" href="../css/page/login.css">
+    <link rel="stylesheet" href="../resource/css/base.css">
+    <link rel="stylesheet" href="../resource/css/common.css">
+    <link rel="stylesheet" href="../resource/css/component.css">
+    <link rel="stylesheet" href="../resource/css/contents.css">
+    <link rel="stylesheet" href="../resource/css/page/login.css">
 </head>
 
 <body>
@@ -87,18 +87,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </main>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-        $(function() {
-            $('form').on('submit', function(e) {
-                const pw = $('#pw').val().trim();
+            $(function () {
+                $('form').on('submit', function (e) {
+                    const pw = $('#pw').val().trim();
 
-                if (pw === '') {
-                    alert("비밀번호를 입력해주세요.");
-                    e.preventDefault();
-                    $('#pw').focus();
-                    return;
-                }
-            });
-        })
+                    if (pw === '') {
+                        alert("비밀번호를 입력해주세요.");
+                        e.preventDefault();
+                        $('#pw').focus();
+                        return;
+                    }
+                });
+            })
         </script>
         <footer class="footer">
             <div class="info_policy">

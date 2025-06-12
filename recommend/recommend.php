@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 header('Cache-Control: no-cache, no-store, must-revalidate');
 date_default_timezone_set('Asia/Seoul');
 session_start();
-include "../db.php";
+include "../resource/db.php";
 
 $input = json_decode(file_get_contents('php://input'), true);
 $board_id = isset($input['id']) ? (int) $input['id'] : 0;

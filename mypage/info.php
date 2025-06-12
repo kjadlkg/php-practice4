@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "../db.php";
+include "../resource/db.php";
 
 if (!isset($_SESSION['id'], $_SESSION['name'])) {
     echo "<script>alert('로그인이 필요합니다.'); location.href='../member/login/login.php';</script>";
@@ -29,11 +29,11 @@ if (!$user) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>내 정보</title>
-    <link rel="stylesheet" href="../css/base.css">
-    <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/component.css">
-    <link rel="stylesheet" href="../css/contents.css">
-    <link rel="stylesheet" href="../css/page/login.css">
+    <link rel="stylesheet" href="../resource/css/base.css">
+    <link rel="stylesheet" href="../resource/css/common.css">
+    <link rel="stylesheet" href="../resource/css/component.css">
+    <link rel="stylesheet" href="../resource/css/contents.css">
+    <link rel="stylesheet" href="../resource/css/page/login.css">
 </head>
 
 <body>
@@ -108,31 +108,31 @@ if (!$user) {
         </main>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-        $(function() {
-            $('form').on('submit', function(e) {
-                const name = $('#name').val().trim();
-                const pw = $('#pw').val().trim();
-                const email = $('#email').val().trim();
+            $(function () {
+                $('form').on('submit', function (e) {
+                    const name = $('#name').val().trim();
+                    const pw = $('#pw').val().trim();
+                    const email = $('#email').val().trim();
 
-                if (name === '') {
-                    e.preventDefault();
-                    $('#name').focus();
-                    return;
-                }
+                    if (name === '') {
+                        e.preventDefault();
+                        $('#name').focus();
+                        return;
+                    }
 
-                if (pw === '') {
-                    e.preventDefault();
-                    $('#pw').focus();
-                    return;
-                }
+                    if (pw === '') {
+                        e.preventDefault();
+                        $('#pw').focus();
+                        return;
+                    }
 
-                if (email === '') {
-                    e.preventDefault();
-                    $('#email').focus();
-                    return;
-                }
-            });
-        })
+                    if (email === '') {
+                        e.preventDefault();
+                        $('#email').focus();
+                        return;
+                    }
+                });
+            })
         </script>
         <footer class="footer">
             <div class="info_policy">

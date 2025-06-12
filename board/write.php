@@ -2,8 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include "../db.php";
-include "../function.php";
+include "../resource/db.php";
+include "../resource/function.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
@@ -85,14 +85,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>글쓰기</title>
-    <link rel="stylesheet" href="../css/base.css">
-    <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/component.css">
-    <link rel="stylesheet" href="../css/contents.css">
+    <link rel="stylesheet" href="../resource/css/base.css">
+    <link rel="stylesheet" href="../resource/css/common.css">
+    <link rel="stylesheet" href="../resource/css/component.css">
+    <link rel="stylesheet" href="../resource/css/contents.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="../css/summernote/summernote-lite.css">
-    <script src="../js/summernote/summernote-lite.js"></script>
-    <script src="../js/summernote/lang/summernote-ko-KR.js"></script>
+    <link rel="stylesheet" href="../resource/css/summernote/summernote-lite.css">
+    <script src="../resource/js/summernote/summernote-lite.js"></script>
+    <script src="../resource/js/summernote/lang/summernote-ko-KR.js"></script>
 </head>
 
 <body>
@@ -177,9 +177,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             maxlength="20">
                                     </div>
                                     <div class="kcaptcha_img">
-                                        <img src="../captcha_image.php?<?= time() ?>" alt="KCAPTCHA"
-                                            onclick="this.src='../captcha_image.php?' + new Date().getTime()"
-                                            style="cursor:pointer;">
+                                        <img src="../resource/captcha_image.php?<?= time() ?>" class="kcaptcha"
+                                            alt="KCAPTCHA">
                                     </div>
                                     <div class="input_box input_info input_kcaptcha">
                                         <input type="text" class="input_text" name="captcha" placeholder="코드 입력">
@@ -244,5 +243,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </footer>
     </div>
 </body>
+<script>
+    // 캡차 클릭 시 이미지 변경
+    Array.from(document.getElementsByClassName('kcaptcha')).forEach(function (img) {
+        img.addEventListener('click', function () {
+            this.src = '../resource/captcha_image.php?' + Date.now();
+            document.getElementById('captcha_input').value = '';
+        });
+    });
+</script>
 
 </html>

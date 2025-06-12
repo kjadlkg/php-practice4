@@ -2,8 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-include "../db.php";
-include "../function.php";
+include "../resource/db.php";
+include "../resource/function.php";
 
 $is_login = isset($_SESSION['id']) && !empty($_SESSION['id']);
 $loginUser = isset($_SESSION['id']) ?? '';
@@ -117,14 +117,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $boardTitle ?></title>
-    <link rel="stylesheet" href="../css/base.css">
-    <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/component.css">
-    <link rel="stylesheet" href="../css/contents.css">
+    <link rel="stylesheet" href="../resource/css/base.css">
+    <link rel="stylesheet" href="../resource/css/common.css">
+    <link rel="stylesheet" href="../resource/css/component.css">
+    <link rel="stylesheet" href="../resource/css/contents.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="../css/summernote/summernote-lite.css">
-    <script src="../js/summernote/summernote-lite.js"></script>
-    <script src="../js/summernote/lang/summernote-ko-KR.js"></script>
+    <link rel="stylesheet" href="../resource/css/summernote/summernote-lite.css">
+    <script src="../resource/js/summernote/summernote-lite.js"></script>
+    <script src="../resource/js/summernote/lang/summernote-ko-KR.js"></script>
 </head>
 
 <body>

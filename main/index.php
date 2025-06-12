@@ -1,10 +1,12 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+   session_start();
+}
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Pragma: no-cache");
 header("Expires: 0");
-include "../db.php";
-include "../function.php";
+include "../resource/db.php";
+include "../resource/function.php";
 
 
 // paging
@@ -22,7 +24,7 @@ $count_stmt->close();
 $total_page = max(1, ceil($total_rows / $list_num));
 
 if ($page > $total_page)
-    $page = $total_page;
+   $page = $total_page;
 
 $start = max(0, ($page - 1) * $list_num);
 
@@ -46,30 +48,30 @@ $board_result = $board_stmt->get_result();
 $posts = [];
 
 while ($row = $board_result->fetch_assoc()) {
-    $created_at = strtotime($row['created_at']);
-    $now = time();
+   $created_at = strtotime($row['created_at']);
+   $now = time();
 
-    if (date("Y", $created_at) === date("Y", $now)) {
-        if (date("Y-m-d", $created_at) === date("Y-m-d", $now)) {
-            $formatted_time = date("H:i", $created_at);
-        } else {
-            $formatted_time = date("m.d", $created_at);
-        }
-    } else {
-        $formatted_time = date("y.m.d", $created_at);
-    }
+   if (date("Y", $created_at) === date("Y", $now)) {
+      if (date("Y-m-d", $created_at) === date("Y-m-d", $now)) {
+         $formatted_time = date("H:i", $created_at);
+      } else {
+         $formatted_time = date("m.d", $created_at);
+      }
+   } else {
+      $formatted_time = date("y.m.d", $created_at);
+   }
 
 
-    $posts[] = [
-        'board_id' => $row['board_id'],
-        'comment_count' => $row['comment_count'],
-        'board_views' => $row['board_views'],
-        'recommend_up' => $row['recommend_up'],
-        'user_ip' => !empty($row['ip']) ? mask_ip($row['ip']) : '',
-        'created_at' => $formatted_time,
-        'board_title' => htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8'),
-        'board_writer' => htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8')
-    ];
+   $posts[] = [
+      'board_id' => $row['board_id'],
+      'comment_count' => $row['comment_count'],
+      'board_views' => $row['board_views'],
+      'recommend_up' => $row['recommend_up'],
+      'user_ip' => !empty($row['ip']) ? mask_ip($row['ip']) : '',
+      'created_at' => $formatted_time,
+      'board_title' => htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8'),
+      'board_writer' => htmlspecialchars($row['board_writer'], ENT_QUOTES, 'UTF-8')
+   ];
 }
 $board_stmt->close();
 ?>
@@ -81,12 +83,12 @@ $board_stmt->close();
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>게시판</title>
-   <link rel="stylesheet" href="../css/base.css">
-   <link rel="stylesheet" href="../css/common.css">
-   <link rel="stylesheet" href="../css/component.css">
-   <link rel="stylesheet" href="../css/contents.css">
-   <link rel="stylesheet" href="../css/popup.css">
-   <link rel="stylesheet" href="../css/page/main.css">
+   <link rel="stylesheet" href="../resource/css/base.css">
+   <link rel="stylesheet" href="../resource/css/common.css">
+   <link rel="stylesheet" href="../resource/css/component.css">
+   <link rel="stylesheet" href="../resource/css/contents.css">
+   <link rel="stylesheet" href="../resource/css/popup.css">
+   <link rel="stylesheet" href="../resource/css/page/main.css">
    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -114,13 +116,13 @@ $board_stmt->close();
             <div class="area_links clear">
                <ul class="fl clear">
                   <?php if (!isset($_SESSION["id"])): ?>
-                  <li><a href="../member/login/login.php">로그인</a></li>
-                  <li><a href="../member/join/join.php">회원가입</a></li>
+                     <li><a href="../member/login/login.php">로그인</a></li>
+                     <li><a href="../member/join/join.php">회원가입</a></li>
                   <?php else: ?>
-                  <li class="area_nick"><a href="javascript:;" class="btn_user_data"><?= $_SESSION['name'] ?>님</a>
-                  </li>
-                  <li><a href="../mypage/index.php">마이페이지</a></li>
-                  <li><a class="btn_top_logout" href="../member/login/logout.php">로그아웃</a></li>
+                     <li class="area_nick"><a href="javascript:;" class="btn_user_data"><?= $_SESSION['name'] ?>님</a>
+                     </li>
+                     <li><a href="../mypage/index.php">마이페이지</a></li>
+                     <li><a class="btn_top_logout" href="../member/login/logout.php">로그아웃</a></li>
                   <?php endif; ?>
                </ul>
             </div>
@@ -216,27 +218,27 @@ $board_stmt->close();
                         </thead>
                         <tbody>
                            <?php foreach ($posts as $post): ?>
-                           <tr>
-                              <td class="board_num"><?= $post['board_id'] ?></td>
-                              <td class="board_title">
-                                 <a href="../board/view.php?id=<?= $post['board_id'] ?>">
-                                    <em></em>
-                                    <?= $post['board_title'] ?>
-                                 </a>
-                                 <a class="comment_numbox" href="../board/view.php?id=<?= $post['board_id'] ?>">
-                                    <span class="comment_num">[<?= $post['comment_count'] ?>]</span>
-                                 </a>
-                              </td>
-                              <td class="board_writer">
-                                 <?= $post['board_writer'] ?>
-                                 <?php if (!empty($post['user_ip'])): ?>
-                                 (<?= $post['user_ip'] ?>)
-                                 <?php endif; ?>
-                              </td>
-                              <td class="board_date"><?= $post['created_at'] ?></td>
-                              <td class="board_count"><?= $post['board_views'] ?></td>
-                              <td class="board_recommend"><?= $post['recommend_up'] ?></td>
-                           </tr>
+                              <tr>
+                                 <td class="board_num"><?= $post['board_id'] ?></td>
+                                 <td class="board_title">
+                                    <a href="../board/view.php?id=<?= $post['board_id'] ?>">
+                                       <em></em>
+                                       <?= $post['board_title'] ?>
+                                    </a>
+                                    <a class="comment_numbox" href="../board/view.php?id=<?= $post['board_id'] ?>">
+                                       <span class="comment_num">[<?= $post['comment_count'] ?>]</span>
+                                    </a>
+                                 </td>
+                                 <td class="board_writer">
+                                    <?= $post['board_writer'] ?>
+                                    <?php if (!empty($post['user_ip'])): ?>
+                                       (<?= $post['user_ip'] ?>)
+                                    <?php endif; ?>
+                                 </td>
+                                 <td class="board_date"><?= $post['created_at'] ?></td>
+                                 <td class="board_count"><?= $post['board_views'] ?></td>
+                                 <td class="board_recommend"><?= $post['recommend_up'] ?></td>
+                              </tr>
                            <?php endforeach; ?>
                         </tbody>
                      </table>
@@ -253,21 +255,21 @@ $board_stmt->close();
                   <div class="bottom_paging_wrap">
                      <div class="bottom_paging_box">
                         <?php if ($now_block > 1): ?>
-                        <a href="index.php?page=1">맨처음</a>
-                        <a href="index.php?page=<?= $s_page - 1 ?>">이전블록</a>
+                           <a href="index.php?page=1">맨처음</a>
+                           <a href="index.php?page=<?= $s_page - 1 ?>">이전블록</a>
                         <?php endif; ?>
 
                         <?php for ($i = $s_page; $i <= $e_page; $i++): ?>
-                        <?php if ($i == $page): ?>
-                        <em><?= $i ?></em>
-                        <?php else: ?>
-                        <a href="index.php?page=<?= $i ?>"><?= $i ?></a>
-                        <?php endif; ?>
+                           <?php if ($i == $page): ?>
+                              <em><?= $i ?></em>
+                           <?php else: ?>
+                              <a href="index.php?page=<?= $i ?>"><?= $i ?></a>
+                           <?php endif; ?>
                         <?php endfor; ?>
 
                         <?php if ($now_block < $total_block): ?>
-                        <a href="index.php?page=<?= $e_page + 1 ?>">다음블록</a>
-                        <a href="index.php?page=<?= $total_page ?>">맨끝</a>
+                           <a href="index.php?page=<?= $e_page + 1 ?>">다음블록</a>
+                           <a href="index.php?page=<?= $total_page ?>">맨끝</a>
                         <?php endif; ?>
                      </div>
                      <div class="bottom_movebox">
@@ -305,37 +307,37 @@ $board_stmt->close();
                <div class="login_box">
                   <div class="user_info">
                      <?php if (!isset($_SESSION['id'])): ?>
-                     <a href="../member/login/login.php">
-                        <strong>로그인 해주세요</strong>
-                     </a>
+                        <a href="../member/login/login.php">
+                           <strong>로그인 해주세요</strong>
+                        </a>
                      <?php else: ?>
-                     <a href="../mypage/index.php" class="fl">
-                        <strong class="nickname"><em><?= $_SESSION['name'] ?></em></strong>님
-                     </a>
-                     <a href="../mypage/index.php">
-                        <strong>></strong>
-                     </a>
-                     <div class="logout_box fr">
-                        <button type="button" class="btn_logout"
-                           onclick="location.href='../member/login/logout.php'">로그아웃</button>
-                     </div>
+                        <a href="../mypage/index.php" class="fl">
+                           <strong class="nickname"><em><?= $_SESSION['name'] ?></em></strong>님
+                        </a>
+                        <a href="../mypage/index.php">
+                           <strong>></strong>
+                        </a>
+                        <div class="logout_box fr">
+                           <button type="button" class="btn_logout"
+                              onclick="location.href='../member/login/logout.php'">로그아웃</button>
+                        </div>
                      <?php endif; ?>
                   </div>
                   <div class="user_option">
                      <?php if (!isset($_SESSION['id'])): ?>
-                     <span>
-                        <a href="javascript:;" onclick="alert('로그인이 필요합니다.');">마이페이지</a>
-                     </span>
-                     <span>
-                        <a href="javascript:;" onclick="alert('로그인이 필요합니다.');">즐겨찾기</a>
-                     </span>
+                        <span>
+                           <a href="javascript:;" onclick="alert('로그인이 필요합니다.');">마이페이지</a>
+                        </span>
+                        <span>
+                           <a href="javascript:;" onclick="alert('로그인이 필요합니다.');">즐겨찾기</a>
+                        </span>
                      <?php else: ?>
-                     <span>
-                        <a href="javascript:;" onclick="window.open('../mypage/index.php');">마이페이지</a>
-                     </span>
-                     <span>
-                        <a href="javascript:;" onclick="">즐겨찾기</a>
-                     </span>
+                        <span>
+                           <a href="javascript:;" onclick="window.open('../mypage/index.php');">마이페이지</a>
+                        </span>
+                        <span>
+                           <a href="javascript:;" onclick="">즐겨찾기</a>
+                        </span>
                      <?php endif; ?>
                      <span>
                         <a href="javascript:;" onclick="$('#alarmList').show();">알림</a>
@@ -446,17 +448,17 @@ $board_stmt->close();
       </footer>
    </div>
    <script>
-   $(function() {
-      $('.option_box li a').on('click', function() {
-         const selectNum = $(this).text().replace('개', '').trim();
-         const url = new URLSearchParams(window.location.search);
+      $(function () {
+         $('.option_box li a').on('click', function () {
+            const selectNum = $(this).text().replace('개', '').trim();
+            const url = new URLSearchParams(window.location.search);
 
-         url.set('list_num', selectNum);
-         url.set('page', 1);
+            url.set('list_num', selectNum);
+            url.set('page', 1);
 
-         window.location.search = url.toString();
+            window.location.search = url.toString();
+         });
       });
-   });
    </script>
 </body>
 
