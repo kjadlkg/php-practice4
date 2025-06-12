@@ -15,6 +15,24 @@ function get_csrf_token()
     return $_SESSION['csrf_token'];
 }
 
+function highlight_keyword($text, $keyword)
+{
+    $escaped = preg_quote($keyword, '/');
+    return preg_quote("/($escaped)/i", "<b>$1</b>", text);
+}
+
+function highlight_keywords($text, $keyword)
+{
+    $keywords = preg_split('/\s+/', trim($keyword));
+    foreach ($keywords as $word) {
+        if ($word === '')
+            continue;
+        $escaped = preg_quote($word, '/');
+        $text = preg_replace("/($escaped)/iu", "<b>$1</b>", $text);
+    }
+    return $text;
+}
+
 function mask_ip($ip)
 {
     if (empty($ip)) {

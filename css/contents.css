@@ -168,6 +168,10 @@
   text-shadow: 0 1px #fff;
 }
 
+.btn_sort_box {
+  margin-top: -4px;
+}
+
 .btn_write {
   width: 21px;
   height: 21px;
@@ -204,6 +208,14 @@
   line-height: 0;
 }
 
+.center_content {
+  position: relative;
+}
+
+.center_content .inner {
+  padding-bottom: 173px;
+}
+
 .comment_num {
   font-size: 12px;
   color: #999;
@@ -213,6 +225,10 @@
   float: right;
   width: 64px;
   padding: 17px 12px 0 0;
+}
+
+.group {
+  position: relative;
 }
 
 .input_box {
@@ -256,6 +272,72 @@
 
 .input_write_title .input_text {
   width: 702px;
+}
+
+.intergrate_bottom_search {
+  position: absolute;
+  left: 0;
+  bottom: 72px;
+  width: 670px;
+  height: 78px;
+}
+
+.integrate_content {
+  overflow: hidden;
+  padding: 27px 16px 20px;
+  border-bottom: 1px solid #eee;
+  color: #333;
+}
+
+.integrate_content .btn_sort {
+  color: #333;
+  font-weight: bold;
+}
+
+.integrate_content .btn_sort.new,
+.integrate_content .btn_sort.accuracy {
+  width: auto;
+  color: #d31900;
+  text-decoration: underline;
+}
+
+.integrate_content .btn_sort_box .btn_sort::before {
+  content: "|";
+  margin: 0 11px 0 6px;
+  color: #d7d7d7;
+}
+
+.integrate_content .btn_sort_box .btn_sort:first-child:before {
+  display: none;
+}
+
+.integrate_content_head {
+  position: relative;
+}
+
+.integrate_search_wrap .bottom_search {
+  margin-left: 0;
+  width: 320px;
+}
+
+.integrate_search_wrap .bottom_search_wrap {
+  width: 320px;
+  margin-top: 27px;
+}
+
+.integrate_search_wrap .gnb_bar {
+  background: #fff;
+  border-width: 2px 0 2px 0;
+}
+
+.integrate_search_wrap .info_policy {
+  padding-top: 38px;
+  margin-top: 20px;
+  border-top: 2px solid #29367c;
+}
+
+.integrate_search_wrap .title_text {
+  color: #4656c7;
 }
 
 .list_array_option {
@@ -410,6 +492,24 @@
   padding-top: 11px;
 }
 
+.search_result_list {
+  margin: 0 0 3px;
+}
+
+.search_result_list li {
+  padding-top: 16px;
+}
+
+.search_result_list li:first-child {
+  padding-top: 11px;
+}
+
+.search_result_list .title_text {
+  font-weight: normal;
+  text-decoration: underline;
+  line-height: 18px;
+}
+
 td {
   padding: 2px 4px;
   border-top: 1px solid #eee;
@@ -438,6 +538,11 @@ tr:first-child td {
   position: absolute;
   left: 13px;
   top: 9px;
+}
+
+.title_text {
+  font-size: 14px;
+  color: #0000ff;
 }
 
 .up_num_box {

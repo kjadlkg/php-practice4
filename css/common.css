@@ -166,6 +166,35 @@
   margin-left: 0;
 }
 
+.bottom_search {
+  display: flex;
+  height: 36px;
+  margin-left: 5px;
+  border: 1px solid #29367c;
+  background: #3b4890;
+}
+
+.bottom_search .btn_search {
+  width: 37px;
+  height: 36px;
+}
+
+.bottom_search .in_keyword {
+  width: 260px;
+  height: 30px;
+  line-height: 30px;
+}
+
+.bottom_search .inner_search {
+  margin: 3px;
+  width: 278px;
+}
+
+.bottom_search_wrap {
+  width: 451px;
+  margin: 20px auto 0;
+}
+
 .btn {
   width: 85px;
   height: 40px;
@@ -246,6 +275,12 @@ border-radius: 0;
   width: 45px;
   height: 44px;
   color: #fff;
+}
+
+.center_content {
+  float: left;
+  width: 670px;
+  margin: 0 15px;
 }
 
 .checkbox {
@@ -1393,6 +1428,10 @@ border-radius: 0;
 
 .width1160 .left_content {
   width: 840px;
+}
+
+.width1160.integrate_search_wrap .left_content {
+  width: 160px;
 }
 
 .width1160 .visit_history {
