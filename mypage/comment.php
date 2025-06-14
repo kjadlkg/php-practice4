@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 include "../resource/db.php";
 
 if (!isset($_SESSION['id'], $_SESSION['name'])) {
@@ -9,29 +11,71 @@ if (!isset($_SESSION['id'], $_SESSION['name'])) {
 
 $id = $_SESSION['id'];
 $name = $_SESSION['name'];
-$keyword = $_GET['keyword'] ?? '';
+$keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
+$search_keyword = "%$keyword%";
 
-if (!empty($keyword)) {
+// paging
+$page_num = 10;
+$page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+$list_num = isset($_GET['list_num']) ? max(10, (int) $_GET['list_num']) : 10;
+
+// 전체 댓글 수
+if ($keyword) {
+    $count_stmt = $db->prepare("
+    SELECT COUNT(*) AS total
+    FROM comment c
+    JOIN board b ON c.board_id = b.board_id
+    WHERE c.comment_writer LIKE ? AND comment_content LIKE ?
+    ");
+    $count_stmt->bind_param("ss", $name, $search_keyword);
+} else {
+    $count_stmt = $db->prepare("
+    SELECT COUNT(*) AS total
+    FROM comment c
+    JOIN board b ON c.board_id = b.board_id
+    WHERE c.comment_writer LIKE ?
+    ");
+    $count_stmt->bind_param("s", $name);
+}
+$count_stmt->execute();
+$count_result = $count_stmt->get_result();
+$total_rows = $count_result->fetch_assoc()['total'];
+$count_stmt->close();
+
+$total_page = max(1, ceil($total_rows / $list_num));
+
+if ($page > $total_page)
+    $page = $total_page;
+
+$start = max(0, ($page - 1) * $list_num);
+
+$total_block = ceil($total_page / $page_num);
+$now_block = ceil($page / $page_num);
+
+$s_page = max(1, ($now_block - 1) * $page_num + 1);
+$e_page = min($total_page, $s_page + $page_num - 1);
+
+// 댓글
+if ($keyword) {
     $stmt = $db->prepare("
     SELECT c.*, b.board_title
     FROM comment c
     JOIN board b ON c.board_id = b.board_id
-    WHERE c.comment_writer = ? AND comment_content = ?
+    WHERE c.comment_writer LIKE ? AND comment_content LIKE ?
     ORDER BY c.comment_id DESC
-    LIMIT 5
+    LIMIT ?, ?
     ");
-    $search_keyword = "%$keyword%";
-    $stmt->bind_param("ss", $name, $search_keyword);
+    $stmt->bind_param("ssii", $name, $search_keyword, $start, $list_num);
 } else {
     $stmt = $db->prepare("
     SELECT c.*, b.board_title
     FROM comment c
     JOIN board b ON c.board_id = b.board_id
-    WHERE c.comment_writer = ?
+    WHERE c.comment_writer LIKE ?
     ORDER BY c.comment_id DESC
-    LIMIT 5
+    LIMIT ?, ?
     ");
-    $stmt->bind_param("s", $name);
+    $stmt->bind_param("sii", $name, $start, $list_num);
 }
 $stmt->execute();
 $comment_result = $stmt->get_result();
@@ -56,41 +100,6 @@ while ($row = $comment_result->fetch_assoc()) {
     ];
 }
 $stmt->close();
-
-
-// paging
-$list_num = 10;
-$page_num = 10;
-
-$page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
-
-// 전체 댓글 수
-$count_stmt = $db->prepare("SELECT COUNT(*) AS total FROM comment WHERE comment_writer = ?");
-$count_stmt->bind_param("s", $name);
-$count_stmt->execute();
-$count_result = $count_stmt->get_result();
-$total_rows = $count_result->fetch_assoc()['total'];
-$count_stmt->close();
-
-$total_page = max(1, ceil($total_rows / $list_num));
-
-if ($page > $total_page)
-    $page = $total_page;
-
-$start = max(0, ($page - 1) * $list_num);
-
-$total_block = ceil($total_page / $page_num);
-$now_block = ceil($page / $page_num);
-
-$s_page = max(1, ($now_block - 1) * $page_num + 1);
-$e_page = min($total_page, $s_page + $page_num - 1);
-
-// 댓글
-$page_stmt = $db->prepare("SELECT * FROM comment ORDER BY comment_id DESC LIMIT ?, ?");
-$page_stmt->bind_param("ii", $start, $list_num);
-$page_stmt->execute();
-$result = $page_stmt->get_result();
-$page_stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -154,17 +163,18 @@ $page_stmt->close();
                                     <header>
                                         <div class="content_head clear">
                                             <div class="choice_wrap">
-                                                <button type="button" class="on" onclick="location.href='posting.php'">
+                                                <button type="button" class="on" onclick="location.href='comment.php'">
                                                     전체<span class="num">(<?= $total_rows ?>)</span>
                                                 </button>
                                             </div>
-                                            <div class="search_wrap">
+                                            <div class="mypage_search_wrap">
                                                 <div class="search_box">
                                                     <div class="search clear">
                                                         <form method="GET">
                                                             <div class="inner_search">
                                                                 <input type="text" class="in_keyword"
-                                                                    placeholder="게시글 제목 검색" name="keyword">
+                                                                    placeholder="게시글 제목 검색" name="keyword"
+                                                                    value="<?= $keyword ?>">
                                                             </div>
                                                             <button type="submit" class="btn_search">
                                                                 <span>검색</span>
@@ -180,12 +190,12 @@ $page_stmt->close();
                                             <div class="select_box select_arraybox ul_selectric">
                                                 <div class="select_area">
                                                     전체보기
-                                                    <span>정렬기준선택</span>
-                                                    <em class=""></em>
+                                                    <span class="blind">정렬기준선택</span>
+                                                    <em class="option_more">▼</em>
                                                 </div>
                                                 <ul class="option_box">
+                                                    <li onclick="location.href='comment.php'">전체보기</li>
                                                 </ul>
-                                                <input type="" name="filter">
                                             </div>
                                             <span class="greybox"></span>
                                         </div>
@@ -223,21 +233,25 @@ $page_stmt->close();
                                         </ul>
                                         <div class="bottom_paging_box">
                                             <?php if ($now_block > 1): ?>
-                                                <a href="comment.php?page=1">맨처음</a>
-                                                <a href="comment.php?page=<?= $s_page - 1 ?>">이전블록</a>
+                                                <a href="comment.php?keyword=<?= urlencode($keyword) ?>&page=1">맨처음</a>
+                                                <a
+                                                    href="comment.php?keyword=<?= urlencode($keyword) ?>&page=<?= $s_page - 1 ?>">이전블록</a>
                                             <?php endif; ?>
 
                                             <?php for ($i = $s_page; $i <= $e_page; $i++): ?>
                                                 <?php if ($i == $page): ?>
                                                     <em><?= $i ?></em>
                                                 <?php else: ?>
-                                                    <a href="comment.php?page=<?= $i ?>"><?= $i ?></a>
+                                                    <a
+                                                        href="comment.php?keyword=<?= urlencode($keyword) ?>&page=<?= $i ?>"><?= $i ?></a>
                                                 <?php endif; ?>
                                             <?php endfor; ?>
 
                                             <?php if ($now_block < $total_block): ?>
-                                                <a href="comment.php?page=<?= $e_page + 1 ?>">다음블록</a>
-                                                <a href="comment.php?page=<?= $total_page ?>">맨끝</a>
+                                                <a
+                                                    href="comment.php?keyword=<?= urlencode($keyword) ?>&page=<?= $e_page + 1 ?>">다음블록</a>
+                                                <a
+                                                    href="comment.php?keyword=<?= urlencode($keyword) ?>&page=<?= $total_page ?>">맨끝</a>
                                             <?php endif; ?>
                                         </div>
                                     </div>
@@ -263,6 +277,16 @@ $page_stmt->close();
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(function () {
+            // 정렬기준선택 클릭
+            $('.option_more').on('click', function (e) {
+                var $option_box = $('.option_box');
+                if ($option_box.css('display') === 'none') {
+                    $option_box.show();
+                } else {
+                    $option_box.hide();
+                }
+            });
+
             $('.btn_user_data').on('click', function (e) {
                 e.stopPropagation();
                 var $btn = $(this);

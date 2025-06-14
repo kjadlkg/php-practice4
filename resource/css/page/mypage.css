@@ -13,7 +13,6 @@
   float: left;
   width: 29px;
   height: 29px;
-  /* background-position: -166px -275px; */
 }
 
 .btn_listdel {
@@ -22,7 +21,6 @@
   right: 7px;
   width: 13px;
   height: 13px;
-  /* background-position: -182px -911px;; */
 }
 
 body {
@@ -34,7 +32,7 @@ body {
 
 .board_linkbox {
   position: relative;
-  padding-right: 0;
+  padding-right: 30px;
   word-break: break-all;
 }
 
@@ -42,11 +40,12 @@ body {
   font-size: 13px;
 }
 
-/* .btn_search {
+.btn_search {
   position: absolute;
   top: 0;
   right: 0;
-} */
+  background: #ccc;
+}
 
 .choice_wrap {
   font-size: 0;
@@ -111,8 +110,8 @@ body {
 
 .content {
   font-size: 13px;
-  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-    "Malgun Gothic", "맑은 고딕", arial, 굴림, Gulim, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", arial, 굴림,
+    Gulim, sans-serif;
   color: #333;
 }
 
@@ -188,7 +187,6 @@ body {
   display: inline-block;
   width: 5px;
   height: 9px;
-  /* background-position: -186px -231px; */
   margin-left: -1px;
 }
 
@@ -264,8 +262,8 @@ body {
   line-height: 34px;
   border: 1px solid #ccc;
   border-radius: 2px;
-  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
-    "Malgun Gothic", "맑은 고딕", arial, Dotum, 돋움, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "맑은 고딕", arial, Dotum,
+    돋움, sans-serif;
   font-size: 14px;
   font-weight: bold;
 }
@@ -335,9 +333,19 @@ body {
   padding-top: 12px;
 }
 
+.option_box {
+  left: -1px;
+  top: 26px;
+  display: none;
+}
+
 .option_sort.mypage {
   margin: 9px 0 9px 3px;
   font-size: 0;
+}
+
+.option_sort.mypage ~ .content_listbox li:first-child {
+  border-top: 1px solid #ddd;
 }
 
 .option_sort.mypage .select_arraybox {
@@ -347,8 +355,19 @@ body {
   line-height: 26px;
 }
 
-.option_sort.mypage ~ .content_listbox li:first-child {
-  border-top: 1px solid #ddd;
+.option_sort.mypage .select_arraybox .option_box {
+  overflow-y: auto;
+  width: 100%;
+  max-height: 400px;
+  padding: 5px 0 4px;
+}
+.option_sort.mypage .select_arraybox .option_box li {
+  padding: 0 9px;
+}
+
+.option_sort.mypage .select_arraybox .option_box li:hover {
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .search {
@@ -380,7 +399,7 @@ body {
   margin-left: 5px;
 }
 
-.search_wrap {
+.mypage_search_wrap {
   position: absolute;
   right: 3px;
   top: -7px;

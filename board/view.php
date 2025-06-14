@@ -54,8 +54,8 @@ $created_at = date("Y.m.d H:m:s", strtotime($row['created_at']));
 
 // 댓글
 // paging
-$list_num = 98;
-$page_num = 15;
+$list_num = 5;   // 98
+$page_num = 5;   // 15
 
 $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
 
@@ -84,9 +84,9 @@ $stmt = $db->prepare("
     SELECT c.*, u.user_name
     FROM comment c LEFT JOIN user u
     ON c.comment_writer = u.user_name
-    WHERE c.board_id = ? ORDER BY c.created_at
+    WHERE c.board_id = ? ORDER BY c.created_at LIMIT ?, ?
     ");
-$stmt->bind_param("i", $board_id);
+$stmt->bind_param("iii", $board_id, $start, $list_num);
 $stmt->execute();
 $comment_result = $stmt->get_result();
 $comments = [];
@@ -364,7 +364,7 @@ $stmt->close();
                                  <div class="bottom_paging_box">
                                     <div class="comment_paging">
                                        <?php if ($now_block > 1): ?>
-                                          <a href="view.php?page=1">맨처음</a>
+                                          <a href="view.php?id=<?= $board_id ?>&page=1">맨처음</a>
                                           <a href="view.php?id=<?= $board_id ?>&page=<?= $s_page - 1 ?>">이전블록</a>
                                        <?php endif; ?>
 
@@ -378,7 +378,7 @@ $stmt->close();
 
                                        <?php if ($now_block < $total_block): ?>
                                           <a href="view.php?id=<?= $board_id ?>&page=<?= $e_page + 1 ?>">다음블록</a>
-                                          <a href="view.php?page=<?= $total_page ?>">맨끝</a>
+                                          <a href="view.php?id=<?= $board_id ?>&page=<?= $total_page ?>">맨끝</a>
                                        <?php endif; ?>
                                     </div>
                                     <div class="comment_option">
@@ -444,6 +444,7 @@ $stmt->close();
                            <?php $step = empty($board_pw) ? 'edit' : 'check'; ?>
                            <button type="button" class="btn btn_grey"
                               onclick="location.href='modify.php?id=<?= $board_id ?>&step=<?= $step ?>'">수정</button>
+                           <?php $step = empty($board_pw) ? 'confirm' : 'check'; ?>
                            <button type="button" class="btn btn_grey"
                               onclick="location.href='delete.php?id=<?= $board_id ?>&step=<?= $step ?>'">삭제</button>
                         <?php endif; ?>
