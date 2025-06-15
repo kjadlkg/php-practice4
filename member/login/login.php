@@ -31,13 +31,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    }
 
    if (!$db) {
-      $_SESSION['error'] = "데이터베이스 연결에 실패했습니다.";
+      $_SESSION['error'] = "오류가 발생했습니다.";
       header("Location: login.php");
       exit;
    }
 
-   if (!($stmt = $db->prepare("SELECT user_name, user_id, user_pw FROM user WHERE user_id = ?"))) {
-      $_SESSION['error'] = "SQL 실행 오류: " . $db->error;
+   if (!($stmt = $db->prepare("SELECT user_name, user_id, user_pw FROM user WHERE user_id = ? AND is_deleted = 0"))) {
+      $_SESSION['error'] = "오류가 발생했습니다.";
       header("Location: login.php");
       exit;
    }
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    $stmt->bind_param("s", $id);
 
    if (!$stmt->execute()) {
-      $_SESSION['error'] = "쿼리 실행 중 오류 발생: " . $stmt->error;
+      $_SESSION['error'] = "오류가 발생했습니다.";
       header("Location: login.php");
       exit;
    }
@@ -71,9 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
          exit;
       }
    }
-
-   sleep(1);
-
    $stmt->close();
 
    $_SESSION['error'] = "아이디 또는 비밀번호가 일치하지 않습니다.";
@@ -81,7 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="ko">
 

@@ -136,7 +136,7 @@ $stmt->close();
                                 </div>
                             </li>
                             <li>
-                                <a class="btn_top_logout" href="../member/login/login.php">로그아웃</a>
+                                <a class="btn_top_logout" href="../member/login/logout.php">로그아웃</a>
                             </li>
                         </ul>
                     </div>
@@ -201,7 +201,8 @@ $stmt->close();
                                         </div>
                                         <ul class="content_listbox">
                                             <?php if (empty($comments)): ?>
-                                                <p>작성한 댓글이 없습니다</p>
+                                                <br>
+                                                <p>작성한 댓글이 없습니다</p><br><br><br><br><br><br>
                                             <?php else: ?>
                                                 <?php foreach ($comments as $comment): ?>
                                                     <li>

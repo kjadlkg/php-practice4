@@ -34,13 +34,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $stmt = $db->prepare("SELECT user_pw FROM user WHERE user_id = ?");
     if (!$stmt) {
-        echo "<script>alert('데이터베이스 오류가 발생했습니다.'); history.back();</script>";
+        echo "<script>alert('오류가 발생했습니다.'); history.back();</script>";
         exit;
     }
 
     $stmt->bind_param("s", $id);
     if (!$stmt->execute()) {
-        echo "<script>alert('쿼리 실행 중 오류가 발생했습니다.'); history.back();</script>";
+        echo "<script>alert('오류가 발생했습니다.'); history.back();</script>";
         exit;
     }
 
@@ -113,9 +113,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
                         <div id="contentbox" class="content_box border">
                             <div class="con innerbox">
-                                <h4 class="title">비밀번호 규칙은 다음과 같습니다.</h4>
+                                <h4 class="title font_red">비밀번호 규칙은 다음과 같습니다.</h4>
                                 <div class="info_text">
-                                    <p>영문, 숫자, 특수문자를 조합하여 8~20자 이내로 설정해주세요</p>
+                                    <p>· 영문, 숫자, 특수문자를 조합하여 8~20자 이내로 설정해주세요</p>
                                 </div>
                                 <div class="bg_box">
                                     <div class="form_box">
