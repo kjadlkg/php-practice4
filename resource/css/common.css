@@ -950,6 +950,11 @@ border-radius: 0;
     돋움, sans-serif;
 }
 
+.option_box li a:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .option_sort::after {
   clear: both;
   display: block;

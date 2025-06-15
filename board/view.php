@@ -126,6 +126,7 @@ $stmt->close();
    <link rel="stylesheet" href="../resource/css/common.css">
    <link rel="stylesheet" href="../resource/css/component.css">
    <link rel="stylesheet" href="../resource/css/contents.css">
+   <link rel="stylesheet" href="../resource/css/popup.css">
    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -265,6 +266,57 @@ $stmt->close();
                            <div class="recommend_bottom_box">
                               <button type="button" class="btn_sns">공유</button>
                               <button type="button" class="btn_report">신고</button>
+                              <div id="sns_share_layer" class="pop_wrap type2">
+                                 <div class="pop_content nlist_sns">
+                                    <div class="pop_head bg">
+                                       <h3>공유하기</h3>
+                                    </div>
+                                    <ul class="list_sns clear">
+                                       <li>
+                                          <a href="javascript:;" id="share_kakao" target="_blank">
+                                             <span class="description">카카오톡</span>
+                                          </a>
+                                       </li>
+                                       <li>
+                                          <a href="javascript:;" id="share_X" target="_blank">
+                                             <span class="description">X</span>
+                                          </a>
+                                       </li>
+                                       <li>
+                                          <a href="javascript:;" id="share_facebook" target="_blank">
+                                             <span class="description">페이스북</span>
+                                          </a>
+                                       </li>
+                                       <li>
+                                          <a href="javascript:;" id="share_instagram" target="_blank">
+                                             <span class="description">인스타그램</span>
+                                          </a>
+                                       </li>
+                                    </ul>
+                                    <div class="url_copy_box">
+                                       <input type="text" class="intext" id="url_copy">
+                                       <label class="btn_url_copy" for="url_copy">URL 복사</label>
+                                    </div>
+                                    <button type="button" class="btn_pop_layer_white_close sns_share_layer_close">
+                                       <span>닫기</span>
+                                    </button>
+                                 </div>
+                              </div>
+                              <div id="report_layer" class="pop_wrap type2">
+                                 <div class="pop_content report three">
+                                    <div class="pop_head bg">
+                                       <h3>신고하기</h3>
+                                    </div>
+                                    <div class="report_box clear">
+                                       <button type="button">음란물 신고</button>
+                                       <button type="button">게시물 신고</button>
+                                       <button type="button">불법촬영물 신고</button>
+                                    </div>
+                                 </div>
+                                 <button type="button" class="btn_pop_layer_white_close report_layer_close">
+                                    <span>닫기</span>
+                                 </button>
+                              </div>
                            </div>
                         </div>
                         <div id="comment" class="attached_file_box">
@@ -485,6 +537,31 @@ $stmt->close();
    </div>
 </body>
 <script>
+   // SNS 공유 레이어
+   $(function () {
+      $('.btn_sns').on('click', function () {
+         var $layer = $('#sns_share_layer');
+         $layer.show();
+      })
+      $('.btn_pop_layer_white_close.sns_share_layer_close').on('click', function () {
+         var $layer = $('#sns_share_layer');
+         $layer.hide();
+      })
+   });
+
+   // 신고 레이어
+   $(function () {
+      $('.btn_report').on('click', function () {
+         var $layer = $('#report_layer');
+         $layer.show();
+      })
+      $('.btn_pop_layer_white_close.report_layer_close').on('click', function () {
+         var $layer = $('#report_layer');
+         $layer.hide();
+      })
+   });
+
+
    // 캡차 클릭 시 이미지 변경
    Array.from(document.getElementsByClassName('kcaptcha')).forEach(function (img) {
       img.addEventListener('click', function () {
@@ -625,6 +702,33 @@ $stmt->close();
             alert('요청 처리 중 오류가 발생했습니다.');
          });
    }
+
+   window.addEventListener('DOMContentLoaded', () => {
+      const currentUrl = window.location.href;
+      const encodedUrl = encodeURIComponent(currentUrl);
+
+      const title = document.querySelector('.title_subject');
+      const boardTitle = title ? title.textContent.trim() : '';
+
+      // 현재 주소 저장
+      document.getElementById('url_copy').value = currentUrl;
+
+      document.getElementById('share_kakao').href = `http://share.kakao.com/?url=${encodedUrl}`;
+      document.getElementById('share_X').href =
+         `https://x.com/intent/post?text=${encodeURIComponent(boardTitle)}&url=${encodedUrl}`;
+      document.getElementById('share_facebook').href = `http://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+      document.getElementById('share_instagram').href = `https://www.instagram.com`;
+
+      // URL 복사 기능
+      document.querySelector('.btn_url_copy').addEventListener('click', function () {
+         const input = document.getElementById('url_copy');
+         input.select();
+         input.setSelectionRange(0, 99999); // 모바일
+         document.execCommand('copy');
+         input.setAttribute('readonly', true);
+         alert('주소가 복사되었습니다.');
+      })
+   });
 </script>
 
 </html>
