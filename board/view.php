@@ -154,13 +154,13 @@ $stmt->close();
             <div class="area_links clear">
                <ul class="fl clear">
                   <?php if (!isset($_SESSION["id"])): ?>
-                     <li><a href="../member/login/login.php">로그인</a></li>
-                     <li><a href="../member/join/join.php">회원가입</a></li>
+                  <li><a href="../member/login/login.php">로그인</a></li>
+                  <li><a href="../member/join/join.php">회원가입</a></li>
                   <?php else: ?>
-                     <li class="area_nick"><a href="javascript:;" class="btn_user_data"><?= $_SESSION['name'] ?>님</a>
-                     </li>
-                     <li><a href="../mypage/index.php">마이페이지</a></li>
-                     <li><a class="btn_top_logout" href="../member/login/logout.php">로그아웃</a></li>
+                  <li class="area_nick"><a href="javascript:;" class="btn_user_data"><?= $_SESSION['name'] ?>님</a>
+                  </li>
+                  <li><a href="../mypage/index.php">마이페이지</a></li>
+                  <li><a class="btn_top_logout" href="../member/login/logout.php">로그아웃</a></li>
                   <?php endif; ?>
                </ul>
             </div>
@@ -210,7 +210,7 @@ $stmt->close();
                                  <span class="nickname">
                                     <?= $board_writer ?>
                                     <?php if (!empty($user_ip)): ?>
-                                       (<?= $user_ip ?>)
+                                    (<?= $user_ip ?>)
                                     <?php endif; ?>
                                  </span>
                                  <span class="date"><?= $created_at ?></span>
@@ -232,13 +232,13 @@ $stmt->close();
                            </div>
                         </div>
                         <?php if (!$is_login): ?>
-                           <div class="recommend_kcaptcha">
-                              <div class="kcaptcha_img">
-                                 <img src="../resource/captcha_image.php?<?= time() ?>" class="kcaptcha" alt="KCAPTCHA">
-                              </div>
-                              <input type="text" id="captcha_input" name="captcha" class="recommend_kcaptcha_input"
-                                 placeholder="코드입력">
+                        <div class="recommend_kcaptcha">
+                           <div class="kcaptcha_img">
+                              <img src="../resource/captcha_image.php?<?= time() ?>" class="kcaptcha" alt="KCAPTCHA">
                            </div>
+                           <input type="text" id="captcha_input" name="captcha" class="recommend_kcaptcha_input"
+                              placeholder="코드입력">
+                        </div>
                         <?php endif; ?>
                         <div class="recommend_box">
                            <h3 class="blind">추천</h3>
@@ -308,9 +308,11 @@ $stmt->close();
                                        <h3>신고하기</h3>
                                     </div>
                                     <div class="report_box clear">
-                                       <button type="button">음란물 신고</button>
-                                       <button type="button">게시물 신고</button>
-                                       <button type="button">불법촬영물 신고</button>
+                                       <button type="button" class="btn_report_action" data-type="obscene">음란물
+                                          신고</button>
+                                       <button type="button" class="btn_report_action" data-type="spam">게시물 신고</button>
+                                       <button type="button" class="btn_report_action" data-type="illegal">불법촬영물
+                                          신고</button>
                                     </div>
                                  </div>
                                  <button type="button" class="btn_pop_layer_white_close report_layer_close">
@@ -361,87 +363,87 @@ $stmt->close();
                            <div class="comment_box">
                               <ul class="comment_list">
                                  <?php foreach ($comments as $comment): ?>
-                                    <li>
-                                       <div class="comment_info clear">
-                                          <div class="comment_nickbox">
-                                             <span class="view_writer">
-                                                <span class="nickname">
-                                                   <em><?= $comment['comment_writer'] ?></em>
-                                                   <?php if ($comment['user_ip']): ?>
-                                                      <span class="ip">(<?= $comment['user_ip'] ?>)</span>
-                                                   <?php endif; ?>
-                                                </span>
+                                 <li>
+                                    <div class="comment_info clear">
+                                       <div class="comment_nickbox">
+                                          <span class="view_writer">
+                                             <span class="nickname">
+                                                <em><?= $comment['comment_writer'] ?></em>
+                                                <?php if ($comment['user_ip']): ?>
+                                                <span class="ip">(<?= $comment['user_ip'] ?>)</span>
+                                                <?php endif; ?>
                                              </span>
-                                          </div>
-                                          <div class="comment_textbox btn_reply_write_all clear">
-                                             <p class="comment_text">
-                                                <?= $comment['comment_content'] ?>
-                                             </p>
-                                          </div>
-                                          <div class="fr clear">
-                                             <span class="date_time">
-                                                <?= $comment['created_at'] ?>
-                                             </span>
-                                             <div class="comment_delete">
-                                                <form method="POST" action="../comment/delete.php"
-                                                   class="comment_delete_form" onsubmit="return checkDeletePassword(this)">
-                                                   <input type="hidden" name="board_id" value="<?= $board_id ?>">
-                                                   <input type="hidden" name="comment_id"
-                                                      value="<?= $comment['comment_id'] ?>">
-                                                   <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-                                                   <?php if ($comment['is_writer']): ?>
-                                                      <button type="submit" class="btn_comment_delete">삭제</button>
-                                                   <?php endif; ?>
-                                                   <?php if (empty($comment['comment_writer_id'])): ?>
-                                                      <button type="button" class="btn_comment_delete"
-                                                         data-comment_id="<?= $comment['comment_id'] ?>">삭제</button>
-                                                      <div class="comment_delpw_box">
-                                                         <input type="password" class="comment_delpw" name="comment_pw"
-                                                            placeholder="비밀번호">
-                                                         <button type="submit" class="btn_ok">확인</button>
-                                                         <button type="button" class="btn_comment_pw_close">
-                                                            <span class="blind">닫기</span>
-                                                            <em>X</em>
-                                                         </button>
-                                                      </div>
-                                                   <?php endif; ?>
-                                                </form>
-                                             </div>
+                                          </span>
+                                       </div>
+                                       <div class="comment_textbox btn_reply_write_all clear">
+                                          <p class="comment_text">
+                                             <?= $comment['comment_content'] ?>
+                                          </p>
+                                       </div>
+                                       <div class="fr clear">
+                                          <span class="date_time">
+                                             <?= $comment['created_at'] ?>
+                                          </span>
+                                          <div class="comment_delete">
+                                             <form method="POST" action="../comment/delete.php"
+                                                class="comment_delete_form" onsubmit="return checkDeletePassword(this)">
+                                                <input type="hidden" name="board_id" value="<?= $board_id ?>">
+                                                <input type="hidden" name="comment_id"
+                                                   value="<?= $comment['comment_id'] ?>">
+                                                <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
+                                                <?php if ($comment['is_writer']): ?>
+                                                <button type="submit" class="btn_comment_delete">삭제</button>
+                                                <?php endif; ?>
+                                                <?php if (empty($comment['comment_writer_id'])): ?>
+                                                <button type="button" class="btn_comment_delete"
+                                                   data-comment_id="<?= $comment['comment_id'] ?>">삭제</button>
+                                                <div class="comment_delpw_box">
+                                                   <input type="password" class="comment_delpw" name="comment_pw"
+                                                      placeholder="비밀번호">
+                                                   <button type="submit" class="btn_ok">확인</button>
+                                                   <button type="button" class="btn_comment_pw_close">
+                                                      <span class="blind">닫기</span>
+                                                      <em>X</em>
+                                                   </button>
+                                                </div>
+                                                <?php endif; ?>
+                                             </form>
                                           </div>
                                        </div>
-                                    </li>
+                                    </div>
+                                 </li>
                                  <?php endforeach; ?>
                               </ul>
                               <?php if ($count !== 0): ?>
-                                 <div class="bottom_paging_box">
-                                    <div class="comment_paging">
-                                       <?php if ($now_block > 1): ?>
-                                          <a href="view.php?id=<?= $board_id ?>&page=1">맨처음</a>
-                                          <a href="view.php?id=<?= $board_id ?>&page=<?= $s_page - 1 ?>">이전블록</a>
-                                       <?php endif; ?>
+                              <div class="bottom_paging_box">
+                                 <div class="comment_paging">
+                                    <?php if ($now_block > 1): ?>
+                                    <a href="view.php?id=<?= $board_id ?>&page=1">맨처음</a>
+                                    <a href="view.php?id=<?= $board_id ?>&page=<?= $s_page - 1 ?>">이전블록</a>
+                                    <?php endif; ?>
 
-                                       <?php for ($i = $s_page; $i <= $e_page; $i++): ?>
-                                          <?php if ($i == $page): ?>
-                                             <em><?= $i ?></em>
-                                          <?php else: ?>
-                                             <a href="view.php?id=<?= $board_id ?>&page=<?= $i ?>"><?= $i ?></a>
-                                          <?php endif; ?>
-                                       <?php endfor; ?>
+                                    <?php for ($i = $s_page; $i <= $e_page; $i++): ?>
+                                    <?php if ($i == $page): ?>
+                                    <em><?= $i ?></em>
+                                    <?php else: ?>
+                                    <a href="view.php?id=<?= $board_id ?>&page=<?= $i ?>"><?= $i ?></a>
+                                    <?php endif; ?>
+                                    <?php endfor; ?>
 
-                                       <?php if ($now_block < $total_block): ?>
-                                          <a href="view.php?id=<?= $board_id ?>&page=<?= $e_page + 1 ?>">다음블록</a>
-                                          <a href="view.php?id=<?= $board_id ?>&page=<?= $total_page ?>">맨끝</a>
-                                       <?php endif; ?>
-                                    </div>
-                                    <div class="comment_option">
-                                       <a href="#container" class="containerGo opt">본문 보기</a>
-                                       <button type="button" class="btn_comment_close opt">
-                                          <span>댓글닫기</span>
-                                          <em></em>
-                                       </button>
-                                       <button type="button" class="btn_comment_refresh opt">새로고침</button>
-                                    </div>
+                                    <?php if ($now_block < $total_block): ?>
+                                    <a href="view.php?id=<?= $board_id ?>&page=<?= $e_page + 1 ?>">다음블록</a>
+                                    <a href="view.php?id=<?= $board_id ?>&page=<?= $total_page ?>">맨끝</a>
+                                    <?php endif; ?>
                                  </div>
+                                 <div class="comment_option">
+                                    <a href="#container" class="containerGo opt">본문 보기</a>
+                                    <button type="button" class="btn_comment_close opt">
+                                       <span>댓글닫기</span>
+                                       <em></em>
+                                    </button>
+                                    <button type="button" class="btn_comment_refresh opt">새로고침</button>
+                                 </div>
+                              </div>
                               <?php endif; ?>
                            </div>
                         </div>
@@ -450,23 +452,23 @@ $stmt->close();
                               onsubmit="return checkCommentEmpty(this)">
                               <div class="fl">
                                  <?php if ($is_login): ?>
-                                    <div class="user_info_input">
-                                       <input type="text" name="name" value="<?= $_SESSION['name'] ?>" maxlength="20">
-                                    </div>
+                                 <div class="user_info_input">
+                                    <input type="text" name="name" value="<?= $_SESSION['name'] ?>" maxlength="20">
+                                 </div>
                                  <?php else: ?>
-                                    <div class="user_info_input">
-                                       <input type="text" name="name" value="ㅇㅇ" placeholder="닉네임" maxlength="20">
-                                    </div>
-                                    <div class="user_info_input">
-                                       <input type="password" name="pw" value="1234" placeholder="비밀번호" maxlength="20">
-                                    </div>
-                                    <div class="user_info_input">
-                                       <input type="text" name="captcha" placeholder="코드입력">
-                                    </div>
-                                    <div class="kcaptcha_img">
-                                       <img src="../resource/captcha_image.php?<?= time() ?>" class="kcaptcha"
-                                          alt="KCAPTCHA">
-                                    </div>
+                                 <div class="user_info_input">
+                                    <input type="text" name="name" value="ㅇㅇ" placeholder="닉네임" maxlength="20">
+                                 </div>
+                                 <div class="user_info_input">
+                                    <input type="password" name="pw" value="1234" placeholder="비밀번호" maxlength="20">
+                                 </div>
+                                 <div class="user_info_input">
+                                    <input type="text" name="captcha" placeholder="코드입력">
+                                 </div>
+                                 <div class="kcaptcha_img">
+                                    <img src="../resource/captcha_image.php?<?= time() ?>" class="kcaptcha"
+                                       alt="KCAPTCHA">
+                                 </div>
                                  <?php endif; ?>
                                  <input type="hidden" name="board_id" value="<?= $board_id ?>">
                                  <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
@@ -493,12 +495,12 @@ $stmt->close();
                      </div>
                      <div class="fr">
                         <?php if ($is_writer || empty($board_writer_id)): ?>
-                           <?php $step = empty($board_pw) ? 'edit' : 'check'; ?>
-                           <button type="button" class="btn btn_grey"
-                              onclick="location.href='modify.php?id=<?= $board_id ?>&step=<?= $step ?>'">수정</button>
-                           <?php $step = empty($board_pw) ? 'confirm' : 'check'; ?>
-                           <button type="button" class="btn btn_grey"
-                              onclick="location.href='delete.php?id=<?= $board_id ?>&step=<?= $step ?>'">삭제</button>
+                        <?php $step = empty($board_pw) ? 'edit' : 'check'; ?>
+                        <button type="button" class="btn btn_grey"
+                           onclick="location.href='modify.php?id=<?= $board_id ?>&step=<?= $step ?>'">수정</button>
+                        <?php $step = empty($board_pw) ? 'confirm' : 'check'; ?>
+                        <button type="button" class="btn btn_grey"
+                           onclick="location.href='delete.php?id=<?= $board_id ?>&step=<?= $step ?>'">삭제</button>
                         <?php endif; ?>
                         <button type="button" class="btn btn_blue" onclick="location.href='write.php'">글쓰기</button>
                      </div>
@@ -537,136 +539,136 @@ $stmt->close();
    </div>
 </body>
 <script>
-   // SNS 공유 레이어
-   $(function () {
-      $('.btn_sns').on('click', function () {
-         var $layer = $('#sns_share_layer');
-         $layer.show();
-      })
-      $('.btn_pop_layer_white_close.sns_share_layer_close').on('click', function () {
-         var $layer = $('#sns_share_layer');
-         $layer.hide();
-      })
+// SNS 공유 레이어
+$(function() {
+   $('.btn_sns').on('click', function() {
+      var $layer = $('#sns_share_layer');
+      $layer.show();
+   })
+   $('.btn_pop_layer_white_close.sns_share_layer_close').on('click', function() {
+      var $layer = $('#sns_share_layer');
+      $layer.hide();
+   })
+});
+
+// 신고 레이어
+$(function() {
+   $('.btn_report').on('click', function() {
+      var $layer = $('#report_layer');
+      $layer.show();
+   })
+   $('.btn_pop_layer_white_close.report_layer_close').on('click', function() {
+      var $layer = $('#report_layer');
+      $layer.hide();
+   })
+});
+
+
+// 캡차 클릭 시 이미지 변경
+Array.from(document.getElementsByClassName('kcaptcha')).forEach(function(img) {
+   img.addEventListener('click', function() {
+      this.src = '../resource/captcha_image.php?' + Date.now();
+      document.getElementById('captcha_input').value = '';
    });
+});
 
-   // 신고 레이어
-   $(function () {
-      $('.btn_report').on('click', function () {
-         var $layer = $('#report_layer');
-         $layer.show();
-      })
-      $('.btn_pop_layer_white_close.report_layer_close').on('click', function () {
-         var $layer = $('#report_layer');
-         $layer.hide();
-      })
-   });
-
-
-   // 캡차 클릭 시 이미지 변경
-   Array.from(document.getElementsByClassName('kcaptcha')).forEach(function (img) {
-      img.addEventListener('click', function () {
-         this.src = '../resource/captcha_image.php?' + Date.now();
-         document.getElementById('captcha_input').value = '';
-      });
-   });
-
-   // 댓글 삭제 버튼 이벤트
-   document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.btn_comment_delete').forEach(button => {
-         // 댓글 작성자일 경우 바로 삭제
-         button.addEventListener('click', (event) => {
-            if (!button.getAttribute('data-comment_id')) {
-               button.closest('form').submit();
-               return;
-            }
-            // 댓글 삭제 비밀번호 입력 창 표시 (비로그인)
-            const commentId = button.getAttribute('data-comment_id');
-            const form = button
-               .closest('.comment_delete')
-               .querySelector(`.comment_delete_form input[name="comment_id"][value="${commentId}"]`)
-               .closest('.comment_delete_form');
-            const delPwBox = form.querySelector('.comment_delpw_box');
-            delPwBox.classList.add('active');
-         });
-      });
-
-      document.querySelectorAll('.btn_comment_pw_close').forEach(button => {
-         button.addEventListener('click', () => {
-            const delPwBox = button.closest('.comment_delpw_box');
-            delPwBox.classList.remove('active');
-            delPwBox.querySelector('.comment_delpw').value = '';
-         });
-      });
-   });
-
-   // 댓글 삭제 비밀번호 입력 확인 (비로그인)
-   function checkDeletePassword(form) {
-      const isLogin = <?= json_encode($is_login) ?>;
-      if (!isLogin) {
-         const password = form.querySelector('.comment_delpw');
-         if (!password || password.value.trim() === '') {
-            alert('비밀번호를 입력해주세요.');
-            password.focus();
-            return false;
+// 댓글 삭제 버튼 이벤트
+document.addEventListener('DOMContentLoaded', () => {
+   document.querySelectorAll('.btn_comment_delete').forEach(button => {
+      // 댓글 작성자일 경우 바로 삭제
+      button.addEventListener('click', (event) => {
+         if (!button.getAttribute('data-comment_id')) {
+            button.closest('form').submit();
+            return;
          }
+         // 댓글 삭제 비밀번호 입력 창 표시 (비로그인)
+         const commentId = button.getAttribute('data-comment_id');
+         const form = button
+            .closest('.comment_delete')
+            .querySelector(`.comment_delete_form input[name="comment_id"][value="${commentId}"]`)
+            .closest('.comment_delete_form');
+         const delPwBox = form.querySelector('.comment_delpw_box');
+         delPwBox.classList.add('active');
+      });
+   });
+
+   document.querySelectorAll('.btn_comment_pw_close').forEach(button => {
+      button.addEventListener('click', () => {
+         const delPwBox = button.closest('.comment_delpw_box');
+         delPwBox.classList.remove('active');
+         delPwBox.querySelector('.comment_delpw').value = '';
+      });
+   });
+});
+
+// 댓글 삭제 비밀번호 입력 확인 (비로그인)
+function checkDeletePassword(form) {
+   const isLogin = <?= json_encode($is_login) ?>;
+   if (!isLogin) {
+      const password = form.querySelector('.comment_delpw');
+      if (!password || password.value.trim() === '') {
+         alert('비밀번호를 입력해주세요.');
+         password.focus();
+         return false;
       }
-      return true;
    }
+   return true;
+}
 
-   // 댓글 작성 빈칸 확인
-   function checkCommentEmpty(form) {
-      const isLogin = <?= json_encode($is_login) ?>;
-      const username = form.querySelector('input[name = "name"]');
-      const password = form.querySelector('input[name = "pw"]');
-      const captcha = form.querySelector('input[name = "captcha"]');
-      const content = form.querySelector('textarea[name = "content"]');
+// 댓글 작성 빈칸 확인
+function checkCommentEmpty(form) {
+   const isLogin = <?= json_encode($is_login) ?>;
+   const username = form.querySelector('input[name = "name"]');
+   const password = form.querySelector('input[name = "pw"]');
+   const captcha = form.querySelector('input[name = "captcha"]');
+   const content = form.querySelector('textarea[name = "content"]');
 
-      if (!isLogin) {
-         if (username && username.value.trim() === '') {
-            alert('닉네임을 입력해주세요.');
-            username.focus();
-            return false;
-         }
-
-         if (password && password.value.trim() === '') {
-            alert('비밀번호를 입력해주세요.');
-            password.focus();
-            return false;
-         }
-
-         if (captcha && captcha.value.trim() === '') {
-            alert('자동입력 방지코드를 입력해주세요.');
-            captcha.focus();
-            return false;
-         }
-      }
-
-      if (content && content.value.trim() === '') {
-         alert('내용을 입력해주세요.');
-         content.focus();
+   if (!isLogin) {
+      if (username && username.value.trim() === '') {
+         alert('닉네임을 입력해주세요.');
+         username.focus();
          return false;
       }
 
-      return true;
-   }
-
-   // 추천 버튼 이벤트
-   function recommend(boardId, type) {
-      if (!['up', 'down'].includes(type)) return;
-
-      const isLogin = <?= json_encode($is_login) ?>;
-      let captcha = '';
-      if (!isLogin) {
-         const captchaInput = document.getElementById('captcha_input');
-         if (!captchaInput || captchaInput.value.trim() === '') {
-            alert('자동입력 방지코드를 입력해주세요.');
-            captchaInput.focus();
-            return false;
-         }
-         captcha = captchaInput.value.trim();
+      if (password && password.value.trim() === '') {
+         alert('비밀번호를 입력해주세요.');
+         password.focus();
+         return false;
       }
 
-      fetch('../recommend/recommend.php', {
+      if (captcha && captcha.value.trim() === '') {
+         alert('자동입력 방지코드를 입력해주세요.');
+         captcha.focus();
+         return false;
+      }
+   }
+
+   if (content && content.value.trim() === '') {
+      alert('내용을 입력해주세요.');
+      content.focus();
+      return false;
+   }
+
+   return true;
+}
+
+// 추천 버튼 이벤트
+function recommend(boardId, type) {
+   if (!['up', 'down'].includes(type)) return;
+
+   const isLogin = <?= json_encode($is_login) ?>;
+   let captcha = '';
+   if (!isLogin) {
+      const captchaInput = document.getElementById('captcha_input');
+      if (!captchaInput || captchaInput.value.trim() === '') {
+         alert('자동입력 방지코드를 입력해주세요.');
+         captchaInput.focus();
+         return false;
+      }
+      captcha = captchaInput.value.trim();
+   }
+
+   fetch('../recommend/recommend.php', {
          method: 'POST',
          headers: {
             'Content-Type': 'application/json',
@@ -680,55 +682,96 @@ $stmt->close();
             })
          })
       })
-         .then(response => {
-            if (!response.ok) {
-               throw new Error('서버 응답 오류: ' + response.status);
-            }
-            return response.json();
-         })
-         .then(data => {
-            if (data.success) {
-               if (type === 'up') {
-                  document.getElementById('recom_up_count').textContent = data.recommend_up;
-               } else {
-                  document.getElementById('recom_down_count').textContent = data.recommend_down;
-               }
-            } else {
-               alert(data.message || '오류가 발생했습니다.');
-            }
-         })
-         .catch(error => {
-            console.error('Error: ', error);
-            alert('요청 처리 중 오류가 발생했습니다.');
-         });
-   }
-
-   window.addEventListener('DOMContentLoaded', () => {
-      const currentUrl = window.location.href;
-      const encodedUrl = encodeURIComponent(currentUrl);
-
-      const title = document.querySelector('.title_subject');
-      const boardTitle = title ? title.textContent.trim() : '';
-
-      // 현재 주소 저장
-      document.getElementById('url_copy').value = currentUrl;
-
-      document.getElementById('share_kakao').href = `http://share.kakao.com/?url=${encodedUrl}`;
-      document.getElementById('share_X').href =
-         `https://x.com/intent/post?text=${encodeURIComponent(boardTitle)}&url=${encodedUrl}`;
-      document.getElementById('share_facebook').href = `http://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
-      document.getElementById('share_instagram').href = `https://www.instagram.com`;
-
-      // URL 복사 기능
-      document.querySelector('.btn_url_copy').addEventListener('click', function () {
-         const input = document.getElementById('url_copy');
-         input.select();
-         input.setSelectionRange(0, 99999); // 모바일
-         document.execCommand('copy');
-         input.setAttribute('readonly', true);
-         alert('주소가 복사되었습니다.');
+      .then(response => {
+         if (!response.ok) {
+            throw new Error('서버 응답 오류: ' + response.status);
+         }
+         return response.json();
       })
+      .then(data => {
+         if (data.success) {
+            if (type === 'up') {
+               document.getElementById('recom_up_count').textContent = data.recommend_up;
+            } else {
+               document.getElementById('recom_down_count').textContent = data.recommend_down;
+            }
+         } else {
+            alert(data.message || '오류가 발생했습니다.');
+         }
+      })
+      .catch(error => {
+         console.error('Error: ', error);
+         alert('요청 처리 중 오류가 발생했습니다.');
+      });
+}
+
+// 공유 버튼
+window.addEventListener('DOMContentLoaded', () => {
+   const currentUrl = window.location.href;
+   const encodedUrl = encodeURIComponent(currentUrl);
+
+   const title = document.querySelector('.title_subject');
+   const boardTitle = title ? title.textContent.trim() : '';
+
+   // 현재 주소 저장
+   document.getElementById('url_copy').value = currentUrl;
+
+   document.getElementById('share_kakao').href = `http://share.kakao.com/?url=${encodedUrl}`;
+   document.getElementById('share_X').href =
+      `https://x.com/intent/post?text=${encodeURIComponent(boardTitle)}&url=${encodedUrl}`;
+   document.getElementById('share_facebook').href = `http://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+   document.getElementById('share_instagram').href = `https://www.instagram.com`;
+
+   // URL 복사 기능
+   document.querySelector('.btn_url_copy').addEventListener('click', function() {
+      const input = document.getElementById('url_copy');
+      input.select();
+      input.setSelectionRange(0, 99999); // 모바일
+      document.execCommand('copy');
+      input.setAttribute('readonly', true);
+      alert('주소가 복사되었습니다.');
+   })
+});
+
+// 신고 버튼
+document.addEventListener('DOMContentLoaded', () => {
+   const boardId = <?= json_encode($board_id) ?>;
+
+   document.querySelectorAll('.btn_report_action').forEach(button => {
+      button.addEventListener('click', () => {
+         const reportType = button.getAttribute('data-type');
+
+         if (!confirm(
+               '허위 신고나 신고 사유와 맞지 않는 신고는 답변되지 않을 수 있으며 차단될 수 있습니다. 해당 게시물에 대한 신고를 진행하시겠습니까?'))
+            return;
+
+         fetch('../report/report.php', {
+               method: 'POST',
+               headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json'
+               },
+               body: JSON.stringify({
+                  id: boardId,
+                  type: reportType
+               })
+            })
+            .then(response => response.json())
+            .then(data => {
+               if (data.success) {
+                  alert('신고가 접수되었습니다.');
+                  document.getElementById('report_layer').style.display = 'none';
+               } else {
+                  alert(data.message || '신고 처리에 실패했습니다.');
+               }
+            })
+            .catch(error => {
+               console.error('신고 오류:', error);
+               alert('요청 중 오류가 발생했습니다.');
+            });
+      });
    });
+});
 </script>
 
 </html>

@@ -261,7 +261,6 @@
 .pop_wrap.type2 {
   left: 50%;
   bottom: 139px;
-  margin-left: -184px;
   border: 1px solid #29367c;
   display: none;
 }
@@ -317,6 +316,10 @@
   padding: 9px 9px 10px;
 }
 
+#report_layer {
+  margin-left: -164px;
+}
+
 .setting_element_box {
   position: relative;
   padding: 0 85px 0 0;
@@ -348,4 +351,8 @@
 .setting_onoff button {
   width: 66px;
   height: 23px;
+}
+
+#sns_share_layer {
+  margin-left: -184px;
 }
