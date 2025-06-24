@@ -79,11 +79,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
-            $stmt = $db->prepare("DELETE FROM board WHERE board_id = ?");
+            $stmt = $db->prepare("UPDATE board SET is_deleted = 1  WHERE board_id = ?");
             $stmt->bind_param("i", $board_id);
 
             if (!$stmt->execute()) {
-                throw new ('오류가 발생했습니다.');
+                throw new Exception('오류가 발생했습니다.');
             }
 
             echo "<script>alert('삭제되었습니다.');</script>";

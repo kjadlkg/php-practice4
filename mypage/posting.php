@@ -24,13 +24,13 @@ if ($keyword) {
    $count_stmt = $db->prepare("
    SELECT COUNT(*) AS total
    FROM board
-   WHERE board_writer LIKE ? AND board_content LIKE ?");
+   WHERE board_writer LIKE ? AND b.is_deleted = 0 AND board_content LIKE ?");
    $count_stmt->bind_param("ss", $name, $search_keyword);
 } else {
    $count_stmt = $db->prepare("
    SELECT COUNT(*) AS total
    FROM board
-   WHERE board_writer LIKE ?");
+   WHERE board_writer LIKE ? AND is_deleted = 0");
    $count_stmt->bind_param("s", $name);
 }
 $count_stmt->execute();
@@ -57,7 +57,7 @@ if ($keyword) {
     SELECT b.*,
     (SELECT COUNT(*) FROM comment WHERE board_id = b.board_id) AS comment_count
     FROM board b
-    WHERE board_writer LIKE ? AND board_title LIKE ?
+    WHERE board_writer LIKE ? AND b.is_deleted = 0 AND board_title LIKE ?
     ORDER BY board_id DESC
     LIMIT ?, ?
     ");
@@ -67,7 +67,7 @@ if ($keyword) {
     SELECT b.*,
     (SELECT COUNT(*) FROM comment WHERE board_id = b.board_id) AS comment_count
     FROM board b
-    WHERE board_writer LIKE ?
+    WHERE board_writer LIKE ? AND b.is_deleted = 0
     ORDER BY board_id DESC
     LIMIT ?, ?
     ");
@@ -92,7 +92,8 @@ while ($row = $board_result->fetch_assoc()) {
       'board_id' => $row['board_id'],
       'board_title' => $title,
       'comment_count' => $row['comment_count'],
-      'created_at' => date("Y.m.d", strtotime($row['created_at']))
+      'created_at' => date("Y.m.d", strtotime($row['created_at'])),
+      'is_deleted' => $row['is_deleted']
    ];
 }
 $stmt->close();
@@ -209,6 +210,7 @@ $stmt->close();
                                                       <strong>
                                                          <?= $post['board_title'] ?>
                                                          <span class="comment_num">[<?= $post['comment_count'] ?>]</span>
+                                                      </strong>
                                                    </div>
                                                    <div class="datebox">
                                                       <span class="date">

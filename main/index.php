@@ -39,6 +39,7 @@ $board_stmt = $db->prepare("
 SELECT b.*,
 (SELECT COUNT(*) FROM comment WHERE board_id = b.board_id) AS comment_count
 FROM board b
+WHERE b.is_deleted = 0
 ORDER BY b.board_id DESC
 LIMIT ?, ?
 ");

@@ -22,13 +22,13 @@ $stmt->execute();
 $stmt->close();
 
 // 게시물
-$stmt = $db->prepare(
-   "SELECT b.*, u.user_id
-        FROM board b
-        JOIN user u
-        ON b.board_writer = u.user_name
-        WHERE b.board_id = ?"
-);
+$stmt = $db->prepare("
+         SELECT b.*, u.user_id
+         FROM board b
+         JOIN user u
+         ON b.board_writer = u.user_name
+         WHERE b.board_id = ? AND b.is_deleted = 0
+        ");
 $stmt->bind_param("i", $board_id);
 $stmt->execute();
 $result = $stmt->get_result();

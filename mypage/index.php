@@ -15,7 +15,7 @@ $stmt = $db->prepare("
 SELECT b.*,
 (SELECT COUNT(*) FROM comment WHERE board_id = b.board_id) AS comment_count
 FROM board b
-WHERE board_writer = ?
+WHERE board_writer = ? AND b.is_deleted = 0
 ORDER BY board_id DESC
 LIMIT 5
 ");
@@ -26,7 +26,7 @@ $stmt->close();
 
 // 댓글
 $stmt = $db->prepare("
-SELECT c.*, b.board_title
+SELECT c.*, b.board_title, b.is_deleted
 FROM comment c
 JOIN board b ON c.board_id = b.board_id
 WHERE c.comment_writer = ?
@@ -187,7 +187,11 @@ $stmt->close();
                                                                         </div>
                                                                         <div class="boardtitle">
                                                                             <strong>
-                                                                                <?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?>
+                                                                                <?php if ($row['is_deleted']): ?>
+                                                                                    삭제된 글입니다.
+                                                                                <?php else: ?>
+                                                                                    <?= htmlspecialchars($row['board_title'], ENT_QUOTES, 'UTF-8') ?>
+                                                                                <?php endif; ?>
                                                                             </strong>
                                                                         </div>
                                                                     </a>
