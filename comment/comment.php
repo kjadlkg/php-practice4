@@ -6,22 +6,31 @@ include "../resource/db.php";
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception('오류가 발생했습니다.');
+        throw new Exception('오류가 발생했습니다.1');
     }
 
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_token'] ?? '')) {
-        throw new Exception('오류가 발생했습니다.');
+        throw new Exception('오류가 발생했습니다.2');
     }
 
     $board_id = filter_input(INPUT_POST, 'board_id', FILTER_VALIDATE_INT)
-        ?: throw new Exception('유효하지 않은 게시물입니다.');
+        ?: throw new Exception('유효하지 않은 게시물입니다.1');
     $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_FULL_SPECIAL_CHARS)
         ?: throw new Exception('닉네임을 입력해주세요.');
     $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_FULL_SPECIAL_CHARS)
         ?: throw new Exception('내용을 입력해주세요.');
 
     if ($board_id <= 0) {
-        throw new Exception('유효하지 않은 게시물입니다.');
+        throw new Exception('유효하지 않은 게시물입니다.2');
+    }
+
+    $parent_id = $_POST['parent_id'] ?? null;
+
+    if ($parent_id !== null) {
+        $parent_id = filter_var($parent_id, FILTER_VALIDATE_INT);
+        if ($parent_id === false) {
+            throw new Exception('유효하지 않은 게시물입니다.3');
+        }
     }
 
     $user_id = $_SESSION['id'] ?? '';
@@ -46,12 +55,11 @@ try {
     $user_ip = $comment_pw ? $user_ip : '';
 
     // 댓글 저장
-    $sql = "INSERT INTO comment (board_id, comment_writer, comment_writer_id, comment_pw, comment_content, ip) VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt = $db->prepare($sql);
-    $stmt->bind_param("isssss", $board_id, $name, $user_id, $comment_pw, $content, $user_ip);
-
+    $stmt = $db->prepare("INSERT INTO comment (board_id, parent_id, comment_writer, comment_writer_id, comment_pw, comment_content, ip) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("iisssss", $board_id, $parent_id, $name, $user_id, $comment_pw, $content, $user_ip);
     if (!$stmt->execute()) {
-        throw new Exception('오류가 발생했습니다.');
+        throw new Exception('Execute 실패: ' . $stmt->error);
+        // throw new Exception('오류가 발생했습니다.3');
     }
 
     header("Location: ../board/view.php?id=" . urlencode($board_id));
