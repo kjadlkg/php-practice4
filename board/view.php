@@ -432,7 +432,8 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                                                    <?= $comment['created_at'] ?>
                                                 </span>
                                                 <div class="comment_delete">
-                                                   <form method="POST" action="../comment/delete.php"
+                                                   <form method="POST"
+                                                      action="../comment/delete.php?sort=<?= $sort ?>&page=<?= $page ?>"
                                                       class="comment_delete_form" onsubmit="return checkDeletePassword(this)">
                                                       <input type="hidden" name="board_id" value="<?= $board_id ?>">
                                                       <input type="hidden" name="comment_id"

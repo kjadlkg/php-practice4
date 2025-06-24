@@ -61,10 +61,8 @@ try {
         throw new Exception('오류가 발생했습니다.');
     }
 
-
-
     $_SESSION['scrollToComment'] = true;
-    $redirect_url = "../board/view.php?id=$board_id&sort=" . urlencode($_GET['sort'] ?? 'created_asc') . "&page=" . urlencode($_GET['page'] ?? 1);
+    $redirect_url = "../board/view.php?id=$board_id&sort=" . urlencode($_GET['sort'] ?? 'oldest') . "&page=" . urlencode($_GET['page'] ?? 1);
     header("Location: $redirect_url");
     exit;
 

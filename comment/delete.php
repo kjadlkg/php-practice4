@@ -73,7 +73,9 @@ try {
         throw new Exception('댓글 삭제에 실패했습니다.');
     }
 
-    header("Location: ../board/view.php?id=" . urlencode($board_id));
+    $_SESSION['scrollToComment'] = true;
+    $redirect_url = "../board/view.php?id=$board_id&sort=" . urlencode($_GET['sort'] ?? 'oldest') . "&page=" . urlencode($_GET['page'] ?? 1);
+    header("Location: $redirect_url");
     exit;
 
 } catch (Exception $e) {
