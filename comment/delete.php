@@ -6,20 +6,20 @@ include "../resource/db.php";
 
 try {
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception('오류가 발생했습니다.1');
+        throw new Exception('오류가 발생했습니다.');
     }
 
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_token'] ?? '')) {
-        throw new Exception('오류가 발생했습니다.2');
+        throw new Exception('오류가 발생했습니다.');
     }
 
     $board_id = filter_input(INPUT_POST, 'board_id', FILTER_VALIDATE_INT)
-        ?: throw new Exception('유효하지 않은 게시글입니다.1');
+        ?: throw new Exception('유효하지 않은 게시글입니다.');
     $comment_id = filter_input(INPUT_POST, 'comment_id', FILTER_VALIDATE_INT)
-        ?: throw new Exception('유효하지 않은 접근입니다.1');
+        ?: throw new Exception('유효하지 않은 접근입니다.');
 
     if ($comment_id <= 0 || $board_id <= 0) {
-        throw new Exception('유효하지 않은 접근입니다.2');
+        throw new Exception('유효하지 않은 접근입니다.');
     }
 
     $parent_id = $_POST['parent_id'] ?? null;
@@ -27,7 +27,7 @@ try {
     if ($parent_id !== null) {
         $parent_id = filter_var($parent_id, FILTER_VALIDATE_INT);
         if ($parent_id === false) {
-            throw new Exception('유효하지 않은 게시물입니다.3');
+            throw new Exception('유효하지 않은 게시물입니다.');
         }
     }
 
@@ -45,7 +45,7 @@ try {
     $stmt = $db->prepare("SELECT comment_pw FROM comment WHERE comment_id = ?");
     $stmt->bind_param("i", $comment_id);
     if (!$stmt->execute()) {
-        throw new Exception('오류가 발생했습니다.3');
+        throw new Exception('오류가 발생했습니다.');
     }
     $result = $stmt->get_result();
 
@@ -62,11 +62,11 @@ try {
     }
     $stmt->close();
 
-    // 댓글 삭제
-    $stmt = $db->prepare("DELETE FROM comment WHERE comment_id = ?");
+    // 댓글 삭제 (상태 변경)
+    $stmt = $db->prepare("UPDATE comment SET is_deleted = 1 WHERE comment_id = ?");
     $stmt->bind_param("i", $comment_id);
     if (!$stmt->execute()) {
-        throw new Exception('오류가 발생했습니다.4');
+        throw new Exception('오류가 발생했습니다.');
     }
 
     if (mysqli_stmt_affected_rows($stmt) === 0) {

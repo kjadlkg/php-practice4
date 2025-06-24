@@ -49,7 +49,7 @@ $board_writer_id = htmlspecialchars($row['board_writer_id'], ENT_QUOTES, 'UTF-8'
 $board_pw = htmlspecialchars($row['board_pw'], ENT_QUOTES, 'UTF-8');
 $board_views = htmlspecialchars($row['board_views'], ENT_QUOTES, 'UTF-8');
 $recommend = htmlspecialchars($row['recommend_up'], ENT_QUOTES, 'UTF-8');
-$created_at = date("Y.m.d H:m:s", strtotime($row['created_at']));
+$created_at = date("Y.m.d H:i:s", strtotime($row['created_at']));
 
 
 // 댓글
@@ -74,12 +74,28 @@ if ($page > $total_page)
 
 $start = max(0, ($page - 1) * $list_num);
 
+// 댓글 sort
+$sort = $_GET['sort'] ?? 'oldest';
+
+switch ($sort) {
+   case 'newest':
+      $order_by = 'c.created_at DESC';
+      break;
+   case 'reply':
+      $order_by = '(SELECT COUNT(*) FROM comment AS child WHERE child.parent_id = c.comment_id) DESC, c.created_at ASC';
+      break;
+   case 'oldest':
+   default:
+      $order_by = 'c.created_at ASC';
+}
+
 // 댓글 조회 (일반 댓글만 페이징 대상, 대댓글은 부모 댓글에 포함)
 $stmt = $db->prepare("
     SELECT c.*, u.user_name
     FROM comment c LEFT JOIN user u
     ON c.comment_writer = u.user_name
-    WHERE c.board_id = ? ORDER BY c.created_at ASC
+    WHERE c.board_id = ?
+    ORDER BY $order_by
     ");
 $stmt->bind_param("i", $board_id);
 $stmt->execute();
@@ -92,7 +108,7 @@ while ($comment_row = $comment_result->fetch_assoc()) {
    $is_writer = $is_login && $_SESSION['id'] == $comment_row['comment_writer_id'];
    $comment_date = strtotime($comment_row['created_at']);
    $now = time();
-   $formatted_time = date("Y") === date("Y", $comment_date) ? date("m.d H:m:s", $comment_date) : date("y.m.d H:m:s", $comment_date);
+   $formatted_time = date("Y") === date("Y", $comment_date) ? date("m.d H:i:s", $comment_date) : date("y.m.d H:i:s", $comment_date);
 
    $comment = [
       'is_writer' => $is_writer,
@@ -104,6 +120,7 @@ while ($comment_row = $comment_result->fetch_assoc()) {
       'comment_content' => nl2br(htmlspecialchars($comment_row['comment_content'], ENT_QUOTES, 'UTF-8')),
       'user_ip' => !empty($comment_row['ip']) ? mask_ip($comment_row['ip']) : '',
       'created_at' => $formatted_time,
+      'is_deleted' => $comment_row['is_deleted'],
       'children' => []
    ];
    $comment_map[$comment_row['comment_id']] = $comment;
@@ -147,6 +164,12 @@ $e_page = min($total_page, $s_page + $page_num - 1);
 </head>
 
 <body>
+   <?php if (isset($_SESSION['scrollToComment'])): ?>
+      <script>
+         sessionStorage.setItem("scrollToComment", "true");
+      </script>
+      <?php unset($_SESSION['scrollToComment']); ?>
+   <?php endif; ?>
    <div id="top" class="width1160 view_wrap">
       <header class="header">
          <div class="head">
@@ -235,7 +258,7 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                                  <span class="view">조회 <?= $board_views ?></span>
                                  <span class="recommend">추천 <?= $recommend ?></span>
                                  <span class="comment">
-                                    <a href="#comment">댓글 <?= $count ?></a>
+                                    <a href="#comment_section">댓글 <?= $count ?></a>
                                  </span>
                               </div>
                            </div>
@@ -337,7 +360,7 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                               </div>
                            </div>
                         </div>
-                        <div id="comment" class="attached_file_box">
+                        <div id="comment_attach" class="attached_file_box">
                            <strong>원본 첨부 파일<em class="font_red"></em></strong>
                            <ul class="attached_file"></ul>
                         </div>
@@ -351,17 +374,20 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                                  <em class="font_red"><?= $count ?></em>개
                                  <div class="comment_sort">
                                     <span class="radiobox">
-                                       <input type="radio" id="radio1" name="commentSort" checked="checked">
+                                       <input type="radio" id="radio1" name="commentSort" value="oldest"
+                                          <?= $sort === 'oldest' ? 'checked' : '' ?>>
                                        <em>√</em>
                                        <label for="radio1">등록순</label>
                                     </span>
                                     <span class="radiobox">
-                                       <input type="radio" id="radio2" name="commentSort">
+                                       <input type="radio" id="radio2" name="commentSort" value="newest"
+                                          <?= $sort === 'newest' ? 'checked' : '' ?>>
                                        <em>√</em>
                                        <label for="radio2">최신순</label>
                                     </span>
                                     <span class="radiobox">
-                                       <input type="radio" id="radio3" name="commentSort">
+                                       <input type="radio" id="radio3" name="commentSort" value="reply"
+                                          <?= $sort === 'reply' ? 'checked' : '' ?>>
                                        <em>√</em>
                                        <label for="radio3">답글순</label>
                                     </span>
@@ -381,96 +407,103 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                                  <?php foreach ($comments as $comment): ?>
                                     <li>
                                        <div class="comment_info clear">
-                                          <div class="comment_nickbox">
-                                             <span class="view_writer">
-                                                <span class="nickname">
-                                                   <em><?= $comment['comment_writer'] ?></em>
-                                                   <?php if ($comment['user_ip']): ?>
-                                                      <span class="ip">(<?= $comment['user_ip'] ?>)</span>
-                                                   <?php endif; ?>
+                                          <?php if ($comment['is_deleted']): ?>
+                                             <div class="comment_textbox btn_reply_write_all clear">
+                                                <p class="comment_text">삭제된 댓글입니다.</p>
+                                             </div>
+                                          <?php else: ?>
+                                             <div class="comment_nickbox">
+                                                <span class="view_writer">
+                                                   <span class="nickname">
+                                                      <em><?= $comment['comment_writer'] ?></em>
+                                                      <?php if ($comment['user_ip']): ?>
+                                                         <span class="ip">(<?= $comment['user_ip'] ?>)</span>
+                                                      <?php endif; ?>
+                                                   </span>
                                                 </span>
-                                             </span>
+                                             </div>
+                                             <div class="comment_textbox btn_reply_write_all clear">
+                                                <p class="comment_text btn_reply">
+                                                   <?= $comment['comment_content'] ?>
+                                                </p>
+                                             </div>
+                                             <div class="fr clear">
+                                                <span class="date_time">
+                                                   <?= $comment['created_at'] ?>
+                                                </span>
+                                                <div class="comment_delete">
+                                                   <form method="POST" action="../comment/delete.php"
+                                                      class="comment_delete_form" onsubmit="return checkDeletePassword(this)">
+                                                      <input type="hidden" name="board_id" value="<?= $board_id ?>">
+                                                      <input type="hidden" name="comment_id"
+                                                         value="<?= $comment['comment_id'] ?>">
+                                                      <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
+                                                      <?php if ($comment['is_writer']): ?>
+                                                         <button type="submit" class="btn_comment_delete">삭제</button>
+                                                      <?php endif; ?>
+                                                      <?php if (empty($comment['comment_writer_id'])): ?>
+                                                         <button type="button" class="btn_comment_delete"
+                                                            data-comment_id="<?= $comment['comment_id'] ?>">삭제</button>
+                                                         <div class="comment_delpw_box">
+                                                            <input type="password" class="comment_delpw" name="comment_pw"
+                                                               placeholder="비밀번호">
+                                                            <button type="submit" class="btn_ok">확인</button>
+                                                            <button type="button" class="btn_comment_pw_close">
+                                                               <span class="blind">닫기</span>
+                                                               <em>X</em>
+                                                            </button>
+                                                         </div>
+                                                      <?php endif; ?>
+                                                   </form>
+                                                </div>
+                                             </div>
                                           </div>
-                                          <div class="comment_textbox btn_reply_write_all clear">
-                                             <p class="comment_text btn_reply">
-                                                <?= $comment['comment_content'] ?>
-                                             </p>
-                                          </div>
-                                          <div class="fr clear">
-                                             <span class="date_time">
-                                                <?= $comment['created_at'] ?>
-                                             </span>
-                                             <div class="comment_delete">
-                                                <form method="POST" action="../comment/delete.php"
-                                                   class="comment_delete_form" onsubmit="return checkDeletePassword(this)">
-                                                   <input type="hidden" name="board_id" value="<?= $board_id ?>">
-                                                   <input type="hidden" name="comment_id"
-                                                      value="<?= $comment['comment_id'] ?>">
-                                                   <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-                                                   <?php if ($comment['is_writer']): ?>
-                                                      <button type="submit" class="btn_comment_delete">삭제</button>
-                                                   <?php endif; ?>
-                                                   <?php if (empty($comment['comment_writer_id'])): ?>
-                                                      <button type="button" class="btn_comment_delete"
-                                                         data-comment_id="<?= $comment['comment_id'] ?>">삭제</button>
-                                                      <div class="comment_delpw_box">
-                                                         <input type="password" class="comment_delpw" name="comment_pw"
-                                                            placeholder="비밀번호">
-                                                         <button type="submit" class="btn_ok">확인</button>
-                                                         <button type="button" class="btn_comment_pw_close">
-                                                            <span class="blind">닫기</span>
-                                                            <em>X</em>
-                                                         </button>
+                                          <!-- 대댓글 작성 폼 -->
+                                          <div class="reply_write_box clear" style="display: none;">
+                                             <form method="POST"
+                                                action="../comment/comment.php?sort=<?= $sort ?>&page=<?= $page ?>"
+                                                onsubmit="return checkCommentEmpty(this)">
+                                                <div class="fl">
+                                                   <?php if ($is_login): ?>
+                                                      <div class="user_info_input">
+                                                         <input type="text" name="name" value="<?= $_SESSION['name'] ?>"
+                                                            maxlength="20">
+                                                      </div>
+                                                   <?php else: ?>
+                                                      <div class="user_info_input">
+                                                         <input type="text" name="name" value="ㅇㅇ" placeholder="닉네임"
+                                                            maxlength="20">
+                                                      </div>
+                                                      <div class="user_info_input">
+                                                         <input type="password" name="pw" value="1234" placeholder="비밀번호"
+                                                            maxlength="20">
+                                                      </div>
+                                                      <div class="user_info_input">
+                                                         <input type="text" name="captcha" placeholder="코드입력">
+                                                      </div>
+                                                      <div class="kcaptcha_img">
+                                                         <img src="../resource/captcha_image.php?<?= time() ?>" class="kcaptcha"
+                                                            alt="KCAPTCHA">
                                                       </div>
                                                    <?php endif; ?>
-                                                </form>
-                                             </div>
+                                                   <input type="hidden" name="board_id" value="<?= $comment['board_id'] ?>">
+                                                   <input type="hidden" name="parent_id"
+                                                      value="<?= $comment['comment_id'] ?>">
+                                                   <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
+                                                </div>
+                                                <div class="comment_text_content">
+                                                   <div class="comment_write">
+                                                      <textarea name="content" autocomplete="off" maxlength="400"></textarea>
+                                                   </div>
+                                                   <div class="comment_write_bottom">
+                                                      <div class="fr">
+                                                         <button type="submit" class="btn btn_blue small">등록</button>
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                             </form>
                                           </div>
-                                       </div>
-                                       <!-- 대댓글 입력 폼 -->
-                                       <div class="reply_write_box clear" style="display: none;">
-                                          <form method="POST" action="../comment/comment.php"
-                                             onsubmit="return checkCommentEmpty(this)">
-                                             <div class="fl">
-                                                <?php if ($is_login): ?>
-                                                   <div class="user_info_input">
-                                                      <input type="text" name="name" value="<?= $_SESSION['name'] ?>"
-                                                         maxlength="20">
-                                                   </div>
-                                                <?php else: ?>
-                                                   <div class="user_info_input">
-                                                      <input type="text" name="name" value="ㅇㅇ" placeholder="닉네임"
-                                                         maxlength="20">
-                                                   </div>
-                                                   <div class="user_info_input">
-                                                      <input type="password" name="pw" value="1234" placeholder="비밀번호"
-                                                         maxlength="20">
-                                                   </div>
-                                                   <div class="user_info_input">
-                                                      <input type="text" name="captcha" placeholder="코드입력">
-                                                   </div>
-                                                   <div class="kcaptcha_img">
-                                                      <img src="../resource/captcha_image.php?<?= time() ?>" class="kcaptcha"
-                                                         alt="KCAPTCHA">
-                                                   </div>
-                                                <?php endif; ?>
-                                                <input type="hidden" name="board_id" value="<?= $comment['board_id'] ?>">
-                                                <input type="hidden" name="parent_id"
-                                                   value="<?= $comment['comment_id'] ?>">
-                                                <input type="hidden" name="csrf_token" value="<?= get_csrf_token() ?>">
-                                             </div>
-                                             <div class="comment_text_content">
-                                                <div class="comment_write">
-                                                   <textarea name="content" autocomplete="off" maxlength="400"></textarea>
-                                                </div>
-                                                <div class="comment_write_bottom">
-                                                   <div class="fr">
-                                                      <button type="submit" class="btn btn_blue small">등록</button>
-                                                   </div>
-                                                </div>
-                                             </div>
-                                          </form>
-                                       </div>
+                                       <?php endif; ?>
                                        <!-- 대댓글 렌더링 -->
                                        <?php if (!empty($comment['children'])): ?>
                                           <?php foreach ($comment['children'] as $child): ?>
@@ -484,21 +517,25 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                                  <div class="bottom_paging_box">
                                     <div class="comment_paging">
                                        <?php if ($now_block > 1): ?>
-                                          <a href="view.php?id=<?= $board_id ?>&page=1">맨처음</a>
-                                          <a href="view.php?id=<?= $board_id ?>&page=<?= $s_page - 1 ?>">이전블록</a>
+                                          <a href="view.php?id=<?= $board_id ?>&sort=<?= $sort ?>&page=1">맨처음</a>
+                                          <a
+                                             href="view.php?id=<?= $board_id ?>&sort=<?= $sort ?>&page=<?= $s_page - 1 ?>">이전블록</a>
                                        <?php endif; ?>
 
                                        <?php for ($i = $s_page; $i <= $e_page; $i++): ?>
                                           <?php if ($i == $page): ?>
                                              <em><?= $i ?></em>
                                           <?php else: ?>
-                                             <a href="view.php?id=<?= $board_id ?>&page=<?= $i ?>"><?= $i ?></a>
+                                             <a
+                                                href="view.php?id=<?= $board_id ?>&sort=<?= $sort ?>&page=<?= $i ?>"><?= $i ?></a>
                                           <?php endif; ?>
                                        <?php endfor; ?>
 
                                        <?php if ($now_block < $total_block): ?>
-                                          <a href="view.php?id=<?= $board_id ?>&page=<?= $e_page + 1 ?>">다음블록</a>
-                                          <a href="view.php?id=<?= $board_id ?>&page=<?= $total_page ?>">맨끝</a>
+                                          <a
+                                             href="view.php?id=<?= $board_id ?>&sort=<?= $sort ?>&page=<?= $e_page + 1 ?>">다음블록</a>
+                                          <a
+                                             href="view.php?id=<?= $board_id ?>&sort=<?= $sort ?>&page=<?= $total_page ?>">맨끝</a>
                                        <?php endif; ?>
                                     </div>
                                     <div class="comment_option">
@@ -513,8 +550,9 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                               <?php endif; ?>
                            </div>
                         </div>
+                        <!-- 댓글 작성 폼 -->
                         <div class="comment_write_box clear">
-                           <form method="POST" action="../comment/comment.php"
+                           <form method="POST" action="../comment/comment.php?sort=<?= $sort ?>&page=<?= $page ?>"
                               onsubmit="return checkCommentEmpty(this)">
                               <div class="fl">
                                  <?php if ($is_login): ?>
@@ -676,6 +714,32 @@ $e_page = min($total_page, $s_page + $page_num - 1);
                }
             });
          });
+
+      // 댓글 sort
+      document.querySelectorAll('input[name="commentSort"]').forEach(radio => {
+         radio.addEventListener('change', () => {
+            const sort = radio.value;
+            const params = new URLSearchParams(window.location.search);
+            params.set('sort', sort);
+            sessionStorage.setItem('scrollToComment', 'true');
+            location.href = `${location.pathname}?${params.toString()}`;
+         });
+      });
+   });
+
+   // 댓글 앵커
+   document.addEventListener("DOMContentLoaded", function () {
+      // 댓글 갱신 시 실행
+      const scroll = sessionStorage.getItem("scrollToComment");
+      if (scroll) {
+         const target = document.getElementById("comment_section");
+         if (target) {
+            target.scrollIntoView({
+               behavior: "auto"
+            });
+         }
+         sessionStorage.removeItem("scroll");
+      }
    });
 
    // 댓글 삭제 비밀번호 입력 확인 (비로그인)
