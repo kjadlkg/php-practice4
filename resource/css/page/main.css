@@ -1,0 +1,7 @@
+.issue_contentbox {
+  display: none;
+}
+
+.list_wrap .issue_contentbox {
+  display: block;
+}

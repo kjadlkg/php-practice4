@@ -1,0 +1,21 @@
+.con.joinform_box {
+  width: 703px;
+  padding: 49px 0 48px;
+}
+
+.join_wrap .btn_blue.small {
+  width: 108px;
+  height: 35px;
+  font-size: 13.5px;
+}
+
+.join_wrap .btn_grey.small {
+  width: 110px;
+  height: 38px;
+  line-height: 37px;
+  font-size: 14px;
+}
+
+.mt6 {
+  margin-top: 6px;
+}
