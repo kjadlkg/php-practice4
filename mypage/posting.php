@@ -24,7 +24,7 @@ if ($keyword) {
    $count_stmt = $db->prepare("
    SELECT COUNT(*) AS total
    FROM board
-   WHERE board_writer LIKE ? AND b.is_deleted = 0 AND board_content LIKE ?");
+   WHERE board_writer LIKE ? AND is_deleted = 0 AND board_content LIKE ?");
    $count_stmt->bind_param("ss", $name, $search_keyword);
 } else {
    $count_stmt = $db->prepare("
@@ -124,7 +124,7 @@ $stmt->close();
                <div class="area_links clear">
                   <ul class="fl clear">
                      <li class="area_nick">
-                        <a href="javascript:;" class="btn_user_data"><?= $name ?>님</a>
+                        <a href="javascript:;" class="btn_user_data"><?= $name ?><em>▼</em></a>
                         <div class="user_data" style="display: none;">
                            <ul class="user_data_list">
                               <li><a href="index.php">마이페이지</a></li>

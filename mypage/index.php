@@ -81,7 +81,7 @@ $stmt->close();
                     <div class="area_links clear">
                         <ul class="fl clear">
                             <li class="area_nick">
-                                <a href="javascript:;" class="btn_user_data"><?= $name ?>님</a>
+                                <a href="javascript:;" class="btn_user_data"><?= $name ?>님<em>▼</em></a>
                                 <div class="user_data" style="display: none;">
                                     <ul class="user_data_list">
                                         <li><a href="index.php">마이페이지</a></li>
