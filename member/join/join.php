@@ -1,4 +1,7 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 include "../../resource/db.php";
 
 if (isset($_SESSION['id'])) {
@@ -66,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($result) {
         echo "<script>alert('회원가입이 완료되었습니다.'); location.href='../login/login.php';</script>";
     } else {
-        echo "<script>alert('회원가입에 실패했습니다. 오류: " . $stmt->error . "'); history.back();</script>";
+        echo "<script>alert('회원가입에 실패했습니다.'); history.back();</script>";
     }
     $stmt->close();
 
