@@ -105,6 +105,7 @@ $stmt->close();
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>게시글</title>
+   <link rel="icon" href="../resource/images/favicon.ico">
    <link rel="stylesheet" href="../resource/css/base.css">
    <link rel="stylesheet" href="../resource/css/common.css">
    <link rel="stylesheet" href="../resource/css/component.css">
