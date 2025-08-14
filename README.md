@@ -1,6 +1,7 @@
 # php-practice4
 
-![alt text](image.png)
+![alt text](resource/images/readme_img1.png)
+
 이 프로젝트의 목표는 **CRUD**와 **OWASP 기반 보안 지식**을 확장하여 하나의 **완성형 웹사이트를 구현**하는 것입니다.
 
 국내 최대 규모의 PHP 기반 커뮤니티 사이트인 **디시인사이드**를 참고하여, UI 구현을 시작으로 웹사이트 구조의 이해를 높였습니다.
