@@ -84,6 +84,7 @@ $board_stmt->close();
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>게시판</title>
+   <link rel="icon" href="../resource/images/favicon.ico">
    <link rel="stylesheet" href="../resource/css/base.css">
    <link rel="stylesheet" href="../resource/css/common.css">
    <link rel="stylesheet" href="../resource/css/component.css">
@@ -98,7 +99,9 @@ $board_stmt->close();
       <header class="header typea">
          <div class="head">
             <h1 class="logo">
-               <a href="index.php">메인페이지</a>
+               <a href="index.php">
+                  <img src="https://nstatic.dcinside.com/dc/w/images/dcin_logo.png">
+               </a>
             </h1>
             <div class="search_wrap">
                <form method="GET" action="../search/search.php">

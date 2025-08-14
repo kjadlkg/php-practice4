@@ -21,6 +21,24 @@
   position: relative;
 }
 
+.half_box {
+  float: right;
+  width: 298px;
+  height: 100%;
+  background: #f3f3f3;
+}
+
+.half_box .inner {
+  width: 250px;
+  height: 252px;
+  margin: 48px auto 48px;
+}
+
+.half_box .inner img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
 .id_checkbox .checkbox {
   float: left;
 }

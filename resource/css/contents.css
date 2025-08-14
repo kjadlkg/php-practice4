@@ -221,6 +221,16 @@
   color: #999;
 }
 
+.content_box {
+  position: relative;
+  margin-top: 15px;
+  padding: 0 13px 16px;
+  border: 1px solid #ccc;
+  background: #fff;
+  box-sizing: border-box;
+  height: 200px; /* 수정 후 삭제 */
+}
+
 .down_num_box {
   float: right;
   width: 64px;
@@ -325,9 +335,35 @@
   margin-top: 27px;
 }
 
+.integrate_search_wrap .left_content {
+  height: 600px;
+  background: #f3f3f3;
+  border: 1px solid #d7d7d7;
+  box-sizing: border-box;
+}
+
+.integrate_search_wrap .left_content img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
 .integrate_search_wrap .gnb_bar {
   background: #fff;
   border-width: 2px 0 2px 0;
+}
+
+.integrate_search_wrap .gnb_list {
+  padding-left: 175px;
+  box-sizing: border-box;
+}
+
+.integrate_search_wrap .gnb_list li a {
+  color: #333;
+  text-shadow: none;
+}
+
+.integrate_search_wrap .gnb_list li a.on {
+  color: #d31900;
 }
 
 .integrate_search_wrap .info_policy {

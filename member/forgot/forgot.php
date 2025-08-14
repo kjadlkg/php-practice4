@@ -86,6 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>비밀번호 재설정</title>
+    <link rel="icon" href="../../resource/images/favicon.ico">
     <link rel="stylesheet" href="../../resource/css/base.css">
     <link rel="stylesheet" href="../../resource/css/common.css">
     <link rel="stylesheet" href="../../resource/css/component.css">
@@ -99,7 +100,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <header class="header bg">
             <div class="head">
                 <h1 class="logo">
-                    <a href="../../main/index.php">메인페이지</a>
+                    <a href="../../main/index.php">
+                        <img src="https://nstatic.dcinside.com/dc/w/images/dcin_logo2.png">
+                    </a>
                 </h1>
             </div>
         </header>

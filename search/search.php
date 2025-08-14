@@ -60,6 +60,7 @@ if ($search) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>검색결과</title>
+    <link rel="icon" href="../resource/images/favicon.ico">
     <link rel="stylesheet" href="../resource/css/base.css">
     <link rel="stylesheet" href="../resource/css/common.css">
     <link rel="stylesheet" href="../resource/css/component.css">
@@ -71,7 +72,9 @@ if ($search) {
         <header class="header typea">
             <div class="head">
                 <h1 class="logo">
-                    <a href="../main/index.php">메인페이지</a>
+                    <a href="../main/index.php">
+                        <img src="https://nstatic.dcinside.com/dc/w/images/dcin_logo.png">
+                    </a>
                 </h1>
                 <div class="search_wrap">
                     <h2 class="blind">메인 검색</h2>
@@ -107,7 +110,11 @@ if ($search) {
             <nav class="gnb clear">
                 <h2 class="blind">GNB</h2>
                 <ul class="gnb_list clear">
-
+                    <li><a href="#" class="on">통합</a></li>
+                    <li><a href="#">게시판</a></li>
+                    <li><a href="#">뉴스</a></li>
+                    <li><a href="#">동영상</a></li>
+                    <li><a href="#">게시물</a></li>
                 </ul>
             </nav>
         </div>
@@ -115,6 +122,9 @@ if ($search) {
             <div class="group clear">
                 <section class="left_content">
                     <h2 class="blind">왼쪽 컨텐츠 영역</h2>
+                    <div>
+                        <img src="../resource/images/ad.png">
+                    </div>
                 </section>
                 <section class="center_content">
                     <h2 class="blind">가운데 컨텐츠 영역</h2>
@@ -200,6 +210,18 @@ if ($search) {
                 </section>
                 <section class="right_content">
                     <h2 class="blind">오른쪽 컨텐츠 영역</h2>
+                    <article>
+                        <div class="content_box"></div>
+                    </article>
+                    <article>
+                        <div class="content_box"></div>
+                    </article>
+                    <article>
+                        <div class="content_box"></div>
+                    </article>
+                    <article>
+                        <div class="content_box"></div>
+                    </article>
                 </section>
             </div>
         </main>
